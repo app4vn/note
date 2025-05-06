@@ -51,7 +51,6 @@ const signupError = document.getElementById('signup-error');
 const showSignupLink = document.getElementById('show-signup-link');
 const showLoginLink = document.getElementById('show-login-link');
 
-// *** THÊM MỚI: Tham chiếu đến ô tìm kiếm ***
 const searchInput = document.getElementById('search-input');
 
 const tagsListContainer = document.getElementById('tags-list-container');
@@ -94,7 +93,7 @@ let currentNoteId = null;
 let notesUnsubscribe = null;
 let activeTag = null;
 let notesCache = {};
-let currentSearchTerm = ''; // *** THÊM MỚI: Lưu trữ từ khóa tìm kiếm hiện tại ***
+let currentSearchTerm = '';
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
 
@@ -117,8 +116,8 @@ function showAuth() {
     notesCache = {};
     activeTag = null;
     currentNoteId = null;
-    currentSearchTerm = ''; // Reset search term
-    if(searchInput) searchInput.value = ''; // Clear search input
+    currentSearchTerm = '';
+    if(searchInput) searchInput.value = '';
     if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
     loginForm.style.display = 'block';
     signupForm.style.display = 'none';
@@ -137,7 +136,6 @@ function showGridView() {
         activeTagDisplay.textContent = '';
     }
     if (contentArea) contentArea.scrollTop = 0;
-    // Render lại list khi quay về grid để đảm bảo filter đúng
     renderNotesList(Object.values(notesCache));
 }
 
@@ -210,14 +208,42 @@ function setActiveTagItem(tagName) {
 function linkify(text) {
     if (!text) return '';
     const urlRegex = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    // Tạm thời chỉ xử lý link, không thoát HTML ở đây vì highlight sẽ dùng innerHTML
+    // Việc thoát HTML cần cẩn thận hơn nếu nội dung có thể chứa HTML độc hại
+    let linkedText = text.replace(urlRegex, (url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    });
+    return linkedText.replace(/\n/g, '<br>');
+}
+
+// *** THÊM MỚI: Hàm highlight text ***
+/**
+ * Tìm và highlight (bọc trong span.search-highlight) các lần xuất hiện của searchTerm trong text.
+ * @param {string} text - Đoạn văn bản gốc.
+ * @param {string} searchTerm - Từ khóa tìm kiếm.
+ * @returns {string} - Chuỗi HTML với các từ khóa đã được highlight.
+ */
+function highlightText(text, searchTerm) {
+    if (!searchTerm) {
+        // Nếu không có từ khóa tìm kiếm, trả về text gốc (đã thoát HTML cơ bản)
+        const tempDiv = document.createElement('div');
+        tempDiv.textContent = text || '';
+        return tempDiv.innerHTML.replace(/\n/g, '<br>'); // Vẫn thay \n bằng <br>
+    }
+    if (!text) return '';
+
+    // Thoát các ký tự đặc biệt trong searchTerm để dùng trong Regex
+    const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Tạo regex để tìm searchTerm, không phân biệt hoa thường (i) và tìm tất cả (g)
+    const regex = new RegExp(`(${escapedSearchTerm})`, 'gi');
+
+    // Tạo div tạm để thoát HTML trong text gốc trước khi chèn highlight
     const tempDiv = document.createElement('div');
     tempDiv.textContent = text;
-    let escapedText = tempDiv.innerHTML;
-    escapedText = escapedText.replace(urlRegex, (url) => {
-         let originalUrl = url.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-         return `<a href="${originalUrl}" target="_blank" rel="noopener noreferrer">${originalUrl}</a>`;
-    });
-    return escapedText.replace(/\n/g, '<br>');
+    const escapedText = tempDiv.innerHTML.replace(/\n/g, '<br>'); // Thoát HTML và thay \n
+
+    // Thay thế các kết quả tìm thấy bằng thẻ span highlight
+    return escapedText.replace(regex, '<span class="search-highlight">$1</span>');
 }
 
 
@@ -432,9 +458,8 @@ function loadNotesAndTags() {
 
         console.log("Notes data changed, updating cache and UI.");
         notesCache = newNotesCache;
-        // *** Gọi renderNotesList với dữ liệu mới nhất từ cache ***
-        renderNotesList(Object.values(notesCache));
-        renderTagsList(allNotes); // Render lại tags (có thể tối ưu sau)
+        renderNotesList(Object.values(notesCache)); // Render lại grid
+        renderTagsList(allNotes); // Render lại tags
 
         if (currentNoteId && !notesCache[currentNoteId]) {
             console.log("Current note removed, showing grid view.");
@@ -448,31 +473,24 @@ function loadNotesAndTags() {
 }
 
 /**
- * Hiển thị danh sách ghi chú lên Grid View, áp dụng bộ lọc tag và tìm kiếm.
+ * Hiển thị danh sách ghi chú lên Grid View, áp dụng bộ lọc tag và tìm kiếm, và highlight từ khóa.
  * @param {Array<object>} allNotes - Mảng tất cả ghi chú từ cache.
  */
 function renderNotesList(allNotes) {
     notesListContainer.innerHTML = ''; // Xóa grid cũ
 
-    // *** Áp dụng bộ lọc tag và tìm kiếm ***
-    const searchTermLower = currentSearchTerm.toLowerCase(); // Chuyển từ khóa tìm kiếm sang chữ thường
+    const searchTermLower = currentSearchTerm.toLowerCase();
 
     const notesToRender = allNotes.filter(note => {
-        // 1. Lọc theo tag (nếu có)
         const tagMatch = !activeTag || (note.tags && note.tags.includes(activeTag));
-        if (!tagMatch) return false; // Nếu không khớp tag, bỏ qua
+        if (!tagMatch) return false;
 
-        // 2. Lọc theo từ khóa tìm kiếm (nếu có)
         if (searchTermLower) {
             const titleMatch = note.title?.toLowerCase().includes(searchTermLower);
             const contentMatch = note.content?.toLowerCase().includes(searchTermLower);
-            // Tìm trong mảng tags
             const tagsMatch = note.tags?.some(tag => tag.toLowerCase().includes(searchTermLower));
-            // Chỉ cần khớp một trong các trường là được
             return titleMatch || contentMatch || tagsMatch;
         }
-
-        // Nếu không có từ khóa tìm kiếm, chỉ cần khớp tag là đủ
         return true;
     });
 
@@ -498,11 +516,13 @@ function renderNotesList(allNotes) {
         noteElement.dataset.id = note.id;
 
         const titleElement = document.createElement('h3');
-        titleElement.textContent = note.title || "Không có tiêu đề";
+        // *** THAY ĐỔI: Sử dụng highlightText và innerHTML cho tiêu đề ***
+        titleElement.innerHTML = highlightText(note.title || "Không có tiêu đề", currentSearchTerm);
 
         const contentPreview = document.createElement('div');
         contentPreview.classList.add('note-item-content-preview');
-        contentPreview.textContent = note.content || '';
+         // *** THAY ĐỔI: Sử dụng highlightText và innerHTML cho nội dung xem trước ***
+        contentPreview.innerHTML = highlightText(note.content || '', currentSearchTerm);
 
         const dateElement = document.createElement('div');
         dateElement.classList.add('note-item-date');
@@ -547,7 +567,7 @@ function renderTagsList(notes) {
         if (activeTag !== null) {
             activeTag = null;
             setActiveTagItem(null);
-            renderNotesList(Object.values(notesCache)); // Render lại grid với filter mới
+            renderNotesList(Object.values(notesCache));
             showGridView();
         }
     });
@@ -566,7 +586,7 @@ function renderTagsList(notes) {
             if (activeTag !== tag) {
                 activeTag = tag;
                 setActiveTagItem(tag);
-                renderNotesList(Object.values(notesCache)); // Render lại grid với filter mới
+                renderNotesList(Object.values(notesCache));
                 showGridView();
             }
         });
@@ -586,7 +606,7 @@ function renderTagsList(notes) {
 function displayNoteDetailContent(note) {
     if (!note) return;
 
-    noteDetailTitle.textContent = note.title;
+    noteDetailTitle.textContent = note.title; // Không highlight ở view chi tiết
 
     noteDetailTags.innerHTML = '';
     if (note.tags && note.tags.length > 0) {
@@ -610,7 +630,7 @@ function displayNoteDetailContent(note) {
     } else {
         noteDetailCode.style.display = 'none';
         copyCodeBtn.style.display = 'none';
-        noteDetailContent.innerHTML = linkify(note.content);
+        noteDetailContent.innerHTML = linkify(note.content); // Chỉ linkify, không highlight ở view chi tiết
         noteDetailContent.style.display = 'block';
     }
 }
@@ -642,14 +662,12 @@ if (scrollToTopBtn) {
     console.warn("Scroll to top button element not found.");
 }
 
-// --- *** THÊM MỚI: Logic tìm kiếm *** ---
+// --- Logic tìm kiếm ---
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
-        currentSearchTerm = e.target.value.trim(); // Cập nhật biến tìm kiếm toàn cục
-        // Render lại danh sách ghi chú với từ khóa tìm kiếm mới
-        // Dùng dữ liệu từ cache để lọc ngay lập tức
+        currentSearchTerm = e.target.value.trim();
+        // Render lại danh sách ngay lập tức với từ khóa mới
         renderNotesList(Object.values(notesCache));
-        // Không cần gọi showGridView() vì người dùng vẫn đang ở grid view
     });
 } else {
     console.warn("Search input element not found.");
