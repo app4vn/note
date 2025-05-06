@@ -259,7 +259,7 @@ hr {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-height: 150px; /* Chiều cao tối thiểu, có thể điều chỉnh */
+    min-height: 150px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 #notes-list-container .note-item:hover {
@@ -273,21 +273,19 @@ hr {
     font-size: 1.1em;
     margin-bottom: 8px;
     color: #212529;
-    /* Giới hạn tiêu đề 2 dòng */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal;
-    min-height: 2.4em; /* Đảm bảo đủ chỗ cho 2 dòng (line-height * số dòng) */
+    min-height: 2.4em;
 }
 .note-item-content-preview { /* Nội dung xem trước */
     font-size: 0.9em;
     color: #6c757d;
     flex-grow: 1;
     margin-bottom: 10px;
-    /* *** THAY ĐỔI: Giới hạn nội dung xem trước 5 dòng *** */
     display: -webkit-box;
     -webkit-line-clamp: 5; /* Giới hạn 5 dòng */
     -webkit-box-orient: vertical;
@@ -295,14 +293,11 @@ hr {
     text-overflow: ellipsis;
     white-space: normal;
     word-break: break-word;
-    /* Cần đảm bảo thẻ cha (.note-item) có chiều cao đủ để hiển thị 5 dòng + tiêu đề + ngày tháng */
-    /* Hoặc đặt max-height cho chính preview này nếu cần */
-     /* max-height: calc(1.6em * 5); /* line-height * số dòng */
 }
 .note-item-date { /* Ngày tháng */
     font-size: 0.8em;
     color: #adb5bd;
-    margin-top: auto; /* Đẩy xuống dưới cùng */
+    margin-top: auto;
     text-align: right;
 }
 
@@ -315,7 +310,7 @@ hr {
 }
 
 
-/* Chế độ xem chi tiết (Giữ nguyên) */
+/* Chế độ xem chi tiết */
 #note-detail-view h2 {
     border-bottom: 1px solid #eee;
     padding-bottom: 15px;
@@ -337,6 +332,8 @@ hr {
     margin-right: 8px;
     margin-bottom: 8px;
 }
+
+/* *** THAY ĐỔI: Thêm style cho khung nội dung text thường *** */
 .content-display {
     margin-top: 15px;
     margin-bottom: 25px;
@@ -344,9 +341,15 @@ hr {
     word-wrap: break-word;
     line-height: 1.7;
     color: #495057;
+    /* Thêm khung */
+    background-color: #f8f9fa; /* Nền xám rất nhạt */
+    padding: 20px; /* Khoảng đệm bên trong */
+    border: 1px solid #e9ecef; /* Viền nhạt */
+    border-radius: 8px; /* Bo góc */
 }
-#note-detail-code { /* Thẻ <pre> */
-    background-color: #f5f2f0;
+
+#note-detail-code { /* Thẻ <pre> cho code */
+    background-color: #f5f2f0; /* Giữ nguyên hoặc đổi theme Prism */
     color: #393a34;
     padding: 20px;
     border-radius: 8px;
@@ -481,6 +484,7 @@ hr {
     }
     .content-display, #note-detail-code {
         font-size: 0.9em;
+        padding: 15px; /* Giảm padding trên mobile */
     }
     .back-button {
         margin-bottom: 15px;
