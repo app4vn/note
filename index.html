@@ -19,14 +19,15 @@
                 <input type="password" id="login-password" placeholder="Mật khẩu" required>
                 <button type="submit" class="button-primary">Đăng nhập</button>
                 <p id="login-error" class="error-message"></p>
+                <p class="auth-switch-link">Chưa có tài khoản? <span id="show-signup-link">Đăng ký ngay</span></p>
             </form>
-            <hr>
-            <form id="signup-form">
-                <h2>Đăng ký</h2>
+
+            <form id="signup-form" style="display: none;"> <h2>Đăng ký</h2>
                 <input type="email" id="signup-email" placeholder="Email" required>
                 <input type="password" id="signup-password" placeholder="Mật khẩu (ít nhất 6 ký tự)" required>
                 <button type="submit" class="button-primary">Đăng ký</button>
                 <p id="signup-error" class="error-message"></p>
+                <p class="auth-switch-link">Đã có tài khoản? <span id="show-login-link">Đăng nhập</span></p>
             </form>
         </div>
     </div>
