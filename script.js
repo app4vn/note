@@ -48,10 +48,11 @@ const logoutButton = document.getElementById('logout-button');
 const userEmailDisplay = document.getElementById('user-email');
 const loginError = document.getElementById('login-error');
 const signupError = document.getElementById('signup-error');
-// *** THÊM MỚI: Tham chiếu đến các link chuyển đổi auth ***
 const showSignupLink = document.getElementById('show-signup-link');
 const showLoginLink = document.getElementById('show-login-link');
 
+// *** THÊM MỚI: Tham chiếu đến ô tìm kiếm ***
+const searchInput = document.getElementById('search-input');
 
 const tagsListContainer = document.getElementById('tags-list-container');
 const addNoteBtn = document.getElementById('add-note-btn');
@@ -93,6 +94,7 @@ let currentNoteId = null;
 let notesUnsubscribe = null;
 let activeTag = null;
 let notesCache = {};
+let currentSearchTerm = ''; // *** THÊM MỚI: Lưu trữ từ khóa tìm kiếm hiện tại ***
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
 
@@ -115,12 +117,13 @@ function showAuth() {
     notesCache = {};
     activeTag = null;
     currentNoteId = null;
+    currentSearchTerm = ''; // Reset search term
+    if(searchInput) searchInput.value = ''; // Clear search input
     if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
-    // *** THÊM MỚI: Đảm bảo form login hiển thị, form signup ẩn khi logout ***
     loginForm.style.display = 'block';
     signupForm.style.display = 'none';
-    loginError.textContent = ''; // Xóa lỗi cũ
-    signupError.textContent = ''; // Xóa lỗi cũ
+    loginError.textContent = '';
+    signupError.textContent = '';
 }
 
 function showGridView() {
@@ -134,6 +137,8 @@ function showGridView() {
         activeTagDisplay.textContent = '';
     }
     if (contentArea) contentArea.scrollTop = 0;
+    // Render lại list khi quay về grid để đảm bảo filter đúng
+    renderNotesList(Object.values(notesCache));
 }
 
 function showEditor(note = null) {
@@ -255,28 +260,27 @@ logoutButton.addEventListener('click', () => {
     signOut(auth).catch((error) => alert(`Lỗi đăng xuất: ${error.message}`));
 });
 
-// *** THÊM MỚI: Sự kiện click cho link chuyển đổi Auth ***
 if (showSignupLink) {
     showSignupLink.addEventListener('click', (e) => {
-        e.preventDefault(); // Ngăn hành vi mặc định của link (nếu là thẻ <a>)
-        loginForm.style.display = 'none'; // Ẩn form login
-        signupForm.style.display = 'block'; // Hiện form signup
-        loginError.textContent = ''; // Xóa lỗi form login cũ
+        e.preventDefault();
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+        loginError.textContent = '';
     });
 }
 
 if (showLoginLink) {
     showLoginLink.addEventListener('click', (e) => {
-        e.preventDefault(); // Ngăn hành vi mặc định của link (nếu là thẻ <a>)
-        signupForm.style.display = 'none'; // Ẩn form signup
-        loginForm.style.display = 'block'; // Hiện form login
-        signupError.textContent = ''; // Xóa lỗi form signup cũ
+        e.preventDefault();
+        signupForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        signupError.textContent = '';
     });
 }
 
 
 // --- Logic quản lý Ghi chú (Notes CRUD & Display) ---
-// (Các hàm còn lại giữ nguyên)
+
 isCodeCheckbox.addEventListener('change', (e) => {
     languageSelect.style.display = e.target.checked ? 'inline-block' : 'none';
     if (!e.target.checked) {
@@ -428,8 +432,9 @@ function loadNotesAndTags() {
 
         console.log("Notes data changed, updating cache and UI.");
         notesCache = newNotesCache;
-        renderNotesList(allNotes);
-        renderTagsList(allNotes);
+        // *** Gọi renderNotesList với dữ liệu mới nhất từ cache ***
+        renderNotesList(Object.values(notesCache));
+        renderTagsList(allNotes); // Render lại tags (có thể tối ưu sau)
 
         if (currentNoteId && !notesCache[currentNoteId]) {
             console.log("Current note removed, showing grid view.");
@@ -442,17 +447,48 @@ function loadNotesAndTags() {
     });
 }
 
-function renderNotesList(notes) {
-    notesListContainer.innerHTML = '';
+/**
+ * Hiển thị danh sách ghi chú lên Grid View, áp dụng bộ lọc tag và tìm kiếm.
+ * @param {Array<object>} allNotes - Mảng tất cả ghi chú từ cache.
+ */
+function renderNotesList(allNotes) {
+    notesListContainer.innerHTML = ''; // Xóa grid cũ
 
-    const notesToRender = activeTag
-        ? notes.filter(note => note.tags && note.tags.includes(activeTag))
-        : notes;
+    // *** Áp dụng bộ lọc tag và tìm kiếm ***
+    const searchTermLower = currentSearchTerm.toLowerCase(); // Chuyển từ khóa tìm kiếm sang chữ thường
+
+    const notesToRender = allNotes.filter(note => {
+        // 1. Lọc theo tag (nếu có)
+        const tagMatch = !activeTag || (note.tags && note.tags.includes(activeTag));
+        if (!tagMatch) return false; // Nếu không khớp tag, bỏ qua
+
+        // 2. Lọc theo từ khóa tìm kiếm (nếu có)
+        if (searchTermLower) {
+            const titleMatch = note.title?.toLowerCase().includes(searchTermLower);
+            const contentMatch = note.content?.toLowerCase().includes(searchTermLower);
+            // Tìm trong mảng tags
+            const tagsMatch = note.tags?.some(tag => tag.toLowerCase().includes(searchTermLower));
+            // Chỉ cần khớp một trong các trường là được
+            return titleMatch || contentMatch || tagsMatch;
+        }
+
+        // Nếu không có từ khóa tìm kiếm, chỉ cần khớp tag là đủ
+        return true;
+    });
+
 
     if (notesToRender.length === 0) {
-        notesListContainer.innerHTML = activeTag
-            ? `<p>Không có ghi chú nào với tag "${activeTag}".</p>`
-            : '<p>Chưa có ghi chú nào. Hãy tạo ghi chú mới!</p>';
+        let message = '';
+        if (activeTag && currentSearchTerm) {
+            message = `Không có ghi chú nào với tag "${activeTag}" khớp với "${currentSearchTerm}".`;
+        } else if (activeTag) {
+            message = `Không có ghi chú nào với tag "${activeTag}".`;
+        } else if (currentSearchTerm) {
+            message = `Không có ghi chú nào khớp với "${currentSearchTerm}".`;
+        } else {
+            message = 'Chưa có ghi chú nào. Hãy tạo ghi chú mới!';
+        }
+        notesListContainer.innerHTML = `<p>${message}</p>`;
         return;
     }
 
@@ -490,6 +526,7 @@ function renderNotesList(notes) {
     });
 }
 
+
 function renderTagsList(notes) {
     const allTags = new Set();
     notes.forEach(note => {
@@ -510,7 +547,7 @@ function renderTagsList(notes) {
         if (activeTag !== null) {
             activeTag = null;
             setActiveTagItem(null);
-            renderNotesList(Object.values(notesCache));
+            renderNotesList(Object.values(notesCache)); // Render lại grid với filter mới
             showGridView();
         }
     });
@@ -529,7 +566,7 @@ function renderTagsList(notes) {
             if (activeTag !== tag) {
                 activeTag = tag;
                 setActiveTagItem(tag);
-                renderNotesList(Object.values(notesCache));
+                renderNotesList(Object.values(notesCache)); // Render lại grid với filter mới
                 showGridView();
             }
         });
@@ -579,9 +616,8 @@ function displayNoteDetailContent(note) {
 }
 
 // --- Logic cho nút Scroll to Top ---
-
 function handleScroll() {
-    if (!contentArea) return;
+    if (!contentArea || !scrollToTopBtn) return;
     if (contentArea.scrollTop > 200) {
         scrollToTopBtn.style.display = "block";
     } else {
@@ -604,6 +640,19 @@ if (scrollToTopBtn) {
     scrollToTopBtn.addEventListener('click', scrollToTop);
 } else {
     console.warn("Scroll to top button element not found.");
+}
+
+// --- *** THÊM MỚI: Logic tìm kiếm *** ---
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        currentSearchTerm = e.target.value.trim(); // Cập nhật biến tìm kiếm toàn cục
+        // Render lại danh sách ghi chú với từ khóa tìm kiếm mới
+        // Dùng dữ liệu từ cache để lọc ngay lập tức
+        renderNotesList(Object.values(notesCache));
+        // Không cần gọi showGridView() vì người dùng vẫn đang ở grid view
+    });
+} else {
+    console.warn("Search input element not found.");
 }
 
 
