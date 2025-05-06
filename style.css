@@ -22,19 +22,52 @@ h1, h2 {
     margin-bottom: 0.8em;
     font-weight: 600;
 }
-/* Thêm style cho tiêu đề lưới */
-#notes-grid-view h2 {
-    margin-bottom: 20px;
+
+/* *** THÊM MỚI: Style cho header của Grid View *** */
+.grid-view-header {
+    display: flex; /* Sắp xếp tiêu đề và ô chọn ngang hàng */
+    justify-content: space-between; /* Đẩy 2 phần tử ra 2 bên */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    margin-bottom: 20px; /* Khoảng cách với lưới ghi chú */
+    padding-bottom: 15px; /* Khoảng cách với đường kẻ dưới */
+    border-bottom: 1px solid #eee; /* Đường kẻ dưới */
+    flex-wrap: wrap; /* Cho phép xuống dòng nếu không đủ chỗ */
+    gap: 10px; /* Khoảng cách nếu xuống dòng */
+}
+
+/* Style cho tiêu đề trong grid header */
+.grid-view-header h2 {
+    margin-bottom: 0; /* Bỏ margin bottom mặc định của h2 */
     font-size: 1.6em;
     color: #495057;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    border-bottom: none; /* Bỏ border bottom riêng của h2 */
+    padding-bottom: 0;
 }
-#notes-grid-view h2 #active-tag-display {
+.grid-view-header h2 #active-tag-display {
     font-size: 0.8em;
     color: #007bff;
     font-weight: 500;
     margin-left: 10px;
+}
+
+/* *** THÊM MỚI: Style cho phần tử chứa ô chọn sắp xếp *** */
+.sort-options {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa label và select */
+}
+.sort-options label {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-bottom: 0; /* Bỏ margin bottom mặc định của label (nếu có) */
+}
+.sort-options select {
+    /* Kế thừa style chung của select */
+    width: auto; /* Cho phép chiều rộng tự điều chỉnh */
+    min-width: 200px; /* Đặt chiều rộng tối thiểu */
+    margin-bottom: 0; /* Bỏ margin bottom mặc định */
+    padding: 8px 12px; /* Giảm padding cho gọn hơn */
+    font-size: 0.9em; /* Giảm cỡ chữ */
 }
 
 
@@ -44,13 +77,13 @@ button {
     border: none;
     border-radius: 6px;
     font-size: 1em;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease; /* Thêm transform */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
 }
 button:disabled {
     cursor: not-allowed;
     opacity: 0.7;
 }
-button:active:not(:disabled) { /* Chỉ active khi không bị disable */
+button:active:not(:disabled) {
      transform: translateY(1px);
      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
@@ -69,9 +102,9 @@ button:active:not(:disabled) { /* Chỉ active khi không bị disable */
 input[type="text"],
 input[type="email"],
 input[type="password"],
-input[type="search"], /* Áp dụng style chung cho search input */
+input[type="search"],
 textarea,
-select {
+select { /* Style chung cho select */
     width: 100%;
     padding: 12px;
     margin-bottom: 12px;
@@ -87,7 +120,7 @@ input:focus, textarea:focus, select:focus {
 }
 /* Style riêng cho ô tìm kiếm trong sidebar */
 #search-input {
-    margin-bottom: 0; /* Bỏ margin bottom mặc định vì có hr ngay dưới */
+    margin-bottom: 0;
 }
 
 
@@ -105,7 +138,7 @@ hr {
 }
 /* Điều chỉnh margin cho hr trong sidebar */
 .sidebar hr {
-    margin: 15px 0; /* Giảm margin cho hr trong sidebar */
+    margin: 15px 0;
 }
 
 
@@ -232,10 +265,9 @@ hr {
 
 .sidebar h2 { /* Tiêu đề "Tags" */
     font-size: 1.1em;
-    margin-top: 0; /* Bỏ margin-top vì hr ở trên */
+    margin-top: 0;
     color: #495057;
     padding-bottom: 8px;
-    /* border-bottom: 1px solid #e9ecef; */ /* Bỏ border bottom ở đây */
 }
 
 #tags-list-container {
@@ -468,9 +500,9 @@ hr {
 
 /* Style cho highlight tìm kiếm */
 .search-highlight {
-    background-color: yellow; /* Màu nền vàng */
-    font-weight: bold; /* Chữ đậm */
-    color: #333; /* Đảm bảo màu chữ dễ đọc trên nền vàng */
+    background-color: yellow;
+    font-weight: bold;
+    color: #333;
 }
 
 
@@ -524,6 +556,18 @@ hr {
     }
      #notes-grid-view h2 {
         font-size: 1.4em;
+     }
+     /* *** THÊM MỚI: Điều chỉnh header grid view trên mobile *** */
+     .grid-view-header {
+        flex-direction: column; /* Xếp chồng tiêu đề và sort */
+        align-items: flex-start; /* Căn trái */
+     }
+     .sort-options {
+        width: 100%; /* Chiếm toàn bộ chiều rộng */
+     }
+     .sort-options select {
+        flex-grow: 1; /* Cho select giãn ra */
+        min-width: 0; /* Bỏ min-width */
      }
 
 
