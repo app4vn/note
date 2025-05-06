@@ -94,9 +94,10 @@ body.theme-dark {
 }
 
 body.theme-gruvbox-light {
-    /* Theme Gruvbox Sáng (Tham khảo màu sắc từ theme Gruvbox) */
+    /* Theme Gruvbox Sáng */
     --bg-primary: #fbf1c7; /* Nền chính */
-    --bg-secondary: #ebdbb2; /* Nền phụ */
+    /* *** THAY ĐỔI: Màu nền phụ (thẻ note, content area) nhạt hơn *** */
+    --bg-secondary: #f9f5d7; /* Thay vì #ebdbb2 */
     --bg-sidebar: #f2e5bc; /* Nền sidebar */
     --bg-header: #3c3836; /* Header tối */
     --bg-input: #fbf1c7;
@@ -106,10 +107,10 @@ body.theme-gruvbox-light {
     --bg-button-secondary-hover: #665c54;
     --bg-button-danger: #cc241d; /* Màu đỏ */
     --bg-button-danger-hover: #9d0006;
-    --bg-code-block: #f9f5d7; /* Nền code sáng hơn */
-    --bg-content-display: #f2e5bc;
-    --bg-note-item-hover: #d5c4a1;
-    --bg-note-item-active: #bdae93;
+    --bg-code-block: #f2e5bc; /* Có thể dùng màu này hoặc f9f5d7 */
+    --bg-content-display: #f2e5bc; /* Nền khung text */
+    --bg-note-item-hover: #ebdbb2; /* Màu hover đậm hơn nền thẻ */
+    --bg-note-item-active: #d5c4a1;
     --bg-tag-item: #7c6f64;
     --bg-tag-item-active: #458588;
 
@@ -474,7 +475,7 @@ hr {
 #notes-list-container .note-item:hover {
     box-shadow: 0 4px 12px var(--shadow-primary); /* Sử dụng biến */
     border-color: var(--border-input-focus); /* Highlight nhẹ viền khi hover */
-    background-color: var(--bg-secondary); /* Giữ nền */
+    /* background-color: var(--bg-note-item-hover); */ /* Bỏ đổi nền khi hover để giữ màu theme */
 }
 
 /* Nội dung bên trong thẻ */
@@ -521,7 +522,7 @@ hr {
 
 /* Chế độ xem chi tiết */
 #note-detail-view h2 { /* Tiêu đề note chi tiết */
-    /* border-bottom: 1px solid var(--border-secondary); */ /* Bỏ border ở đây */
+    /* border-bottom: 1px solid var(--border-secondary); */
     padding-bottom: 15px;
     margin-bottom: 20px;
     color: var(--text-primary); /* Sử dụng biến */
@@ -654,11 +655,10 @@ hr {
     background-color: var(--highlight-bg); /* Sử dụng biến */
     font-weight: bold;
     color: var(--text-highlight); /* Sử dụng biến */
-    /* padding: 0 1px; */ /* Giảm padding nếu cần */
     border-radius: 2px;
 }
 
-/* *** THÊM MỚI: Style cho Bộ chọn Theme *** */
+/* Style cho Bộ chọn Theme */
 .theme-selector {
     margin-top: auto; /* Đẩy xuống cuối sidebar */
     padding-top: 15px; /* Khoảng cách với phần tử bên trên (hr) */
@@ -666,6 +666,7 @@ hr {
 .theme-selector h2 {
     margin-bottom: 10px; /* Khoảng cách với các nút */
     font-size: 1em; /* Giảm cỡ chữ */
+    padding-bottom: 0; /* Bỏ padding bottom */
 }
 .theme-options {
     display: flex;
@@ -680,6 +681,7 @@ hr {
     border: 1px solid var(--border-primary); /* Thêm viền */
     background-color: var(--bg-secondary); /* Nền phụ */
     color: var(--text-secondary); /* Chữ phụ */
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; /* Thêm transition */
 }
 .theme-button.active { /* Kiểu nút theme đang được chọn */
     background-color: var(--bg-button-primary); /* Dùng màu nút chính */
@@ -690,6 +692,7 @@ hr {
 .theme-button:not(.active):hover { /* Hover khi không active */
      background-color: var(--bg-note-item-hover);
      border-color: var(--border-input);
+     color: var(--text-primary); /* Đổi màu chữ khi hover */
 }
 
 
@@ -731,13 +734,13 @@ hr {
     .sidebar #search-input {
         margin-bottom: 0;
     }
-    /* *** THÊM MỚI: Điều chỉnh theme selector trên mobile *** */
+    /* Điều chỉnh theme selector trên mobile */
     .theme-selector {
-        margin-top: 15px; /* Giảm khoảng cách trên */
+        margin-top: 15px;
         padding-top: 10px;
     }
     .theme-options {
-        justify-content: space-around; /* Căn đều các nút */
+        justify-content: space-around;
     }
 
 
@@ -759,7 +762,7 @@ hr {
      }
      .sort-options {
         width: 100%;
-        margin-top: 10px; /* Thêm khoảng cách trên mobile */
+        margin-top: 10px;
      }
      .sort-options select {
         flex-grow: 1;
