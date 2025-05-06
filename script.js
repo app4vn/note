@@ -15,7 +15,7 @@ import {
     addDoc,
     query,
     where,
-    orderBy,
+    orderBy, // *** Import orderBy ***
     onSnapshot,
     doc,
     getDoc,
@@ -52,6 +52,8 @@ const showSignupLink = document.getElementById('show-signup-link');
 const showLoginLink = document.getElementById('show-login-link');
 
 const searchInput = document.getElementById('search-input');
+// *** THÊM MỚI: Tham chiếu đến ô chọn sắp xếp ***
+const sortSelect = document.getElementById('sort-select');
 
 const tagsListContainer = document.getElementById('tags-list-container');
 const addNoteBtn = document.getElementById('add-note-btn');
@@ -94,9 +96,11 @@ let notesUnsubscribe = null;
 let activeTag = null;
 let notesCache = {};
 let currentSearchTerm = '';
+// *** THÊM MỚI: Lưu trữ tùy chọn sắp xếp hiện tại ***
+let currentSortOption = 'updatedAt_desc'; // Giá trị mặc định
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
-
+// (Các hàm show/hide/clear/set/linkify/highlight giữ nguyên)
 function showApp() {
     authContainer.style.display = 'none';
     appContainer.style.display = 'flex';
@@ -117,7 +121,9 @@ function showAuth() {
     activeTag = null;
     currentNoteId = null;
     currentSearchTerm = '';
+    currentSortOption = 'updatedAt_desc'; // Reset về mặc định
     if(searchInput) searchInput.value = '';
+    if(sortSelect) sortSelect.value = currentSortOption; // Reset dropdown
     if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
     loginForm.style.display = 'block';
     signupForm.style.display = 'none';
@@ -136,6 +142,7 @@ function showGridView() {
         activeTagDisplay.textContent = '';
     }
     if (contentArea) contentArea.scrollTop = 0;
+    // Gọi renderNotesList khi quay về grid để đảm bảo filter/sort đúng
     renderNotesList(Object.values(notesCache));
 }
 
@@ -208,41 +215,25 @@ function setActiveTagItem(tagName) {
 function linkify(text) {
     if (!text) return '';
     const urlRegex = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    // Tạm thời chỉ xử lý link, không thoát HTML ở đây vì highlight sẽ dùng innerHTML
-    // Việc thoát HTML cần cẩn thận hơn nếu nội dung có thể chứa HTML độc hại
     let linkedText = text.replace(urlRegex, (url) => {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
     });
     return linkedText.replace(/\n/g, '<br>');
 }
 
-// *** THÊM MỚI: Hàm highlight text ***
-/**
- * Tìm và highlight (bọc trong span.search-highlight) các lần xuất hiện của searchTerm trong text.
- * @param {string} text - Đoạn văn bản gốc.
- * @param {string} searchTerm - Từ khóa tìm kiếm.
- * @returns {string} - Chuỗi HTML với các từ khóa đã được highlight.
- */
 function highlightText(text, searchTerm) {
     if (!searchTerm) {
-        // Nếu không có từ khóa tìm kiếm, trả về text gốc (đã thoát HTML cơ bản)
         const tempDiv = document.createElement('div');
         tempDiv.textContent = text || '';
-        return tempDiv.innerHTML.replace(/\n/g, '<br>'); // Vẫn thay \n bằng <br>
+        return tempDiv.innerHTML.replace(/\n/g, '<br>');
     }
     if (!text) return '';
 
-    // Thoát các ký tự đặc biệt trong searchTerm để dùng trong Regex
     const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // Tạo regex để tìm searchTerm, không phân biệt hoa thường (i) và tìm tất cả (g)
     const regex = new RegExp(`(${escapedSearchTerm})`, 'gi');
-
-    // Tạo div tạm để thoát HTML trong text gốc trước khi chèn highlight
     const tempDiv = document.createElement('div');
     tempDiv.textContent = text;
-    const escapedText = tempDiv.innerHTML.replace(/\n/g, '<br>'); // Thoát HTML và thay \n
-
-    // Thay thế các kết quả tìm thấy bằng thẻ span highlight
+    const escapedText = tempDiv.innerHTML.replace(/\n/g, '<br>');
     return escapedText.replace(regex, '<span class="search-highlight">$1</span>');
 }
 
@@ -254,7 +245,7 @@ onAuthStateChanged(auth, (user) => {
         currentUser = user;
         userEmailDisplay.textContent = user.email;
         showApp();
-        loadNotesAndTags();
+        loadNotesAndTags(); // Tải dữ liệu với sắp xếp mặc định
         showGridView();
     } else {
         console.log("User logged out.");
@@ -306,7 +297,7 @@ if (showLoginLink) {
 
 
 // --- Logic quản lý Ghi chú (Notes CRUD & Display) ---
-
+// (Các hàm khác giữ nguyên)
 isCodeCheckbox.addEventListener('change', (e) => {
     languageSelect.style.display = e.target.checked ? 'inline-block' : 'none';
     if (!e.target.checked) {
@@ -363,7 +354,7 @@ saveNoteBtn.addEventListener('click', async () => {
             notesCache[id] = { ...notesCache[id], ...noteData, id };
         } else {
             console.log("Adding new note");
-            noteData.createdAt = Timestamp.now();
+            noteData.createdAt = Timestamp.now(); // Chỉ thêm createdAt khi tạo mới
             const docRef = await addDoc(collection(db, "notes"), noteData);
             console.log("Note added with ID:", docRef.id);
             savedNoteId = docRef.id;
@@ -430,21 +421,35 @@ copyCodeBtn.addEventListener('click', () => {
 
 // --- Tải và Hiển thị Dữ liệu từ Firestore ---
 
+/** Tải danh sách ghi chú và tags, áp dụng sắp xếp và lắng nghe thay đổi */
 function loadNotesAndTags() {
     if (!currentUser) return;
-    console.log("Setting up Firestore listener for user:", currentUser.uid);
+    console.log(`Setting up Firestore listener for user: ${currentUser.uid}, Sort: ${currentSortOption}`);
 
-    const notesQuery = query(
+    // Tách giá trị sort thành trường và hướng
+    const [sortField, sortDirection] = currentSortOption.split('_'); // vd: "updatedAt", "desc"
+
+    // --- Tạo truy vấn Firestore với sắp xếp động ---
+    let notesQuery = query(
         collection(db, "notes"),
-        where("userId", "==", currentUser.uid),
-        orderBy("updatedAt", "desc")
+        where("userId", "==", currentUser.uid)
+        // ** Quan trọng: Áp dụng orderBy dựa trên lựa chọn **
+        // orderBy(sortField, sortDirection)
     );
 
+    // Firestore yêu cầu trường trong orderBy phải là trường đầu tiên trong các bộ lọc khác (inequality filters)
+    // Vì chúng ta chỉ có bộ lọc bằng (==) trên userId, chúng ta có thể thêm orderBy trực tiếp.
+    // Tuy nhiên, nếu sau này thêm bộ lọc khác (vd: >, <), thứ tự orderBy và where cần được xem xét cẩn thận.
+    notesQuery = query(notesQuery, orderBy(sortField, sortDirection));
+
+
+    // Hủy lắng nghe cũ trước khi tạo lắng nghe mới
     if (notesUnsubscribe) {
         console.log("Unsubscribing previous listener.");
         notesUnsubscribe();
     }
 
+    // --- Thiết lập lắng nghe real-time (onSnapshot) ---
     notesUnsubscribe = onSnapshot(notesQuery, (querySnapshot) => {
         console.log("Firestore data received (onSnapshot)");
         const allNotes = [];
@@ -458,7 +463,7 @@ function loadNotesAndTags() {
 
         console.log("Notes data changed, updating cache and UI.");
         notesCache = newNotesCache;
-        renderNotesList(Object.values(notesCache)); // Render lại grid
+        renderNotesList(Object.values(notesCache)); // Render lại grid với dữ liệu đã sắp xếp từ Firestore
         renderTagsList(allNotes); // Render lại tags
 
         if (currentNoteId && !notesCache[currentNoteId]) {
@@ -468,30 +473,40 @@ function loadNotesAndTags() {
 
     }, (error) => {
         console.error("Error listening to Firestore: ", error);
-        notesListContainer.innerHTML = `<p class="error-message">Lỗi tải ghi chú: ${error.message}</p>`;
+        // *** THÊM MỚI: Kiểm tra lỗi thiếu Index ***
+        if (error.code === 'failed-precondition') {
+             notesListContainer.innerHTML = `<p class="error-message">Lỗi: Cần tạo chỉ mục (index) trong Firestore để sắp xếp theo tiêu chí này. Hãy kiểm tra Console của trình duyệt để lấy link tạo chỉ mục.</p>`;
+             // Firebase thường log link tạo index ra console
+             console.error("Firestore Index Required:", error.message);
+        } else {
+            notesListContainer.innerHTML = `<p class="error-message">Lỗi tải ghi chú: ${error.message}</p>`;
+        }
     });
 }
 
 /**
  * Hiển thị danh sách ghi chú lên Grid View, áp dụng bộ lọc tag và tìm kiếm, và highlight từ khóa.
- * @param {Array<object>} allNotes - Mảng tất cả ghi chú từ cache.
+ * @param {Array<object>} allNotes - Mảng tất cả ghi chú từ cache (đã được sắp xếp bởi Firestore).
  */
 function renderNotesList(allNotes) {
     notesListContainer.innerHTML = ''; // Xóa grid cũ
 
     const searchTermLower = currentSearchTerm.toLowerCase();
 
+    // *** Lọc client-side sau khi đã sắp xếp từ Firestore ***
     const notesToRender = allNotes.filter(note => {
+        // 1. Lọc theo tag (nếu có)
         const tagMatch = !activeTag || (note.tags && note.tags.includes(activeTag));
         if (!tagMatch) return false;
 
+        // 2. Lọc theo từ khóa tìm kiếm (nếu có)
         if (searchTermLower) {
             const titleMatch = note.title?.toLowerCase().includes(searchTermLower);
             const contentMatch = note.content?.toLowerCase().includes(searchTermLower);
             const tagsMatch = note.tags?.some(tag => tag.toLowerCase().includes(searchTermLower));
             return titleMatch || contentMatch || tagsMatch;
         }
-        return true;
+        return true; // Nếu không tìm kiếm, chỉ cần khớp tag
     });
 
 
@@ -516,12 +531,10 @@ function renderNotesList(allNotes) {
         noteElement.dataset.id = note.id;
 
         const titleElement = document.createElement('h3');
-        // *** THAY ĐỔI: Sử dụng highlightText và innerHTML cho tiêu đề ***
         titleElement.innerHTML = highlightText(note.title || "Không có tiêu đề", currentSearchTerm);
 
         const contentPreview = document.createElement('div');
         contentPreview.classList.add('note-item-content-preview');
-         // *** THAY ĐỔI: Sử dụng highlightText và innerHTML cho nội dung xem trước ***
         contentPreview.innerHTML = highlightText(note.content || '', currentSearchTerm);
 
         const dateElement = document.createElement('div');
@@ -567,7 +580,7 @@ function renderTagsList(notes) {
         if (activeTag !== null) {
             activeTag = null;
             setActiveTagItem(null);
-            renderNotesList(Object.values(notesCache));
+            renderNotesList(Object.values(notesCache)); // Render lại grid với filter mới
             showGridView();
         }
     });
@@ -586,7 +599,7 @@ function renderTagsList(notes) {
             if (activeTag !== tag) {
                 activeTag = tag;
                 setActiveTagItem(tag);
-                renderNotesList(Object.values(notesCache));
+                renderNotesList(Object.values(notesCache)); // Render lại grid với filter mới
                 showGridView();
             }
         });
@@ -606,7 +619,7 @@ function renderTagsList(notes) {
 function displayNoteDetailContent(note) {
     if (!note) return;
 
-    noteDetailTitle.textContent = note.title; // Không highlight ở view chi tiết
+    noteDetailTitle.textContent = note.title;
 
     noteDetailTags.innerHTML = '';
     if (note.tags && note.tags.length > 0) {
@@ -630,7 +643,7 @@ function displayNoteDetailContent(note) {
     } else {
         noteDetailCode.style.display = 'none';
         copyCodeBtn.style.display = 'none';
-        noteDetailContent.innerHTML = linkify(note.content); // Chỉ linkify, không highlight ở view chi tiết
+        noteDetailContent.innerHTML = linkify(note.content);
         noteDetailContent.style.display = 'block';
     }
 }
@@ -666,11 +679,27 @@ if (scrollToTopBtn) {
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
         currentSearchTerm = e.target.value.trim();
-        // Render lại danh sách ngay lập tức với từ khóa mới
         renderNotesList(Object.values(notesCache));
     });
 } else {
     console.warn("Search input element not found.");
+}
+
+// --- *** THÊM MỚI: Logic sắp xếp *** ---
+if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+        const newSortOption = e.target.value;
+        if (newSortOption !== currentSortOption) {
+            console.log("Sort option changed to:", newSortOption);
+            currentSortOption = newSortOption;
+            // Tải lại dữ liệu với tùy chọn sắp xếp mới
+            // Việc này sẽ hủy listener cũ và tạo listener mới với query đã cập nhật
+            loadNotesAndTags();
+            // Không cần gọi renderNotesList ở đây vì onSnapshot sẽ làm việc đó
+        }
+    });
+} else {
+    console.warn("Sort select element not found.");
 }
 
 
