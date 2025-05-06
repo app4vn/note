@@ -48,6 +48,10 @@ const logoutButton = document.getElementById('logout-button');
 const userEmailDisplay = document.getElementById('user-email');
 const loginError = document.getElementById('login-error');
 const signupError = document.getElementById('signup-error');
+// *** THÊM MỚI: Tham chiếu đến các link chuyển đổi auth ***
+const showSignupLink = document.getElementById('show-signup-link');
+const showLoginLink = document.getElementById('show-login-link');
+
 
 const tagsListContainer = document.getElementById('tags-list-container');
 const addNoteBtn = document.getElementById('add-note-btn');
@@ -80,9 +84,8 @@ const saveNoteBtn = document.getElementById('save-note-btn');
 const cancelEditBtn = document.getElementById('cancel-edit-btn');
 const editorError = document.getElementById('editor-error');
 
-// *** THÊM MỚI: Tham chiếu đến nút Scroll to Top và khu vực cuộn ***
 const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-const contentArea = document.querySelector('.content-area'); // Khu vực nội dung chính có thể cuộn
+const contentArea = document.querySelector('.content-area');
 
 // --- Biến trạng thái toàn cục ---
 let currentUser = null;
@@ -112,8 +115,12 @@ function showAuth() {
     notesCache = {};
     activeTag = null;
     currentNoteId = null;
-    // Ẩn nút scroll to top khi logout
     if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
+    // *** THÊM MỚI: Đảm bảo form login hiển thị, form signup ẩn khi logout ***
+    loginForm.style.display = 'block';
+    signupForm.style.display = 'none';
+    loginError.textContent = ''; // Xóa lỗi cũ
+    signupError.textContent = ''; // Xóa lỗi cũ
 }
 
 function showGridView() {
@@ -126,7 +133,6 @@ function showGridView() {
     } else {
         activeTagDisplay.textContent = '';
     }
-    // Reset scroll của content area về đầu khi quay lại grid
     if (contentArea) contentArea.scrollTop = 0;
 }
 
@@ -153,7 +159,6 @@ function showEditor(note = null) {
         currentNoteId = null;
     }
     noteTitleInput.focus();
-    // Reset scroll của content area về đầu khi mở editor
     if (contentArea) contentArea.scrollTop = 0;
 }
 
@@ -168,7 +173,6 @@ function showDetailView(note) {
     noteDetailView.style.display = 'block';
     currentNoteId = note.id;
     displayNoteDetailContent(note);
-    // Reset scroll của content area về đầu khi xem chi tiết
     if (contentArea) contentArea.scrollTop = 0;
 }
 
@@ -220,7 +224,7 @@ onAuthStateChanged(auth, (user) => {
         userEmailDisplay.textContent = user.email;
         showApp();
         loadNotesAndTags();
-        showGridView(); // Hiển thị Grid View ban đầu
+        showGridView();
     } else {
         console.log("User logged out.");
         showAuth();
@@ -251,9 +255,28 @@ logoutButton.addEventListener('click', () => {
     signOut(auth).catch((error) => alert(`Lỗi đăng xuất: ${error.message}`));
 });
 
+// *** THÊM MỚI: Sự kiện click cho link chuyển đổi Auth ***
+if (showSignupLink) {
+    showSignupLink.addEventListener('click', (e) => {
+        e.preventDefault(); // Ngăn hành vi mặc định của link (nếu là thẻ <a>)
+        loginForm.style.display = 'none'; // Ẩn form login
+        signupForm.style.display = 'block'; // Hiện form signup
+        loginError.textContent = ''; // Xóa lỗi form login cũ
+    });
+}
+
+if (showLoginLink) {
+    showLoginLink.addEventListener('click', (e) => {
+        e.preventDefault(); // Ngăn hành vi mặc định của link (nếu là thẻ <a>)
+        signupForm.style.display = 'none'; // Ẩn form signup
+        loginForm.style.display = 'block'; // Hiện form login
+        signupError.textContent = ''; // Xóa lỗi form signup cũ
+    });
+}
+
 
 // --- Logic quản lý Ghi chú (Notes CRUD & Display) ---
-
+// (Các hàm còn lại giữ nguyên)
 isCodeCheckbox.addEventListener('change', (e) => {
     languageSelect.style.display = e.target.checked ? 'inline-block' : 'none';
     if (!e.target.checked) {
@@ -487,8 +510,8 @@ function renderTagsList(notes) {
         if (activeTag !== null) {
             activeTag = null;
             setActiveTagItem(null);
-            renderNotesList(Object.values(notesCache)); // Render lại grid với filter mới
-            showGridView(); // Đảm bảo đang ở grid view và cập nhật tiêu đề
+            renderNotesList(Object.values(notesCache));
+            showGridView();
         }
     });
     tagsListContainer.appendChild(allTagElement);
@@ -506,8 +529,8 @@ function renderTagsList(notes) {
             if (activeTag !== tag) {
                 activeTag = tag;
                 setActiveTagItem(tag);
-                renderNotesList(Object.values(notesCache)); // Render lại grid với filter mới
-                showGridView(); // Đảm bảo đang ở grid view và cập nhật tiêu đề
+                renderNotesList(Object.values(notesCache));
+                showGridView();
             }
         });
 
@@ -555,14 +578,10 @@ function displayNoteDetailContent(note) {
     }
 }
 
-// --- *** THÊM MỚI: Logic cho nút Scroll to Top *** ---
+// --- Logic cho nút Scroll to Top ---
 
-// Hàm kiểm tra vị trí cuộn và hiển thị/ẩn nút
 function handleScroll() {
-    // Kiểm tra xem contentArea có tồn tại và đã được gán chưa
     if (!contentArea) return;
-
-    // Hiển thị nút nếu cuộn xuống hơn 200px, ẩn nếu không
     if (contentArea.scrollTop > 200) {
         scrollToTopBtn.style.display = "block";
     } else {
@@ -570,22 +589,17 @@ function handleScroll() {
     }
 }
 
-// Hàm xử lý khi nhấp vào nút scroll to top
 function scrollToTop() {
-    // Kiểm tra xem contentArea có tồn tại và đã được gán chưa
     if (!contentArea) return;
-    // Cuộn contentArea lên đầu (sử dụng smooth behavior từ CSS)
     contentArea.scrollTop = 0;
 }
 
-// Gắn sự kiện scroll vào contentArea (chỉ khi contentArea tồn tại)
 if (contentArea) {
     contentArea.addEventListener('scroll', handleScroll);
 } else {
     console.warn("Content area element not found for scroll event listener.");
 }
 
-// Gắn sự kiện click vào nút scroll to top (chỉ khi nút tồn tại)
 if (scrollToTopBtn) {
     scrollToTopBtn.addEventListener('click', scrollToTop);
 } else {
