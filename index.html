@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ghi Chú Cá Nhân</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <script type="module" src="script.js" defer></script>
 </head>
 <body>
@@ -47,7 +48,7 @@
                 <hr>
                 <h2>Danh sách Ghi chú</h2>
                 <div id="notes-list-container">
-                    <p>Chưa có ghi chú nào.</p>
+                    <p>Đang tải ghi chú...</p>
                     </div>
                 <hr>
                 <h2>Tags</h2>
@@ -62,9 +63,9 @@
                 <div id="note-detail-view" style="display: none;">
                      <h2 id="note-detail-title"></h2>
                      <div id="note-detail-tags" class="tags-display"></div>
-                     <div id="note-detail-content" class="content-display">
-                         </div>
-                     <pre id="note-detail-code" class="code-display" style="display: none;"><code></code></pre> <div id="note-detail-actions">
+                     <div id="note-detail-content" class="content-display"></div>
+                     <pre id="note-detail-code" style="display: none;"><code class="language-plaintext"></code></pre>
+                     <div id="note-detail-actions">
                           <button id="edit-note-btn" class="button-secondary">Sửa</button>
                           <button id="delete-note-btn" class="button-danger">Xóa</button>
                           <button id="copy-code-btn" class="button-secondary" style="display: none;">Copy Code</button>
@@ -88,6 +89,9 @@
                             <option value="sql">SQL</option>
                             <option value="json">JSON</option>
                             <option value="markdown">Markdown</option>
+                            <option value="java">Java</option>
+                            <option value="csharp">C#</option>
+                            <option value="php">PHP</option>
                             </select>
                     </div>
                     <div class="editor-actions">
@@ -99,6 +103,9 @@
             </main>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
 </body>
 </html>
