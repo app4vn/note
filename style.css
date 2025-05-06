@@ -6,6 +6,12 @@
     padding: 0;
 }
 
+html {
+    /* Thêm scroll-behavior để cuộn mượt khi nhấn nút */
+    scroll-behavior: smooth;
+}
+
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     line-height: 1.6;
@@ -193,7 +199,7 @@ hr {
     background-color: #f8f9fa;
     padding: 20px;
     border-right: 1px solid #dee2e6;
-    overflow-y: auto;
+    overflow-y: auto; /* Cho phép sidebar scroll riêng */
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -232,7 +238,7 @@ hr {
     flex-grow: 1;
     padding: 30px 40px;
     background-color: #fff;
-    overflow-y: auto;
+    overflow-y: auto; /* Cho phép content area scroll riêng */
 }
 
 /* Grid View */
@@ -333,7 +339,6 @@ hr {
     margin-bottom: 8px;
 }
 
-/* *** THAY ĐỔI: Thêm style cho khung nội dung text thường *** */
 .content-display {
     margin-top: 15px;
     margin-bottom: 25px;
@@ -341,15 +346,14 @@ hr {
     word-wrap: break-word;
     line-height: 1.7;
     color: #495057;
-    /* Thêm khung */
-    background-color: #f8f9fa; /* Nền xám rất nhạt */
-    padding: 20px; /* Khoảng đệm bên trong */
-    border: 1px solid #e9ecef; /* Viền nhạt */
-    border-radius: 8px; /* Bo góc */
+    background-color: #f8f9fa;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
 }
 
 #note-detail-code { /* Thẻ <pre> cho code */
-    background-color: #f5f2f0; /* Giữ nguyên hoặc đổi theme Prism */
+    background-color: #f5f2f0;
     color: #393a34;
     padding: 20px;
     border-radius: 8px;
@@ -405,6 +409,36 @@ hr {
 .editor-actions button {
     margin-right: 10px;
     margin-top: 10px;
+}
+
+
+/* *** THÊM MỚI: Style cho nút Scroll to Top *** */
+#scrollToTopBtn {
+  display: none; /* Ẩn ban đầu */
+  position: fixed; /* Vị trí cố định */
+  bottom: 20px; /* Cách đáy 20px */
+  right: 30px; /* Cách phải 30px */
+  z-index: 99; /* Nằm trên các phần tử khác */
+  border: none; /* Bỏ viền mặc định */
+  outline: none; /* Bỏ viền focus */
+  background-color: #007bff; /* Màu nền */
+  color: white; /* Màu chữ */
+  cursor: pointer;
+  padding: 10px 15px; /* Tăng padding cho dễ nhấn */
+  border-radius: 50%; /* Bo tròn thành hình tròn */
+  font-size: 18px; /* Kích thước mũi tên */
+  line-height: 1; /* Căn giữa mũi tên */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Thêm shadow */
+  opacity: 0.8; /* Hơi mờ đi một chút */
+  transition: opacity 0.3s ease, background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng chuyển động */
+}
+
+#scrollToTopBtn:hover {
+  background-color: #0056b3; /* Đậm hơn khi hover */
+  opacity: 1; /* Rõ hơn khi hover */
+}
+#scrollToTopBtn:active {
+    transform: scale(0.95); /* Hiệu ứng nhấn nhỏ lại */
 }
 
 
@@ -484,9 +518,17 @@ hr {
     }
     .content-display, #note-detail-code {
         font-size: 0.9em;
-        padding: 15px; /* Giảm padding trên mobile */
+        padding: 15px;
     }
     .back-button {
         margin-bottom: 15px;
+    }
+
+    /* Điều chỉnh nút Scroll to Top cho mobile */
+    #scrollToTopBtn {
+        bottom: 15px;
+        right: 15px;
+        padding: 8px 12px;
+        font-size: 16px;
     }
 }
