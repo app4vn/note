@@ -52,13 +52,15 @@
             <main class="content-area">
 
                 <div id="notes-grid-view">
-                    <h2>Tất cả Ghi chú <span id="active-tag-display"></span></h2> <div id="notes-list-container">
+                    <h2>Tất cả Ghi chú <span id="active-tag-display"></span></h2>
+                    <div id="notes-list-container">
                         <p>Đang tải ghi chú...</p>
                     </div>
                 </div>
 
                 <div id="note-detail-view" style="display: none;">
-                     <button id="back-to-grid-btn" class="button-secondary back-button">&larr; Quay lại danh sách</button> <h2 id="note-detail-title"></h2>
+                     <button id="back-to-grid-btn" class="button-secondary back-button">&larr; Quay lại danh sách</button>
+                     <h2 id="note-detail-title"></h2>
                      <div id="note-detail-tags" class="tags-display"></div>
                      <div id="note-detail-content" class="content-display"></div>
                      <pre id="note-detail-code" style="display: none;"><code class="language-plaintext"></code></pre>
@@ -94,7 +96,8 @@
                     </div>
                     <div class="editor-actions">
                         <button id="save-note-btn" class="button-primary">Lưu Ghi Chú</button>
-                        <button id="cancel-edit-btn" class="button-secondary">Hủy</button> </div>
+                        <button id="cancel-edit-btn" class="button-secondary">Hủy</button>
+                    </div>
                      <p id="editor-error" class="error-message"></p>
                 </div>
             </main>
@@ -103,6 +106,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <button id="scrollToTopBtn" title="Cuộn lên đầu trang">&uarr;</button>
 
 </body>
 </html>
