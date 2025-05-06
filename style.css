@@ -69,6 +69,7 @@ button:active:not(:disabled) { /* Chỉ active khi không bị disable */
 input[type="text"],
 input[type="email"],
 input[type="password"],
+input[type="search"], /* *** THÊM MỚI: Áp dụng style chung cho search input *** */
 textarea,
 select {
     width: 100%;
@@ -84,6 +85,11 @@ input:focus, textarea:focus, select:focus {
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
 }
+/* *** THÊM MỚI: Style riêng cho ô tìm kiếm trong sidebar *** */
+#search-input {
+    margin-bottom: 0; /* Bỏ margin bottom mặc định vì có hr ngay dưới */
+    /* Có thể thêm icon tìm kiếm nếu muốn (phức tạp hơn) */
+}
 
 
 textarea {
@@ -98,6 +104,11 @@ hr {
     background-color: #e0e0e0;
     margin: 20px 0;
 }
+/* *** THÊM MỚI: Điều chỉnh margin cho hr trong sidebar *** */
+.sidebar hr {
+    margin: 15px 0; /* Giảm margin cho hr trong sidebar */
+}
+
 
 /* Kiểu nút */
 .button-primary {
@@ -156,20 +167,19 @@ hr {
     color: #495057;
 }
 
-/* *** THÊM MỚI: Style cho link chuyển đổi Auth *** */
 .auth-switch-link {
-    margin-top: 20px; /* Khoảng cách với nút submit */
+    margin-top: 20px;
     font-size: 0.9em;
-    color: #6c757d; /* Màu chữ xám */
+    color: #6c757d;
 }
-.auth-switch-link span { /* Phần text link bên trong */
-    color: #007bff; /* Màu xanh dương */
-    text-decoration: underline; /* Gạch chân */
-    cursor: pointer; /* Đổi con trỏ chuột */
+.auth-switch-link span {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
     transition: color 0.2s ease;
 }
 .auth-switch-link span:hover {
-    color: #0056b3; /* Đậm hơn khi hover */
+    color: #0056b3;
 }
 
 
@@ -223,10 +233,10 @@ hr {
 
 .sidebar h2 { /* Tiêu đề "Tags" */
     font-size: 1.1em;
-    margin-top: 0;
+    margin-top: 0; /* Bỏ margin-top vì hr ở trên */
     color: #495057;
     padding-bottom: 8px;
-    border-bottom: 1px solid #e9ecef;
+    /* border-bottom: 1px solid #e9ecef; */ /* Bỏ border bottom ở đây */
 }
 
 #tags-list-container {
@@ -492,6 +502,10 @@ hr {
         min-height: auto;
         overflow-y: visible;
         padding: 15px;
+    }
+    /* *** THÊM MỚI: Đảm bảo search input không bị margin bottom mặc định trên mobile *** */
+    .sidebar #search-input {
+        margin-bottom: 0;
     }
 
     .content-area {
