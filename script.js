@@ -80,6 +80,9 @@ const saveNoteBtn = document.getElementById('save-note-btn');
 const cancelEditBtn = document.getElementById('cancel-edit-btn');
 const editorError = document.getElementById('editor-error');
 
+// *** THÊM MỚI: Tham chiếu đến nút Scroll to Top và khu vực cuộn ***
+const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+const contentArea = document.querySelector('.content-area'); // Khu vực nội dung chính có thể cuộn
 
 // --- Biến trạng thái toàn cục ---
 let currentUser = null;
@@ -109,6 +112,8 @@ function showAuth() {
     notesCache = {};
     activeTag = null;
     currentNoteId = null;
+    // Ẩn nút scroll to top khi logout
+    if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
 }
 
 function showGridView() {
@@ -121,7 +126,8 @@ function showGridView() {
     } else {
         activeTagDisplay.textContent = '';
     }
-    // Không cần gọi renderNotesList ở đây nữa, vì nó sẽ được gọi khi click tag hoặc onSnapshot
+    // Reset scroll của content area về đầu khi quay lại grid
+    if (contentArea) contentArea.scrollTop = 0;
 }
 
 function showEditor(note = null) {
@@ -147,6 +153,8 @@ function showEditor(note = null) {
         currentNoteId = null;
     }
     noteTitleInput.focus();
+    // Reset scroll của content area về đầu khi mở editor
+    if (contentArea) contentArea.scrollTop = 0;
 }
 
 function showDetailView(note) {
@@ -160,6 +168,8 @@ function showDetailView(note) {
     noteDetailView.style.display = 'block';
     currentNoteId = note.id;
     displayNoteDetailContent(note);
+    // Reset scroll của content area về đầu khi xem chi tiết
+    if (contentArea) contentArea.scrollTop = 0;
 }
 
 function clearEditorFields() {
@@ -394,11 +404,10 @@ function loadNotesAndTags() {
         });
 
         console.log("Notes data changed, updating cache and UI.");
-        notesCache = newNotesCache; // Cập nhật cache chính
-        renderNotesList(allNotes); // Render lại grid
-        renderTagsList(allNotes); // Render lại tags
+        notesCache = newNotesCache;
+        renderNotesList(allNotes);
+        renderTagsList(allNotes);
 
-        // Xử lý nếu note đang xem chi tiết/sửa bị xóa
         if (currentNoteId && !notesCache[currentNoteId]) {
             console.log("Current note removed, showing grid view.");
             showGridView();
@@ -411,9 +420,8 @@ function loadNotesAndTags() {
 }
 
 function renderNotesList(notes) {
-    notesListContainer.innerHTML = ''; // Xóa grid cũ
+    notesListContainer.innerHTML = '';
 
-    // *** Áp dụng bộ lọc tag ở đây ***
     const notesToRender = activeTag
         ? notes.filter(note => note.tags && note.tags.includes(activeTag))
         : notes;
@@ -452,18 +460,13 @@ function renderNotesList(notes) {
         noteElement.appendChild(dateElement);
 
         noteElement.addEventListener('click', () => {
-            showDetailView(note); // Hiển thị chi tiết khi click
+            showDetailView(note);
         });
 
         notesListContainer.appendChild(noteElement);
     });
 }
 
-
-/**
- * Hiển thị danh sách các tags duy nhất lên sidebar.
- * @param {Array<object>} notes - Mảng tất cả ghi chú.
- */
 function renderTagsList(notes) {
     const allTags = new Set();
     notes.forEach(note => {
@@ -474,7 +477,6 @@ function renderTagsList(notes) {
 
     tagsListContainer.innerHTML = '';
 
-    // Nút "Tất cả"
     const allTagElement = document.createElement('span');
     allTagElement.classList.add('tag-item');
     allTagElement.textContent = 'Tất cả';
@@ -485,14 +487,12 @@ function renderTagsList(notes) {
         if (activeTag !== null) {
             activeTag = null;
             setActiveTagItem(null);
-            // *** THAY ĐỔI: Gọi renderNotesList trực tiếp ***
             renderNotesList(Object.values(notesCache)); // Render lại grid với filter mới
             showGridView(); // Đảm bảo đang ở grid view và cập nhật tiêu đề
         }
     });
     tagsListContainer.appendChild(allTagElement);
 
-    // Các tag khác
     [...allTags].sort().forEach(tag => {
         const tagElement = document.createElement('span');
         tagElement.classList.add('tag-item');
@@ -506,7 +506,6 @@ function renderTagsList(notes) {
             if (activeTag !== tag) {
                 activeTag = tag;
                 setActiveTagItem(tag);
-                 // *** THAY ĐỔI: Gọi renderNotesList trực tiếp ***
                 renderNotesList(Object.values(notesCache)); // Render lại grid với filter mới
                 showGridView(); // Đảm bảo đang ở grid view và cập nhật tiêu đề
             }
@@ -556,5 +555,44 @@ function displayNoteDetailContent(note) {
     }
 }
 
+// --- *** THÊM MỚI: Logic cho nút Scroll to Top *** ---
+
+// Hàm kiểm tra vị trí cuộn và hiển thị/ẩn nút
+function handleScroll() {
+    // Kiểm tra xem contentArea có tồn tại và đã được gán chưa
+    if (!contentArea) return;
+
+    // Hiển thị nút nếu cuộn xuống hơn 200px, ẩn nếu không
+    if (contentArea.scrollTop > 200) {
+        scrollToTopBtn.style.display = "block";
+    } else {
+        scrollToTopBtn.style.display = "none";
+    }
+}
+
+// Hàm xử lý khi nhấp vào nút scroll to top
+function scrollToTop() {
+    // Kiểm tra xem contentArea có tồn tại và đã được gán chưa
+    if (!contentArea) return;
+    // Cuộn contentArea lên đầu (sử dụng smooth behavior từ CSS)
+    contentArea.scrollTop = 0;
+}
+
+// Gắn sự kiện scroll vào contentArea (chỉ khi contentArea tồn tại)
+if (contentArea) {
+    contentArea.addEventListener('scroll', handleScroll);
+} else {
+    console.warn("Content area element not found for scroll event listener.");
+}
+
+// Gắn sự kiện click vào nút scroll to top (chỉ khi nút tồn tại)
+if (scrollToTopBtn) {
+    scrollToTopBtn.addEventListener('click', scrollToTop);
+} else {
+    console.warn("Scroll to top button element not found.");
+}
+
+
 // --- Khởi chạy ---
 console.log("Script loaded. Firebase Initialized. Waiting for Auth state change...");
+
