@@ -6,6 +6,137 @@
     padding: 0;
 }
 
+/* *** THÊM MỚI: Định nghĩa Biến CSS cho Themes *** */
+:root {
+    /* Theme Sáng (Mặc định) */
+    --bg-primary: #f4f4f4; /* Nền chính body */
+    --bg-secondary: #fff; /* Nền phụ (content area, card) */
+    --bg-sidebar: #f8f9fa; /* Nền sidebar */
+    --bg-header: #343a40; /* Nền header */
+    --bg-input: #fff; /* Nền input */
+    --bg-button-primary: #007bff;
+    --bg-button-primary-hover: #0056b3;
+    --bg-button-secondary: #6c757d;
+    --bg-button-secondary-hover: #5a6268;
+    --bg-button-danger: #dc3545;
+    --bg-button-danger-hover: #c82333;
+    --bg-code-block: #f5f2f0; /* Nền code block sáng */
+    --bg-content-display: #f8f9fa; /* Nền khung text */
+    --bg-note-item-hover: #e9ecef;
+    --bg-note-item-active: #cfe2ff; /* Màu nền note item được chọn (nếu dùng lại) */
+    --bg-tag-item: #6c757d;
+    --bg-tag-item-active: #007bff;
+
+    --text-primary: #333; /* Màu chữ chính */
+    --text-secondary: #6c757d; /* Màu chữ phụ (ngày tháng, label) */
+    --text-header: #fff; /* Màu chữ header */
+    --text-button: #fff; /* Màu chữ trên nút màu */
+    --text-link: #007bff;
+    --text-link-hover: #0056b3;
+    --text-placeholder: #6c757d;
+    --text-error: #dc3545;
+    --text-code-block: #393a34; /* Màu chữ code block sáng */
+    --text-highlight: #333; /* Màu chữ trên nền highlight */
+
+    --border-primary: #dee2e6; /* Viền chính (sidebar, card) */
+    --border-secondary: #e0e0e0; /* Viền phụ (hr) */
+    --border-input: #ccc;
+    --border-input-focus: #007bff;
+    --border-content-display: #e9ecef;
+    --border-code-block: #ddd;
+
+    --shadow-primary: rgba(0,0,0,0.1); /* Shadow chính */
+    --shadow-focus: rgba(0, 123, 255, 0.2); /* Shadow khi focus */
+    --highlight-bg: yellow; /* Nền highlight tìm kiếm */
+}
+
+body.theme-dark {
+    /* Theme Tối */
+    --bg-primary: #212529;
+    --bg-secondary: #343a40;
+    --bg-sidebar: #2b3035;
+    --bg-header: #1c1e21;
+    --bg-input: #495057;
+    --bg-button-primary: #0d6efd;
+    --bg-button-primary-hover: #0b5ed7;
+    --bg-button-secondary: #5c636a;
+    --bg-button-secondary-hover: #4f555a;
+    --bg-button-danger: #dc3545;
+    --bg-button-danger-hover: #bb2d3b;
+    --bg-code-block: #282c34; /* Nền code block tối (Okaidia) */
+    --bg-content-display: #3a3f44;
+    --bg-note-item-hover: #495057;
+    --bg-note-item-active: #0d6efd;
+    --bg-tag-item: #5c636a;
+    --bg-tag-item-active: #0d6efd;
+
+    --text-primary: #e9ecef; /* Chữ sáng hơn */
+    --text-secondary: #adb5bd;
+    --text-header: #fff;
+    --text-button: #fff;
+    --text-link: #6ea8fe; /* Link sáng hơn */
+    --text-link-hover: #8bb9fe;
+    --text-placeholder: #adb5bd;
+    --text-error: #f17c7c;
+    --text-code-block: #abb2bf; /* Màu chữ code block tối */
+    --text-highlight: #212529; /* Chữ tối trên nền vàng */
+
+    --border-primary: #495057;
+    --border-secondary: #5c636a;
+    --border-input: #6c757d;
+    --border-input-focus: #6ea8fe;
+    --border-content-display: #495057;
+    --border-code-block: #5c636a;
+
+    --shadow-primary: rgba(255,255,255,0.1);
+    --shadow-focus: rgba(110, 168, 254, 0.25);
+    --highlight-bg: #ffec80; /* Vàng nhạt hơn cho theme tối */
+}
+
+body.theme-gruvbox-light {
+    /* Theme Gruvbox Sáng (Tham khảo màu sắc từ theme Gruvbox) */
+    --bg-primary: #fbf1c7; /* Nền chính */
+    --bg-secondary: #ebdbb2; /* Nền phụ */
+    --bg-sidebar: #f2e5bc; /* Nền sidebar */
+    --bg-header: #3c3836; /* Header tối */
+    --bg-input: #fbf1c7;
+    --bg-button-primary: #458588; /* Màu xanh dương */
+    --bg-button-primary-hover: #076678;
+    --bg-button-secondary: #7c6f64; /* Màu xám */
+    --bg-button-secondary-hover: #665c54;
+    --bg-button-danger: #cc241d; /* Màu đỏ */
+    --bg-button-danger-hover: #9d0006;
+    --bg-code-block: #f9f5d7; /* Nền code sáng hơn */
+    --bg-content-display: #f2e5bc;
+    --bg-note-item-hover: #d5c4a1;
+    --bg-note-item-active: #bdae93;
+    --bg-tag-item: #7c6f64;
+    --bg-tag-item-active: #458588;
+
+    --text-primary: #3c3836; /* Chữ tối */
+    --text-secondary: #665c54;
+    --text-header: #ebdbb2; /* Chữ sáng trên header */
+    --text-button: #ebdbb2;
+    --text-link: #458588;
+    --text-link-hover: #076678;
+    --text-placeholder: #928374;
+    --text-error: #cc241d;
+    --text-code-block: #3c3836;
+    --text-highlight: #3c3836;
+
+    --border-primary: #d5c4a1;
+    --border-secondary: #bdae93;
+    --border-input: #bdae93;
+    --border-input-focus: #458588;
+    --border-content-display: #d5c4a1;
+    --border-code-block: #bdae93;
+
+    --shadow-primary: rgba(0,0,0,0.08);
+    --shadow-focus: rgba(69, 133, 136, 0.2);
+    --highlight-bg: #fabd2f; /* Màu vàng gruvbox */
+}
+
+
 html {
     scroll-behavior: smooth;
 }
@@ -14,60 +145,28 @@ html {
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     line-height: 1.6;
-    color: #333;
-    background-color: #f4f4f4;
+    color: var(--text-primary); /* Sử dụng biến */
+    background-color: var(--bg-primary); /* Sử dụng biến */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Thêm transition */
 }
 
 h1, h2 {
     margin-bottom: 0.8em;
     font-weight: 600;
 }
-
-/* *** THÊM MỚI: Style cho header của Grid View *** */
-.grid-view-header {
-    display: flex; /* Sắp xếp tiêu đề và ô chọn ngang hàng */
-    justify-content: space-between; /* Đẩy 2 phần tử ra 2 bên */
-    align-items: center; /* Căn giữa theo chiều dọc */
-    margin-bottom: 20px; /* Khoảng cách với lưới ghi chú */
-    padding-bottom: 15px; /* Khoảng cách với đường kẻ dưới */
-    border-bottom: 1px solid #eee; /* Đường kẻ dưới */
-    flex-wrap: wrap; /* Cho phép xuống dòng nếu không đủ chỗ */
-    gap: 10px; /* Khoảng cách nếu xuống dòng */
-}
-
-/* Style cho tiêu đề trong grid header */
-.grid-view-header h2 {
-    margin-bottom: 0; /* Bỏ margin bottom mặc định của h2 */
+/* Tiêu đề lưới */
+#notes-grid-view h2 {
+    margin-bottom: 20px;
     font-size: 1.6em;
-    color: #495057;
-    border-bottom: none; /* Bỏ border bottom riêng của h2 */
-    padding-bottom: 0;
+    color: var(--text-primary); /* Sử dụng biến */
+    border-bottom: 1px solid var(--border-secondary); /* Sử dụng biến */
+    padding-bottom: 10px;
 }
-.grid-view-header h2 #active-tag-display {
+#notes-grid-view h2 #active-tag-display {
     font-size: 0.8em;
-    color: #007bff;
+    color: var(--text-link); /* Sử dụng biến */
     font-weight: 500;
     margin-left: 10px;
-}
-
-/* *** THÊM MỚI: Style cho phần tử chứa ô chọn sắp xếp *** */
-.sort-options {
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Khoảng cách giữa label và select */
-}
-.sort-options label {
-    font-size: 0.9em;
-    color: #6c757d;
-    margin-bottom: 0; /* Bỏ margin bottom mặc định của label (nếu có) */
-}
-.sort-options select {
-    /* Kế thừa style chung của select */
-    width: auto; /* Cho phép chiều rộng tự điều chỉnh */
-    min-width: 200px; /* Đặt chiều rộng tối thiểu */
-    margin-bottom: 0; /* Bỏ margin bottom mặc định */
-    padding: 8px 12px; /* Giảm padding cho gọn hơn */
-    font-size: 0.9em; /* Giảm cỡ chữ */
 }
 
 
@@ -85,17 +184,17 @@ button:disabled {
 }
 button:active:not(:disabled) {
      transform: translateY(1px);
-     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+     box-shadow: inset 0 1px 3px var(--shadow-primary); /* Sử dụng biến */
 }
-/* Style cho nút quay lại */
+/* Nút quay lại */
 .back-button {
     margin-bottom: 20px;
-    background-color: #f8f9fa;
-    color: #343a40;
-    border: 1px solid #dee2e6;
+    background-color: var(--bg-secondary); /* Sử dụng biến */
+    color: var(--text-primary); /* Sử dụng biến */
+    border: 1px solid var(--border-primary); /* Sử dụng biến */
 }
 .back-button:hover {
-    background-color: #e9ecef;
+    background-color: var(--bg-note-item-hover); /* Sử dụng biến */
 }
 
 
@@ -104,21 +203,27 @@ input[type="email"],
 input[type="password"],
 input[type="search"],
 textarea,
-select { /* Style chung cho select */
+select {
     width: 100%;
     padding: 12px;
     margin-bottom: 12px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-input); /* Sử dụng biến */
     border-radius: 6px;
     font-size: 1em;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: var(--bg-input); /* Sử dụng biến */
+    color: var(--text-primary); /* Sử dụng biến */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+}
+input::placeholder, textarea::placeholder {
+    color: var(--text-placeholder); /* Sử dụng biến */
+    opacity: 1; /* Firefox */
 }
 input:focus, textarea:focus, select:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    border-color: var(--border-input-focus); /* Sử dụng biến */
+    box-shadow: 0 0 0 3px var(--shadow-focus); /* Sử dụng biến */
 }
-/* Style riêng cho ô tìm kiếm trong sidebar */
+/* Ô tìm kiếm trong sidebar */
 #search-input {
     margin-bottom: 0;
 }
@@ -133,38 +238,39 @@ textarea {
 hr {
     border: 0;
     height: 1px;
-    background-color: #e0e0e0;
+    background-color: var(--border-secondary); /* Sử dụng biến */
     margin: 20px 0;
 }
-/* Điều chỉnh margin cho hr trong sidebar */
+/* hr trong sidebar */
 .sidebar hr {
     margin: 15px 0;
+    background-color: var(--border-primary); /* Đồng bộ màu viền sidebar */
 }
 
 
 /* Kiểu nút */
 .button-primary {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--bg-button-primary); /* Sử dụng biến */
+    color: var(--text-button);
 }
 .button-primary:hover:not(:disabled) {
-    background-color: #0056b3;
+    background-color: var(--bg-button-primary-hover); /* Sử dụng biến */
 }
 
 .button-secondary {
-    background-color: #6c757d;
-    color: white;
+    background-color: var(--bg-button-secondary); /* Sử dụng biến */
+    color: var(--text-button);
 }
 .button-secondary:hover:not(:disabled) {
-    background-color: #5a6268;
+    background-color: var(--bg-button-secondary-hover); /* Sử dụng biến */
 }
 
 .button-danger {
-    background-color: #dc3545;
-    color: white;
+    background-color: var(--bg-button-danger); /* Sử dụng biến */
+    color: var(--text-button);
 }
 .button-danger:hover:not(:disabled) {
-    background-color: #c82333;
+    background-color: var(--bg-button-danger-hover); /* Sử dụng biến */
 }
 
 .full-width {
@@ -173,7 +279,7 @@ hr {
 
 /* Thông báo lỗi */
 .error-message {
-    color: #dc3545;
+    color: var(--text-error); /* Sử dụng biến */
     font-size: 0.9em;
     margin-top: 5px;
     min-height: 1.2em;
@@ -185,33 +291,35 @@ hr {
     max-width: 400px;
     margin: 50px auto;
     padding: 30px;
-    background-color: #fff;
+    background-color: var(--bg-secondary); /* Sử dụng biến */
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px var(--shadow-primary); /* Sử dụng biến */
     text-align: center;
+    border: 1px solid var(--border-primary); /* Thêm viền nhẹ */
 }
 #auth-forms hr {
+    background-color: var(--border-secondary); /* Sử dụng biến */
     margin: 25px 0;
 }
 #auth-forms h2 {
     margin-bottom: 15px;
     font-size: 1.4em;
-    color: #495057;
+    color: var(--text-primary); /* Sử dụng biến */
 }
 
 .auth-switch-link {
     margin-top: 20px;
     font-size: 0.9em;
-    color: #6c757d;
+    color: var(--text-secondary); /* Sử dụng biến */
 }
 .auth-switch-link span {
-    color: #007bff;
+    color: var(--text-link); /* Sử dụng biến */
     text-decoration: underline;
     cursor: pointer;
     transition: color 0.2s ease;
 }
 .auth-switch-link span:hover {
-    color: #0056b3;
+    color: var(--text-link-hover); /* Sử dụng biến */
 }
 
 
@@ -224,14 +332,15 @@ hr {
 }
 
 .app-header {
-    background-color: #343a40;
-    color: white;
+    background-color: var(--bg-header); /* Sử dụng biến */
+    color: var(--text-header); /* Sử dụng biến */
     padding: 15px 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px var(--shadow-primary); /* Sử dụng biến */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app-header h1 {
@@ -254,19 +363,20 @@ hr {
 /* Sidebar */
 .sidebar {
     width: 240px;
-    background-color: #f8f9fa;
+    background-color: var(--bg-sidebar); /* Sử dụng biến */
     padding: 20px;
-    border-right: 1px solid #dee2e6;
+    border-right: 1px solid var(--border-primary); /* Sử dụng biến */
     overflow-y: auto;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.sidebar h2 { /* Tiêu đề "Tags" */
+.sidebar h2 { /* Tiêu đề "Tags", "Giao diện" */
     font-size: 1.1em;
     margin-top: 0;
-    color: #495057;
+    color: var(--text-primary); /* Sử dụng biến */
     padding-bottom: 8px;
 }
 
@@ -275,8 +385,8 @@ hr {
 }
 #tags-list-container .tag-item {
      display: inline-block;
-     background-color: #6c757d;
-     color: white;
+     background-color: var(--bg-tag-item); /* Sử dụng biến */
+     color: var(--text-button); /* Sử dụng biến */
      padding: 4px 10px;
      border-radius: 15px;
      font-size: 0.85em;
@@ -287,21 +397,57 @@ hr {
 }
 #tags-list-container .tag-item:hover,
 #tags-list-container .tag-item.active {
-    background-color: #007bff;
+    background-color: var(--bg-tag-item-active); /* Sử dụng biến */
 }
 
 
 .content-area {
     flex-grow: 1;
     padding: 30px 40px;
-    background-color: #fff;
+    background-color: var(--bg-secondary); /* Sử dụng biến */
     overflow-y: auto;
+    transition: background-color 0.3s ease;
 }
 
 /* Grid View */
 #notes-grid-view {
     display: block;
 }
+
+/* Header của Grid View */
+.grid-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-secondary); /* Sử dụng biến */
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.grid-view-header h2 {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.sort-options {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.sort-options label {
+    font-size: 0.9em;
+    color: var(--text-secondary); /* Sử dụng biến */
+    margin-bottom: 0;
+}
+.sort-options select {
+    width: auto;
+    min-width: 200px;
+    margin-bottom: 0;
+    padding: 8px 12px;
+    font-size: 0.9em;
+    /* Kế thừa màu nền, chữ, border từ style chung */
+}
+
 
 #notes-list-container {
     display: grid;
@@ -313,29 +459,29 @@ hr {
 
 /* Thẻ ghi chú trong lưới */
 #notes-list-container .note-item {
-    background-color: #fff;
-    border: 1px solid #dee2e6;
+    background-color: var(--bg-secondary); /* Sử dụng biến */
+    border: 1px solid var(--border-primary); /* Sử dụng biến */
     border-radius: 8px;
     padding: 15px 20px;
     cursor: pointer;
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     min-height: 150px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px var(--shadow-primary); /* Sử dụng biến */
 }
 #notes-list-container .note-item:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border-color: #ced4da;
-    background-color: #fff;
+    box-shadow: 0 4px 12px var(--shadow-primary); /* Sử dụng biến */
+    border-color: var(--border-input-focus); /* Highlight nhẹ viền khi hover */
+    background-color: var(--bg-secondary); /* Giữ nền */
 }
 
 /* Nội dung bên trong thẻ */
 .note-item h3 { /* Tiêu đề thẻ */
     font-size: 1.1em;
     margin-bottom: 8px;
-    color: #212529;
+    color: var(--text-primary); /* Sử dụng biến */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -346,11 +492,11 @@ hr {
 }
 .note-item-content-preview { /* Nội dung xem trước */
     font-size: 0.9em;
-    color: #6c757d;
+    color: var(--text-secondary); /* Sử dụng biến */
     flex-grow: 1;
     margin-bottom: 10px;
     display: -webkit-box;
-    -webkit-line-clamp: 5; /* Giới hạn 5 dòng */
+    -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -359,7 +505,7 @@ hr {
 }
 .note-item-date { /* Ngày tháng */
     font-size: 0.8em;
-    color: #adb5bd;
+    color: var(--text-secondary); /* Sử dụng biến */
     margin-top: auto;
     text-align: right;
 }
@@ -368,17 +514,17 @@ hr {
 #notes-list-container > p {
     grid-column: 1 / -1;
     text-align: center;
-    color: #888;
+    color: var(--text-secondary); /* Sử dụng biến */
     margin-top: 30px;
 }
 
 
 /* Chế độ xem chi tiết */
-#note-detail-view h2 {
-    border-bottom: 1px solid #eee;
+#note-detail-view h2 { /* Tiêu đề note chi tiết */
+    /* border-bottom: 1px solid var(--border-secondary); */ /* Bỏ border ở đây */
     padding-bottom: 15px;
     margin-bottom: 20px;
-    color: #212529;
+    color: var(--text-primary); /* Sử dụng biến */
     font-size: 1.8em;
     word-break: break-word;
 }
@@ -387,8 +533,8 @@ hr {
 }
 .tags-display .tag {
     display: inline-block;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--bg-button-primary); /* Dùng màu nút chính */
+    color: var(--text-button);
     padding: 4px 10px;
     border-radius: 6px;
     font-size: 0.9em;
@@ -396,22 +542,23 @@ hr {
     margin-bottom: 8px;
 }
 
-.content-display {
+.content-display { /* Khung nội dung text */
     margin-top: 15px;
     margin-bottom: 25px;
     white-space: pre-wrap;
     word-wrap: break-word;
     line-height: 1.7;
-    color: #495057;
-    background-color: #f8f9fa;
+    color: var(--text-primary); /* Sử dụng biến */
+    background-color: var(--bg-content-display); /* Sử dụng biến */
     padding: 20px;
-    border: 1px solid #e9ecef;
+    border: 1px solid var(--border-content-display); /* Sử dụng biến */
     border-radius: 8px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 #note-detail-code { /* Thẻ <pre> cho code */
-    background-color: #f5f2f0;
-    color: #393a34;
+    background-color: var(--bg-code-block); /* Sử dụng biến */
+    color: var(--text-code-block); /* Sử dụng biến */
     padding: 20px;
     border-radius: 8px;
     overflow-x: auto;
@@ -421,21 +568,23 @@ hr {
     line-height: 1.5;
     margin-top: 15px;
     margin-bottom: 25px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-code-block); /* Sử dụng biến */
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 #note-detail-actions button {
     margin-right: 10px;
     margin-top: 10px;
 }
 
-/* Chế độ soạn thảo (Giữ nguyên) */
+/* Chế độ soạn thảo */
 #note-editor-view {
     max-width: 800px;
 }
 #note-editor-view h2 {
-     border-bottom: 1px solid #eee;
+     border-bottom: 1px solid var(--border-secondary); /* Sử dụng biến */
      padding-bottom: 15px;
      margin-bottom: 20px;
+     color: var(--text-primary); /* Sử dụng biến */
 }
 .code-options {
     margin-top: 15px;
@@ -449,6 +598,7 @@ hr {
     margin-right: 20px;
     cursor: pointer;
     user-select: none;
+    color: var(--text-secondary); /* Sử dụng biến */
 }
 .code-options input[type="checkbox"] {
     width: auto;
@@ -461,6 +611,7 @@ hr {
     min-width: 150px;
     margin-bottom: 0;
     vertical-align: middle;
+    /* Kế thừa style chung */
 }
 
 .editor-actions button {
@@ -478,20 +629,20 @@ hr {
   z-index: 99;
   border: none;
   outline: none;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--bg-button-primary); /* Sử dụng biến */
+  color: var(--text-button); /* Sử dụng biến */
   cursor: pointer;
   padding: 10px 15px;
   border-radius: 50%;
   font-size: 18px;
   line-height: 1;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px var(--shadow-primary); /* Sử dụng biến */
   opacity: 0.8;
   transition: opacity 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
 }
 
 #scrollToTopBtn:hover {
-  background-color: #0056b3;
+  background-color: var(--bg-button-primary-hover); /* Sử dụng biến */
   opacity: 1;
 }
 #scrollToTopBtn:active {
@@ -500,9 +651,45 @@ hr {
 
 /* Style cho highlight tìm kiếm */
 .search-highlight {
-    background-color: yellow;
+    background-color: var(--highlight-bg); /* Sử dụng biến */
     font-weight: bold;
-    color: #333;
+    color: var(--text-highlight); /* Sử dụng biến */
+    /* padding: 0 1px; */ /* Giảm padding nếu cần */
+    border-radius: 2px;
+}
+
+/* *** THÊM MỚI: Style cho Bộ chọn Theme *** */
+.theme-selector {
+    margin-top: auto; /* Đẩy xuống cuối sidebar */
+    padding-top: 15px; /* Khoảng cách với phần tử bên trên (hr) */
+}
+.theme-selector h2 {
+    margin-bottom: 10px; /* Khoảng cách với các nút */
+    font-size: 1em; /* Giảm cỡ chữ */
+}
+.theme-options {
+    display: flex;
+    gap: 10px; /* Khoảng cách giữa các nút */
+    flex-wrap: wrap; /* Cho phép xuống dòng nếu cần */
+}
+.theme-button {
+    flex: 1; /* Các nút tự chia sẻ không gian */
+    min-width: 60px; /* Chiều rộng tối thiểu */
+    padding: 6px 10px; /* Padding nhỏ hơn */
+    font-size: 0.9em;
+    border: 1px solid var(--border-primary); /* Thêm viền */
+    background-color: var(--bg-secondary); /* Nền phụ */
+    color: var(--text-secondary); /* Chữ phụ */
+}
+.theme-button.active { /* Kiểu nút theme đang được chọn */
+    background-color: var(--bg-button-primary); /* Dùng màu nút chính */
+    color: var(--text-button);
+    border-color: var(--bg-button-primary);
+    font-weight: bold;
+}
+.theme-button:not(.active):hover { /* Hover khi không active */
+     background-color: var(--bg-note-item-hover);
+     border-color: var(--border-input);
 }
 
 
@@ -535,7 +722,7 @@ hr {
     .sidebar {
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid var(--border-primary); /* Sử dụng biến */
         max-height: none;
         min-height: auto;
         overflow-y: visible;
@@ -544,6 +731,15 @@ hr {
     .sidebar #search-input {
         margin-bottom: 0;
     }
+    /* *** THÊM MỚI: Điều chỉnh theme selector trên mobile *** */
+    .theme-selector {
+        margin-top: 15px; /* Giảm khoảng cách trên */
+        padding-top: 10px;
+    }
+    .theme-options {
+        justify-content: space-around; /* Căn đều các nút */
+    }
+
 
     .content-area {
         padding: 20px 15px;
@@ -557,17 +753,17 @@ hr {
      #notes-grid-view h2 {
         font-size: 1.4em;
      }
-     /* *** THÊM MỚI: Điều chỉnh header grid view trên mobile *** */
      .grid-view-header {
-        flex-direction: column; /* Xếp chồng tiêu đề và sort */
-        align-items: flex-start; /* Căn trái */
+        flex-direction: column;
+        align-items: flex-start;
      }
      .sort-options {
-        width: 100%; /* Chiếm toàn bộ chiều rộng */
+        width: 100%;
+        margin-top: 10px; /* Thêm khoảng cách trên mobile */
      }
      .sort-options select {
-        flex-grow: 1; /* Cho select giãn ra */
-        min-width: 0; /* Bỏ min-width */
+        flex-grow: 1;
+        min-width: 0;
      }
 
 
