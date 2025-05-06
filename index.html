@@ -20,9 +20,7 @@
                 <button type="submit" class="button-primary">Đăng nhập</button>
                 <p id="login-error" class="error-message"></p>
             </form>
-
             <hr>
-
             <form id="signup-form">
                 <h2>Đăng ký</h2>
                 <input type="email" id="signup-email" placeholder="Email" required>
@@ -46,22 +44,21 @@
             <aside class="sidebar">
                 <button id="add-note-btn" class="button-primary full-width">Thêm Ghi Chú Mới</button>
                 <hr>
-                <h2>Danh sách Ghi chú</h2>
-                <div id="notes-list-container">
-                    <p>Đang tải ghi chú...</p>
-                    </div>
-                <hr>
                 <h2>Tags</h2>
                 <div id="tags-list-container">
                     </div>
             </aside>
 
             <main class="content-area">
-                <div id="note-detail-placeholder" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #888;">
-                    <p>Chọn một ghi chú để xem hoặc tạo ghi chú mới.</p>
-                 </div>
+
+                <div id="notes-grid-view">
+                    <h2>Tất cả Ghi chú <span id="active-tag-display"></span></h2> <div id="notes-list-container">
+                        <p>Đang tải ghi chú...</p>
+                    </div>
+                </div>
+
                 <div id="note-detail-view" style="display: none;">
-                     <h2 id="note-detail-title"></h2>
+                     <button id="back-to-grid-btn" class="button-secondary back-button">&larr; Quay lại danh sách</button> <h2 id="note-detail-title"></h2>
                      <div id="note-detail-tags" class="tags-display"></div>
                      <div id="note-detail-content" class="content-display"></div>
                      <pre id="note-detail-code" style="display: none;"><code class="language-plaintext"></code></pre>
@@ -74,7 +71,8 @@
 
                 <div id="note-editor-view" style="display: none;">
                     <h2 id="editor-title">Soạn thảo Ghi chú</h2>
-                    <input type="hidden" id="note-id-input"> <input type="text" id="note-title-input" placeholder="Tiêu đề" required>
+                    <input type="hidden" id="note-id-input">
+                    <input type="text" id="note-title-input" placeholder="Tiêu đề" required>
                     <textarea id="note-content-input" placeholder="Nội dung ghi chú..." rows="10" required></textarea>
                     <input type="text" id="note-tags-input" placeholder="Tags (cách nhau bằng dấu phẩy)">
                     <div class="code-options">
@@ -92,12 +90,11 @@
                             <option value="java">Java</option>
                             <option value="csharp">C#</option>
                             <option value="php">PHP</option>
-                            </select>
+                        </select>
                     </div>
                     <div class="editor-actions">
                         <button id="save-note-btn" class="button-primary">Lưu Ghi Chú</button>
-                        <button id="cancel-edit-btn" class="button-secondary">Hủy</button>
-                    </div>
+                        <button id="cancel-edit-btn" class="button-secondary">Hủy</button> </div>
                      <p id="editor-error" class="error-message"></p>
                 </div>
             </main>
