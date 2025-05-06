@@ -96,8 +96,8 @@ body.theme-dark {
 body.theme-gruvbox-light {
     /* Theme Gruvbox Sáng */
     --bg-primary: #fbf1c7; /* Nền chính */
-    /* *** THAY ĐỔI: Màu nền phụ (thẻ note, content area) nhạt hơn *** */
-    --bg-secondary: #f9f5d7; /* Thay vì #ebdbb2 */
+    /* *** THAY ĐỔI: Màu nền phụ (thẻ note, content area) đậm hơn *** */
+    --bg-secondary: #ebdbb2; /* Quay lại màu be đậm */
     --bg-sidebar: #f2e5bc; /* Nền sidebar */
     --bg-header: #3c3836; /* Header tối */
     --bg-input: #fbf1c7;
@@ -107,10 +107,10 @@ body.theme-gruvbox-light {
     --bg-button-secondary-hover: #665c54;
     --bg-button-danger: #cc241d; /* Màu đỏ */
     --bg-button-danger-hover: #9d0006;
-    --bg-code-block: #f2e5bc; /* Có thể dùng màu này hoặc f9f5d7 */
+    --bg-code-block: #f2e5bc;
     --bg-content-display: #f2e5bc; /* Nền khung text */
-    --bg-note-item-hover: #ebdbb2; /* Màu hover đậm hơn nền thẻ */
-    --bg-note-item-active: #d5c4a1;
+    --bg-note-item-hover: #d5c4a1; /* Màu hover đậm hơn nền thẻ */
+    --bg-note-item-active: #bdae93;
     --bg-tag-item: #7c6f64;
     --bg-tag-item-active: #458588;
 
@@ -475,7 +475,7 @@ hr {
 #notes-list-container .note-item:hover {
     box-shadow: 0 4px 12px var(--shadow-primary); /* Sử dụng biến */
     border-color: var(--border-input-focus); /* Highlight nhẹ viền khi hover */
-    /* background-color: var(--bg-note-item-hover); */ /* Bỏ đổi nền khi hover để giữ màu theme */
+    background-color: var(--bg-note-item-hover); /* Đổi nền khi hover */
 }
 
 /* Nội dung bên trong thẻ */
