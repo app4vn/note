@@ -47,7 +47,8 @@
                 <button id="add-note-btn" class="button-primary full-width">Thêm Ghi Chú Mới</button>
                 <hr>
                 <input type="search" id="search-input" placeholder="Tìm kiếm ghi chú...">
-                <hr> <h2>Tags</h2>
+                <hr>
+                <h2>Tags</h2>
                 <div id="tags-list-container">
                     </div>
             </aside>
@@ -55,7 +56,18 @@
             <main class="content-area">
 
                 <div id="notes-grid-view">
-                    <h2>Tất cả Ghi chú <span id="active-tag-display"></span></h2>
+                    <div class="grid-view-header">
+                        <h2>Tất cả Ghi chú <span id="active-tag-display"></span></h2>
+                        <div class="sort-options">
+                            <label for="sort-select">Sắp xếp theo:</label>
+                            <select id="sort-select">
+                                <option value="updatedAt_desc">Ngày cập nhật (Mới nhất)</option>
+                                <option value="updatedAt_asc">Ngày cập nhật (Cũ nhất)</option>
+                                <option value="title_asc">Tiêu đề (A-Z)</option>
+                                <option value="title_desc">Tiêu đề (Z-A)</option>
+                                </select>
+                        </div>
+                    </div>
                     <div id="notes-list-container">
                         <p>Đang tải ghi chú...</p>
                     </div>
