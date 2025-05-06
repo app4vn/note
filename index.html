@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghi Chú Cá Nhân</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="script.js" defer></script>
+</head>
+<body>
+
+    <div id="auth-container">
+        <h1>Ghi Chú Cá Nhân</h1>
+        <div id="auth-forms">
+            <form id="login-form">
+                <h2>Đăng nhập</h2>
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Mật khẩu" required>
+                <button type="submit" class="button-primary">Đăng nhập</button>
+                <p id="login-error" class="error-message"></p>
+            </form>
+
+            <hr>
+
+            <form id="signup-form">
+                <h2>Đăng ký</h2>
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="password" id="signup-password" placeholder="Mật khẩu (ít nhất 6 ký tự)" required>
+                <button type="submit" class="button-primary">Đăng ký</button>
+                <p id="signup-error" class="error-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-container" style="display: none;">
+        <header class="app-header">
+            <h1>Ghi Chú Của Tôi</h1>
+            <div class="user-info">
+                <span id="user-email"></span>
+                <button id="logout-button" class="button-secondary">Đăng xuất</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <button id="add-note-btn" class="button-primary full-width">Thêm Ghi Chú Mới</button>
+                <hr>
+                <h2>Danh sách Ghi chú</h2>
+                <div id="notes-list-container">
+                    <p>Chưa có ghi chú nào.</p>
+                    </div>
+                <hr>
+                <h2>Tags</h2>
+                <div id="tags-list-container">
+                    </div>
+            </aside>
+
+            <main class="content-area">
+                <div id="note-detail-placeholder" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #888;">
+                    <p>Chọn một ghi chú để xem hoặc tạo ghi chú mới.</p>
+                 </div>
+                <div id="note-detail-view" style="display: none;">
+                     <h2 id="note-detail-title"></h2>
+                     <div id="note-detail-tags" class="tags-display"></div>
+                     <div id="note-detail-content" class="content-display">
+                         </div>
+                     <pre id="note-detail-code" class="code-display" style="display: none;"><code></code></pre> <div id="note-detail-actions">
+                          <button id="edit-note-btn" class="button-secondary">Sửa</button>
+                          <button id="delete-note-btn" class="button-danger">Xóa</button>
+                          <button id="copy-code-btn" class="button-secondary" style="display: none;">Copy Code</button>
+                     </div>
+                </div>
+
+                <div id="note-editor-view" style="display: none;">
+                    <h2 id="editor-title">Soạn thảo Ghi chú</h2>
+                    <input type="hidden" id="note-id-input"> <input type="text" id="note-title-input" placeholder="Tiêu đề" required>
+                    <textarea id="note-content-input" placeholder="Nội dung ghi chú..." rows="10" required></textarea>
+                    <input type="text" id="note-tags-input" placeholder="Tags (cách nhau bằng dấu phẩy)">
+                    <div class="code-options">
+                        <input type="checkbox" id="note-is-code-checkbox">
+                        <label for="note-is-code-checkbox">Đây là code?</label>
+                        <select id="note-language-select" style="display: none;">
+                            <option value="plaintext">Plain Text</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="python">Python</option>
+                            <option value="html">HTML</option>
+                            <option value="css">CSS</option>
+                            <option value="sql">SQL</option>
+                            <option value="json">JSON</option>
+                            <option value="markdown">Markdown</option>
+                            </select>
+                    </div>
+                    <div class="editor-actions">
+                        <button id="save-note-btn" class="button-primary">Lưu Ghi Chú</button>
+                        <button id="cancel-edit-btn" class="button-secondary">Hủy</button>
+                    </div>
+                     <p id="editor-error" class="error-message"></p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+</body>
+</html>
