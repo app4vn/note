@@ -1,48 +1,46 @@
 // script.js
 
 // Import các hàm cần thiết từ Firebase SDK
-// Sử dụng cú pháp module ES6
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
     getAuth,
-    onAuthStateChanged, // Theo dõi trạng thái đăng nhập
-    createUserWithEmailAndPassword, // Đăng ký
-    signInWithEmailAndPassword, // Đăng nhập
-    signOut // Đăng xuất
+    onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import {
     getFirestore,
-    collection, // Tham chiếu đến một collection
-    addDoc, // Thêm document mới
-    query, // Tạo truy vấn
-    where, // Lọc theo điều kiện
-    orderBy, // Sắp xếp kết quả
-    onSnapshot, // Lắng nghe thay đổi real-time
-    doc, // Tham chiếu đến một document cụ thể bằng ID
-    getDoc, // Lấy dữ liệu một document (ít dùng khi có onSnapshot)
-    updateDoc, // Cập nhật document
-    deleteDoc, // Xóa document
-    Timestamp // Lưu trữ ngày giờ chuẩn của Firebase
+    collection,
+    addDoc,
+    query,
+    where,
+    orderBy,
+    onSnapshot,
+    doc,
+    getDoc,
+    updateDoc,
+    deleteDoc,
+    Timestamp
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // --- Cấu hình Firebase của bạn ---
-// Lấy từ thông tin bạn cung cấp
 const firebaseConfig = {
     apiKey: "AIzaSyAe5UOFul4ce8vQN66Bpcktj4oiV19ht-I",
     authDomain: "ghichu-198277.firebaseapp.com",
     projectId: "ghichu-198277",
-    storageBucket: "ghichu-198277.appspot.com", // Đảm bảo đúng đuôi .appspot.com
+    storageBucket: "ghichu-198277.appspot.com",
     messagingSenderId: "1001550945488",
     appId: "1:1001550945488:web:bbda01f5a11f15a81192d5"
 };
 
 // --- Khởi tạo Firebase ---
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app); // Dịch vụ xác thực
-const db = getFirestore(app); // Dịch vụ Firestore Database
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// --- Lấy tham chiếu đến các phần tử DOM quan trọng ---
-// Sử dụng const vì các tham chiếu này không thay đổi
+// --- Lấy tham chiếu đến các phần tử DOM ---
+// (Thêm các tham chiếu mới và cập nhật/xóa các tham chiếu cũ nếu cần)
 const authContainer = document.getElementById('auth-container');
 const appContainer = document.getElementById('app-container');
 const loginForm = document.getElementById('login-form');
@@ -52,64 +50,89 @@ const userEmailDisplay = document.getElementById('user-email');
 const loginError = document.getElementById('login-error');
 const signupError = document.getElementById('signup-error');
 
-const notesListContainer = document.getElementById('notes-list-container');
 const tagsListContainer = document.getElementById('tags-list-container');
 const addNoteBtn = document.getElementById('add-note-btn');
-const noteDetailPlaceholder = document.getElementById('note-detail-placeholder');
+
+// Tham chiếu đến các view chính trong content-area
+const notesGridView = document.getElementById('notes-grid-view');
 const noteDetailView = document.getElementById('note-detail-view');
 const noteEditorView = document.getElementById('note-editor-view');
+
+// Các phần tử trong Grid View
+const notesListContainer = document.getElementById('notes-list-container'); // Container chứa các thẻ grid
+const activeTagDisplay = document.getElementById('active-tag-display'); // Hiển thị tag đang lọc
+
+// Các phần tử trong Detail View
+const backToGridBtn = document.getElementById('back-to-grid-btn'); // Nút quay lại lưới
 const noteDetailTitle = document.getElementById('note-detail-title');
 const noteDetailTags = document.getElementById('note-detail-tags');
-const noteDetailContent = document.getElementById('note-detail-content'); // Cho text thường
-const noteDetailCode = document.getElementById('note-detail-code'); // Thẻ <pre> cho code
-const codeBlock = noteDetailCode.querySelector('code'); // Thẻ <code> bên trong <pre>
+const noteDetailContent = document.getElementById('note-detail-content');
+const noteDetailCode = document.getElementById('note-detail-code');
+const codeBlock = noteDetailCode.querySelector('code');
 const copyCodeBtn = document.getElementById('copy-code-btn');
+const editNoteBtn = document.getElementById('edit-note-btn');
+const deleteNoteBtn = document.getElementById('delete-note-btn');
 
+// Các phần tử trong Editor View
 const editorTitle = document.getElementById('editor-title');
-const noteIdInput = document.getElementById('note-id-input'); // Input ẩn lưu ID khi sửa
+const noteIdInput = document.getElementById('note-id-input');
 const noteTitleInput = document.getElementById('note-title-input');
 const noteContentInput = document.getElementById('note-content-input');
 const noteTagsInput = document.getElementById('note-tags-input');
 const isCodeCheckbox = document.getElementById('note-is-code-checkbox');
 const languageSelect = document.getElementById('note-language-select');
 const saveNoteBtn = document.getElementById('save-note-btn');
-const cancelEditBtn = document.getElementById('cancel-edit-btn');
+const cancelEditBtn = document.getElementById('cancel-edit-btn'); // Nút hủy trong editor
 const editorError = document.getElementById('editor-error');
-const editNoteBtn = document.getElementById('edit-note-btn');
-const deleteNoteBtn = document.getElementById('delete-note-btn');
+
 
 // --- Biến trạng thái toàn cục ---
-let currentUser = null; // Lưu thông tin người dùng đang đăng nhập
-let currentNoteId = null; // Lưu ID của ghi chú đang được chọn/xem/sửa
-let notesUnsubscribe = null; // Hàm để hủy lắng nghe thay đổi notes (quan trọng để tránh memory leak)
-let activeTag = null; // Tag đang được dùng để lọc (null = hiển thị tất cả)
-let notesCache = {}; // Lưu trữ dữ liệu các ghi chú đã tải để truy cập nhanh
+let currentUser = null;
+let currentNoteId = null; // ID của ghi chú đang được xem chi tiết hoặc sửa
+let notesUnsubscribe = null;
+let activeTag = null;
+let notesCache = {};
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
 
 /** Hiển thị giao diện ứng dụng chính, ẩn khu vực đăng nhập */
 function showApp() {
     authContainer.style.display = 'none';
-    appContainer.style.display = 'flex'; // Layout chính dùng flex
+    appContainer.style.display = 'flex';
 }
 
 /** Hiển thị khu vực đăng nhập/đăng ký, ẩn ứng dụng chính */
 function showAuth() {
     authContainer.style.display = 'block';
     appContainer.style.display = 'none';
-    currentUser = null; // Reset user khi logout
-    clearNoteDisplay(); // Xóa dữ liệu chi tiết note
-    clearEditor(); // Xóa dữ liệu editor
-    notesListContainer.innerHTML = '<p>Vui lòng đăng nhập.</p>'; // Reset danh sách note
-    tagsListContainer.innerHTML = ''; // Reset danh sách tag
-    // Hủy lắng nghe Firestore khi logout để giải phóng tài nguyên
+    currentUser = null;
+    // clearNoteDisplay(); // Không cần nữa vì grid sẽ tự render lại
+    clearEditor();
+    notesListContainer.innerHTML = '<p>Vui lòng đăng nhập.</p>';
+    tagsListContainer.innerHTML = '';
     if (notesUnsubscribe) {
         notesUnsubscribe();
         notesUnsubscribe = null;
     }
-    notesCache = {}; // Xóa cache ghi chú
-    activeTag = null; // Reset bộ lọc tag
-    currentNoteId = null; // Reset note đang chọn
+    notesCache = {};
+    activeTag = null;
+    currentNoteId = null;
+}
+
+/** Hiển thị Grid View, ẩn các view khác */
+function showGridView() {
+    notesGridView.style.display = 'block';
+    noteDetailView.style.display = 'none';
+    noteEditorView.style.display = 'none';
+    currentNoteId = null; // Không có note nào đang được chọn khi ở grid view
+    // Cập nhật tiêu đề grid view dựa trên activeTag
+    if (activeTag) {
+        activeTagDisplay.textContent = `(Tag: ${activeTag})`;
+    } else {
+        activeTagDisplay.textContent = ''; // Xóa hiển thị tag nếu xem tất cả
+    }
+    // Render lại danh sách ghi chú (có thể không cần nếu onSnapshot xử lý tốt)
+    // renderNotesList(Object.values(notesCache));
 }
 
 /**
@@ -117,44 +140,42 @@ function showAuth() {
  * @param {object | null} note - Dữ liệu ghi chú để sửa (nếu có). Null nếu tạo mới.
  */
 function showEditor(note = null) {
-    noteDetailPlaceholder.style.display = 'none'; // Ẩn placeholder
-    noteDetailView.style.display = 'none'; // Ẩn view chi tiết
-    noteEditorView.style.display = 'block'; // Hiện view editor
-    editorError.textContent = ''; // Xóa thông báo lỗi cũ
+    notesGridView.style.display = 'none'; // Ẩn grid
+    noteDetailView.style.display = 'none'; // Ẩn detail
+    noteEditorView.style.display = 'block'; // Hiện editor
+    editorError.textContent = '';
 
-    if (note && note.id) { // Nếu có dữ liệu note -> đang sửa
+    if (note && note.id) { // Sửa
         editorTitle.textContent = "Sửa Ghi chú";
-        noteIdInput.value = note.id; // Lưu ID vào input ẩn để biết đang sửa note nào
+        noteIdInput.value = note.id;
         noteTitleInput.value = note.title;
         noteContentInput.value = note.content;
-        noteTagsInput.value = note.tags ? note.tags.join(', ') : ''; // Nối các tag bằng dấu phẩy
-        isCodeCheckbox.checked = note.isCode || false; // Đặt trạng thái checkbox
-        languageSelect.value = note.language || 'plaintext'; // Đặt ngôn ngữ đã chọn
-        // Hiện/ẩn dropdown ngôn ngữ dựa trên checkbox
+        noteTagsInput.value = note.tags ? note.tags.join(', ') : '';
+        isCodeCheckbox.checked = note.isCode || false;
+        languageSelect.value = note.language || 'plaintext';
         languageSelect.style.display = note.isCode ? 'inline-block' : 'none';
-    } else { // Nếu không có dữ liệu note -> đang tạo mới
+        currentNoteId = note.id; // Lưu ID đang sửa
+    } else { // Tạo mới
         editorTitle.textContent = "Tạo Ghi chú Mới";
-        clearEditorFields(); // Xóa trắng các trường input
-        noteIdInput.value = ''; // Đảm bảo input ID rỗng
-        currentNoteId = null; // Đảm bảo không có note nào đang được chọn khi tạo mới
+        clearEditorFields();
+        noteIdInput.value = '';
+        currentNoteId = null; // Đảm bảo không có ID khi tạo mới
     }
-    noteTitleInput.focus(); // Tự động focus vào ô tiêu đề
+    noteTitleInput.focus();
 }
 
 /** Hiển thị khu vực xem chi tiết ghi chú */
-function showDetailView() {
-    noteDetailPlaceholder.style.display = 'none';
+function showDetailView(note) {
+    if (!note || !note.id) {
+        console.warn("Attempted to show detail view with invalid note data.");
+        showGridView(); // Quay lại grid nếu dữ liệu không hợp lệ
+        return;
+    }
+    notesGridView.style.display = 'none';
     noteEditorView.style.display = 'none';
     noteDetailView.style.display = 'block';
-}
-
-/** Hiển thị placeholder (khi không có note nào được chọn) */
-function showPlaceholder() {
-    noteDetailPlaceholder.style.display = 'flex'; // Hiện placeholder
-    noteEditorView.style.display = 'none'; // Ẩn editor
-    noteDetailView.style.display = 'none'; // Ẩn view chi tiết
-    clearNoteDisplay(); // Xóa dữ liệu chi tiết cũ
-    setActiveNoteItem(null); // Bỏ highlight item trong danh sách
+    currentNoteId = note.id; // Lưu ID đang xem
+    displayNoteDetailContent(note); // Hàm mới để chỉ hiển thị nội dung chi tiết
 }
 
 /** Xóa trắng các trường trong form editor */
@@ -168,36 +189,11 @@ function clearEditorFields() {
     editorError.textContent = '';
 }
 
-/** Xóa toàn bộ trạng thái của editor (bao gồm cả ID) */
+/** Xóa toàn bộ trạng thái của editor */
 function clearEditor() {
     clearEditorFields();
-    noteIdInput.value = ''; // Xóa ID đang sửa (nếu có)
-}
-
-/** Xóa trắng khu vực hiển thị chi tiết ghi chú */
-function clearNoteDisplay() {
-     noteDetailTitle.textContent = '';
-     noteDetailTags.innerHTML = ''; // Xóa các tag cũ
-     noteDetailContent.innerHTML = ''; // *** THAY ĐỔI: Dùng innerHTML thay vì textContent
-     noteDetailContent.style.display = 'none'; // Ẩn vùng text
-     noteDetailCode.style.display = 'none'; // Ẩn vùng code
-     codeBlock.textContent = ''; // Xóa nội dung code
-     codeBlock.className = ''; // Xóa class ngôn ngữ cũ (quan trọng cho Prism)
-     copyCodeBtn.style.display = 'none'; // Ẩn nút copy
-}
-
-/**
- * Đánh dấu (highlight) ghi chú đang được chọn trong danh sách sidebar.
- * @param {string | null} noteId - ID của ghi chú cần highlight, hoặc null để bỏ highlight tất cả.
- */
-function setActiveNoteItem(noteId) {
-    document.querySelectorAll('#notes-list-container .note-item').forEach(item => {
-        if (item.dataset.id === noteId) {
-            item.classList.add('active');
-        } else {
-            item.classList.remove('active');
-        }
-    });
+    noteIdInput.value = '';
+    // currentNoteId = null; // Reset khi hủy hoặc lưu xong
 }
 
 /**
@@ -216,55 +212,34 @@ function setActiveTagItem(tagName) {
 }
 
 /**
- * Hàm tìm và thay thế URL trong text bằng thẻ <a>.
+ * Hàm tìm và thay thế URL trong text bằng thẻ <a>. (Giữ nguyên)
  * @param {string} text - Đoạn văn bản đầu vào.
  * @returns {string} - Chuỗi HTML với các URL đã được chuyển thành link.
  */
 function linkify(text) {
     if (!text) return '';
-    // Regex đơn giản để tìm URL (http, https, ftp)
     const urlRegex = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    // Regex để tìm URL không có scheme (vd: www.google.com) - phức tạp hơn và có thể bắt nhầm
-    // const pseudoUrlRegex = /(^|[^\/])(www\.[\S]+(\b|$))/ig;
-
-    let linkedText = text.replace(urlRegex, (url) => {
-        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-    });
-
-    // Tùy chọn: Xử lý link không có scheme (www.) - Cẩn thận vì có thể bắt nhầm
-    // linkedText = linkedText.replace(pseudoUrlRegex, (match, p1, p2) => {
-    //     return `${p1}<a href="http://${p2}" target="_blank" rel="noopener noreferrer">${p2}</a>`;
-    // });
-
-    // Quan trọng: Thoát các ký tự HTML đặc biệt khác để tránh XSS khi dùng innerHTML
-    // Ngoại trừ các thẻ <a> vừa tạo
     const tempDiv = document.createElement('div');
-    tempDiv.textContent = text; // Gán text thuần túy để trình duyệt tự thoát HTML
+    tempDiv.textContent = text;
     let escapedText = tempDiv.innerHTML;
-
-    // Thay thế lại các URL đã thoát bằng link thật sự
     escapedText = escapedText.replace(urlRegex, (url) => {
-         // Cần đảm bảo URL trong href không bị thoát lần nữa
          let originalUrl = url.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
          return `<a href="${originalUrl}" target="_blank" rel="noopener noreferrer">${originalUrl}</a>`;
     });
-
-
-    // Trả về text đã được xử lý link và thoát HTML an toàn
-    return escapedText.replace(/\n/g, '<br>'); // Thay thế xuống dòng bằng <br>
+    return escapedText.replace(/\n/g, '<br>');
 }
 
 
 // --- Logic Xác thực (Authentication) ---
-// (Giữ nguyên như trước)
+// (Giữ nguyên)
 onAuthStateChanged(auth, (user) => {
     if (user) {
         console.log("User logged in:", user.uid, user.email);
         currentUser = user;
         userEmailDisplay.textContent = user.email;
         showApp();
-        loadNotesAndTags();
-        showPlaceholder();
+        loadNotesAndTags(); // Tải dữ liệu
+        showGridView(); // Hiển thị Grid View ban đầu
     } else {
         console.log("User logged out.");
         showAuth();
@@ -297,7 +272,6 @@ logoutButton.addEventListener('click', () => {
 
 
 // --- Logic quản lý Ghi chú (Notes CRUD & Display) ---
-// (Các hàm khác giữ nguyên)
 
 // Hiện/ẩn ô chọn ngôn ngữ
 isCodeCheckbox.addEventListener('change', (e) => {
@@ -307,31 +281,26 @@ isCodeCheckbox.addEventListener('change', (e) => {
     }
 });
 
-// Nút "Thêm Ghi Chú Mới"
+// Nút "Thêm Ghi Chú Mới" -> Hiển thị Editor trống
 addNoteBtn.addEventListener('click', () => {
-    setActiveNoteItem(null);
-    showEditor();
+    showEditor(); // Gọi không có tham số để tạo mới
 });
 
-// Nút "Hủy" trong Editor
+// Nút "Hủy" trong Editor -> Quay lại Grid View
 cancelEditBtn.addEventListener('click', () => {
-    const idBeingEdited = noteIdInput.value;
     clearEditor();
-    if (idBeingEdited && notesCache[idBeingEdited]) {
-        currentNoteId = idBeingEdited;
-        displayNoteDetail(notesCache[idBeingEdited]);
-        setActiveNoteItem(idBeingEdited);
-    } else {
-        showPlaceholder();
-    }
+    showGridView(); // Luôn quay lại grid view khi hủy
 });
+
+// *** THAY ĐỔI: Nút "Quay lại danh sách" từ Detail View -> Quay lại Grid View ***
+backToGridBtn.addEventListener('click', () => {
+    showGridView();
+});
+
 
 // Nút "Lưu Ghi Chú"
 saveNoteBtn.addEventListener('click', async () => {
-    if (!currentUser) {
-        alert("Vui lòng đăng nhập để lưu ghi chú.");
-        return;
-    }
+    if (!currentUser) return;
 
     const id = noteIdInput.value;
     const title = noteTitleInput.value.trim();
@@ -351,39 +320,37 @@ saveNoteBtn.addEventListener('click', async () => {
     saveNoteBtn.textContent = 'Đang lưu...';
 
     const noteData = {
-        title,
-        content,
-        tags,
-        isCode,
-        language,
+        title, content, tags, isCode, language,
         userId: currentUser.uid,
         updatedAt: Timestamp.now()
     };
 
     try {
+        let savedNoteId = id; // Lưu lại ID để hiển thị sau khi lưu
         if (id) {
-            // --- Sửa ghi chú ---
+            // Sửa
             console.log("Updating note with ID:", id);
             const noteRef = doc(db, "notes", id);
             await updateDoc(noteRef, noteData);
             console.log("Note updated successfully");
             notesCache[id] = { ...notesCache[id], ...noteData, id };
-            currentNoteId = id;
-            displayNoteDetail(notesCache[id]);
-            setActiveNoteItem(id);
         } else {
-            // --- Tạo ghi chú mới ---
+            // Tạo mới
             console.log("Adding new note");
             noteData.createdAt = Timestamp.now();
             const docRef = await addDoc(collection(db, "notes"), noteData);
             console.log("Note added with ID:", docRef.id);
-            notesCache[docRef.id] = { ...noteData, id: docRef.id };
-            currentNoteId = docRef.id;
-            displayNoteDetail(notesCache[docRef.id]);
-            setActiveNoteItem(docRef.id);
-            clearEditorFields();
-            noteEditorView.style.display = 'none';
+            savedNoteId = docRef.id; // Lấy ID mới tạo
+            notesCache[savedNoteId] = { ...noteData, id: savedNoteId };
         }
+        // *** THAY ĐỔI: Sau khi lưu thành công, quay lại Grid View ***
+        clearEditor();
+        showGridView();
+        // Không cần hiển thị chi tiết ngay sau khi lưu nữa
+        // currentNoteId = savedNoteId;
+        // displayNoteDetailContent(notesCache[savedNoteId]);
+        // showDetailView(notesCache[savedNoteId]);
+
     } catch (error) {
         console.error("Error saving note: ", error);
         editorError.textContent = `Lỗi lưu ghi chú: ${error.message}`;
@@ -393,39 +360,43 @@ saveNoteBtn.addEventListener('click', async () => {
     }
 });
 
-// Nút "Sửa" trong Detail View
+// Nút "Sửa" trong Detail View -> Hiển thị Editor với dữ liệu hiện tại
 editNoteBtn.addEventListener('click', () => {
     if (!currentNoteId || !notesCache[currentNoteId]) {
-        alert("Vui lòng chọn một ghi chú để sửa.");
+        alert("Không tìm thấy dữ liệu ghi chú để sửa.");
+        showGridView(); // Quay về grid nếu có lỗi
         return;
     };
     const noteToEdit = notesCache[currentNoteId];
-    showEditor(noteToEdit);
+    showEditor(noteToEdit); // Chuyển sang màn hình editor
 });
 
 // Nút "Xóa" trong Detail View
 deleteNoteBtn.addEventListener('click', async () => {
-     if (!currentNoteId) {
-         alert("Vui lòng chọn một ghi chú để xóa.");
-         return;
-     }
+     if (!currentNoteId) return; // Phải có note đang xem
+
      const noteTitle = notesCache[currentNoteId]?.title || "ghi chú này";
-     if (confirm(`Bạn có chắc chắn muốn xóa ghi chú "${noteTitle}" không? Hành động này không thể hoàn tác.`)) {
-        console.log("Attempting to delete note ID:", currentNoteId);
+     if (confirm(`Bạn có chắc chắn muốn xóa ghi chú "${noteTitle}" không?`)) {
+        console.log("Deleting note ID:", currentNoteId);
+        const idToDelete = currentNoteId; // Lưu lại ID trước khi reset
+        currentNoteId = null; // Reset ID đang xem
         try {
-            const noteRef = doc(db, "notes", currentNoteId);
+            const noteRef = doc(db, "notes", idToDelete);
             await deleteDoc(noteRef);
-            console.log("Note deleted successfully from Firestore");
-            delete notesCache[currentNoteId];
-            showPlaceholder();
+            console.log("Note deleted successfully");
+            delete notesCache[idToDelete]; // Xóa khỏi cache
+            // *** THAY ĐỔI: Quay lại Grid View sau khi xóa ***
+            showGridView();
+            // onSnapshot sẽ tự động cập nhật danh sách trong grid view
         } catch (error) {
             console.error("Error deleting note: ", error);
             alert(`Lỗi xóa ghi chú: ${error.message}`);
+            currentNoteId = idToDelete; // Khôi phục ID nếu xóa lỗi
         }
      }
 });
 
-// Nút "Copy Code"
+// Nút "Copy Code" (Giữ nguyên)
 copyCodeBtn.addEventListener('click', () => {
     const codeToCopy = codeBlock.textContent;
     if (codeToCopy) {
@@ -462,32 +433,31 @@ function loadNotesAndTags() {
     notesUnsubscribe = onSnapshot(notesQuery, (querySnapshot) => {
         console.log("Firestore data received (onSnapshot)");
         const allNotes = [];
-        notesCache = {};
+        const newNotesCache = {}; // Dùng cache mới để so sánh
 
         querySnapshot.forEach((doc) => {
             const note = { id: doc.id, ...doc.data() };
             allNotes.push(note);
-            notesCache[note.id] = note;
+            newNotesCache[note.id] = note;
         });
 
-        renderNotesList(allNotes);
-        renderTagsList(allNotes);
+        // Chỉ cập nhật cache và render lại nếu có thay đổi thực sự (tối ưu hóa)
+        // (Có thể bỏ qua bước kiểm tra này nếu muốn đơn giản)
+        // if (JSON.stringify(notesCache) !== JSON.stringify(newNotesCache)) {
+            console.log("Notes data changed, updating cache and UI.");
+            notesCache = newNotesCache; // Cập nhật cache chính
+            renderNotesList(allNotes); // Render lại grid
+            renderTagsList(allNotes); // Render lại tags
+        // } else {
+        //     console.log("Notes data unchanged.");
+        // }
 
-        // --- Xử lý các trường hợp cạnh ---
-        if (currentNoteId && !notesCache[currentNoteId] && noteDetailView.style.display === 'block') {
-            console.log("Current detailed note removed, showing placeholder.");
-            showPlaceholder();
+        // Xử lý nếu note đang xem chi tiết/sửa bị xóa
+        if (currentNoteId && !notesCache[currentNoteId]) {
+            console.log("Current note removed, showing grid view.");
+            showGridView(); // Nếu note đang xem/sửa bị xóa, quay về grid
         }
-        const editorNoteId = noteIdInput.value;
-        if (noteEditorView.style.display === 'block' && editorNoteId && !notesCache[editorNoteId]) {
-             console.log("Current edited note removed, clearing editor and showing placeholder.");
-             clearEditor();
-             showPlaceholder();
-        }
-        else if (currentNoteId && notesCache[currentNoteId] && noteDetailView.style.display === 'block') {
-             console.log("Updating detail view for note:", currentNoteId);
-             displayNoteDetail(notesCache[currentNoteId]);
-        }
+        // Không cần cập nhật detail view ở đây nữa vì người dùng sẽ quay lại grid
 
     }, (error) => {
         console.error("Error listening to Firestore: ", error);
@@ -496,11 +466,11 @@ function loadNotesAndTags() {
 }
 
 /**
- * Hiển thị danh sách ghi chú lên sidebar.
+ * Hiển thị danh sách ghi chú lên Grid View.
  * @param {Array<object>} notes - Mảng các đối tượng ghi chú.
  */
 function renderNotesList(notes) {
-    notesListContainer.innerHTML = '';
+    notesListContainer.innerHTML = ''; // Xóa grid cũ
 
     const notesToRender = activeTag
         ? notes.filter(note => note.tags && note.tags.includes(activeTag))
@@ -513,53 +483,50 @@ function renderNotesList(notes) {
         return;
     }
 
+    // Tạo thẻ ghi chú cho mỗi note
     notesToRender.forEach(note => {
         const noteElement = document.createElement('div');
         noteElement.classList.add('note-item');
-        noteElement.dataset.id = note.id;
+        noteElement.dataset.id = note.id; // Lưu ID
 
+        // Tiêu đề (giới hạn 2 dòng - CSS xử lý)
         const titleElement = document.createElement('h3');
         titleElement.textContent = note.title || "Không có tiêu đề";
 
-        const dateElement = document.createElement('span');
+        // Nội dung xem trước (giới hạn 4 dòng - CSS xử lý)
+        const contentPreview = document.createElement('div');
+        contentPreview.classList.add('note-item-content-preview');
+        // Lấy text thuần túy từ nội dung để xem trước, tránh hiển thị HTML/code
+        contentPreview.textContent = note.content || '';
+
+        // Ngày cập nhật
+        const dateElement = document.createElement('div'); // Đổi thành div
+        dateElement.classList.add('note-item-date'); // Thêm class
         if (note.updatedAt && note.updatedAt.toDate) {
              dateElement.textContent = note.updatedAt.toDate().toLocaleDateString('vi-VN', {
                 day: '2-digit', month: '2-digit', year: 'numeric'
              });
         } else {
-             dateElement.textContent = "Không rõ ngày";
+             dateElement.textContent = ""; // Để trống nếu không có ngày
         }
 
+        // Thêm các phần tử vào thẻ note
         noteElement.appendChild(titleElement);
+        noteElement.appendChild(contentPreview);
         noteElement.appendChild(dateElement);
 
+        // *** THAY ĐỔI: Sự kiện click trên thẻ note -> hiển thị chi tiết ***
         noteElement.addEventListener('click', () => {
-            if (currentNoteId !== note.id || noteEditorView.style.display === 'block') {
-                currentNoteId = note.id;
-                displayNoteDetail(note);
-                setActiveNoteItem(note.id);
-                 if (noteEditorView.style.display === 'block') {
-                    clearEditor();
-                    noteEditorView.style.display = 'none';
-                 }
-            }
+            showDetailView(note); // Gọi hàm hiển thị chi tiết với dữ liệu note này
         });
 
         notesListContainer.appendChild(noteElement);
     });
-
-     if (currentNoteId && !notesToRender.some(n => n.id === currentNoteId)) {
-        if (noteDetailView.style.display === 'block' || noteEditorView.style.display === 'block') {
-            showPlaceholder();
-        }
-     } else if (currentNoteId) {
-         setActiveNoteItem(currentNoteId);
-     }
 }
 
 /**
  * Hiển thị danh sách các tags duy nhất lên sidebar.
- * @param {Array<object>} notes - Mảng tất cả ghi chú (để trích xuất tags).
+ * @param {Array<object>} notes - Mảng tất cả ghi chú.
  */
 function renderTagsList(notes) {
     const allTags = new Set();
@@ -571,7 +538,7 @@ function renderTagsList(notes) {
 
     tagsListContainer.innerHTML = '';
 
-    // --- Tạo nút "Tất cả" ---
+    // Nút "Tất cả"
     const allTagElement = document.createElement('span');
     allTagElement.classList.add('tag-item');
     allTagElement.textContent = 'Tất cả';
@@ -581,14 +548,15 @@ function renderTagsList(notes) {
     allTagElement.addEventListener('click', () => {
         if (activeTag !== null) {
             activeTag = null;
-            renderNotesList(Object.values(notesCache));
             setActiveTagItem(null);
-            showPlaceholder();
+            showGridView(); // Hiển thị lại grid view (onSnapshot sẽ render lại list)
+            // Cập nhật tiêu đề grid
+             activeTagDisplay.textContent = '';
         }
     });
     tagsListContainer.appendChild(allTagElement);
 
-    // --- Hiển thị các tag khác ---
+    // Các tag khác
     [...allTags].sort().forEach(tag => {
         const tagElement = document.createElement('span');
         tagElement.classList.add('tag-item');
@@ -601,9 +569,10 @@ function renderTagsList(notes) {
         tagElement.addEventListener('click', () => {
             if (activeTag !== tag) {
                 activeTag = tag;
-                renderNotesList(Object.values(notesCache));
                 setActiveTagItem(tag);
-                showPlaceholder();
+                showGridView(); // Hiển thị lại grid view (onSnapshot sẽ render lại list)
+                 // Cập nhật tiêu đề grid
+                 activeTagDisplay.textContent = `(Tag: ${tag})`;
             }
         });
 
@@ -620,21 +589,18 @@ function renderTagsList(notes) {
 }
 
 /**
- * Hiển thị chi tiết của một ghi chú cụ thể.
+ * Chỉ hiển thị nội dung chi tiết của ghi chú (không chuyển view).
+ * Hàm này được gọi bởi showDetailView và khi dữ liệu onSnapshot thay đổi.
  * @param {object} note - Đối tượng ghi chú cần hiển thị.
  */
-function displayNoteDetail(note) {
-    if (!note || !note.id) {
-        console.warn("Invalid note data passed to displayNoteDetail");
-        showPlaceholder();
-        return;
-    }
-    console.log("Displaying detail for note:", note.id);
-    clearNoteDisplay();
+function displayNoteDetailContent(note) {
+    if (!note) return; // Thoát nếu không có note
 
+    // Hiển thị tiêu đề
     noteDetailTitle.textContent = note.title;
 
-    noteDetailTags.innerHTML = '';
+    // Hiển thị tags
+    noteDetailTags.innerHTML = ''; // Xóa tag cũ
     if (note.tags && note.tags.length > 0) {
         note.tags.forEach(tag => {
             const tagElement = document.createElement('span');
@@ -644,30 +610,22 @@ function displayNoteDetail(note) {
         });
     }
 
+    // Hiển thị nội dung (code hoặc text)
     if (note.isCode) {
-        // --- Hiển thị dạng Code ---
         noteDetailContent.style.display = 'none';
         codeBlock.textContent = note.content;
-        codeBlock.className = `language-${note.language || 'plaintext'}`; // Đặt class ngôn ngữ
+        codeBlock.className = `language-${note.language || 'plaintext'}`;
         noteDetailCode.style.display = 'block';
         copyCodeBtn.style.display = 'inline-block';
-
-        // Gọi Prism để highlight
         if (window.Prism) {
-            Prism.highlightElement(codeBlock);
-        } else {
-            console.warn("Prism.js not loaded. Syntax highlighting disabled.");
+            Prism.highlightElement(codeBlock); // Highlight lại code
         }
     } else {
-        // --- Hiển thị dạng Text thường với link ---
         noteDetailCode.style.display = 'none';
         copyCodeBtn.style.display = 'none';
-        // *** THAY ĐỔI: Sử dụng hàm linkify và innerHTML ***
-        noteDetailContent.innerHTML = linkify(note.content);
+        noteDetailContent.innerHTML = linkify(note.content); // Xử lý link
         noteDetailContent.style.display = 'block';
     }
-
-    showDetailView();
 }
 
 // --- Khởi chạy ---
