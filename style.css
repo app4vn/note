@@ -88,7 +88,6 @@ input:focus, textarea:focus, select:focus {
 /* *** THÊM MỚI: Style riêng cho ô tìm kiếm trong sidebar *** */
 #search-input {
     margin-bottom: 0; /* Bỏ margin bottom mặc định vì có hr ngay dưới */
-    /* Có thể thêm icon tìm kiếm nếu muốn (phức tạp hơn) */
 }
 
 
@@ -467,6 +466,15 @@ hr {
     transform: scale(0.95);
 }
 
+/* *** THÊM MỚI: Style cho highlight tìm kiếm *** */
+.search-highlight {
+    background-color: yellow; /* Màu nền vàng */
+    font-weight: bold; /* Chữ đậm */
+    /* padding: 0 2px; */ /* Tùy chọn: thêm padding nhỏ */
+    /* border-radius: 3px; */ /* Tùy chọn: bo góc nhẹ */
+    color: #333; /* Đảm bảo màu chữ dễ đọc trên nền vàng */
+}
+
 
 /* Responsive Design */
 @media (max-width: 992px) {
@@ -503,7 +511,6 @@ hr {
         overflow-y: visible;
         padding: 15px;
     }
-    /* *** THÊM MỚI: Đảm bảo search input không bị margin bottom mặc định trên mobile *** */
     .sidebar #search-input {
         margin-bottom: 0;
     }
