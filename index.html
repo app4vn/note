@@ -6,6 +6,10 @@
     <title>Ghi Chú Cá Nhân</title>
     <link rel="stylesheet" href="style.css">
     <link id="prism-theme-link" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;500;700&family=Merriweather:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
     <script type="module" src="script.js" defer></script>
 </head>
 <body>
@@ -51,7 +55,8 @@
                 <h2>Tags</h2>
                 <div id="tags-list-container">
                     </div>
-                <div class="sidebar-settings"> <hr>
+                <div class="sidebar-settings">
+                    <hr>
                     <h2>Giao diện</h2>
                     <div class="theme-selector">
                          <div class="theme-options">
@@ -70,6 +75,16 @@
                             <button class="accent-color-button" data-accent="#fd7e14" style="background-color: #fd7e14;" title="Cam"></button>
                             <button class="accent-color-button" data-accent="#6f42c1" style="background-color: #6f42c1;" title="Tím"></button>
                         </div>
+                    </div>
+                    <div class="font-selector">
+                        <h3>Font chữ Nội dung</h3>
+                        <select id="font-select">
+                            <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">Hệ thống (Mặc định)</option>
+                            <option value="'Lora', serif">Lora (Serif)</option>
+                            <option value="'Roboto', sans-serif">Roboto (Sans-serif)</option>
+                            <option value="'Open Sans', sans-serif">Open Sans (Sans-serif)</option>
+                            <option value="'Merriweather', serif">Merriweather (Serif)</option>
+                            </select>
                     </div>
                 </div>
             </aside>
