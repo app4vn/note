@@ -49,62 +49,27 @@
         <div class="main-content">
             <aside class="sidebar">
                 <button id="add-note-btn" class="button-primary full-width">Thêm Ghi Chú Mới</button>
-                <button id="show-trash-btn" class="sidebar-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66H14.5a.5.5 0 0 0 0-1H11Zm-1 1.007H6.5V13h3V3.5ZM5.036 3.5h5.928L10.202 13H5.797L5.036 3.5Z"/>
-                    </svg>
-                    Thùng rác
-                </button>
-                 <button id="show-all-notes-btn" class="sidebar-button" style="display: none;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
-                        <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
-                        <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8m0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0M4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
-                    </svg>
-                     Tất cả Ghi chú
-                </button>
                 <hr>
                 <input type="search" id="search-input" placeholder="Tìm kiếm ghi chú...">
                 <hr>
                 <h2>Tags</h2>
                 <div id="tags-list-container">
                     </div>
-                <div class="sidebar-settings">
-                    <h2>Giao diện</h2>
-                    <div class="theme-selector">
-                         <div class="theme-options">
-                            <button data-theme="light" class="theme-button" title="Giao diện Sáng">Sáng</button>
-                            <button data-theme="dark" class="theme-button" title="Giao diện Tối">Tối</button>
-                            <button data-theme="gruvbox-light" class="theme-button" title="Giao diện Gruvbox Sáng">Gruvbox</button>
-                            <button data-theme="dracula" class="theme-button" title="Giao diện Dracula">Dracula</button>
-                            <button data-theme="solarized-light" class="theme-button" title="Giao diện Solarized Sáng">Solarized</button>
-                         </div>
-                    </div>
-                    <div class="accent-color-selector">
-                        <h3>Màu nhấn</h3>
-                        <div class="accent-color-options">
-                            <button class="accent-color-button" data-accent="#007bff" style="background-color: #007bff;" title="Xanh dương (Mặc định)"></button>
-                            <button class="accent-color-button" data-accent="#198754" style="background-color: #198754;" title="Xanh lá"></button>
-                            <button class="accent-color-button" data-accent="#dc3545" style="background-color: #dc3545;" title="Đỏ"></button>
-                            <button class="accent-color-button" data-accent="#ffc107" style="background-color: #ffc107;" title="Vàng"></button>
-                            <button class="accent-color-button" data-accent="#fd7e14" style="background-color: #fd7e14;" title="Cam"></button>
-                            <button class="accent-color-button" data-accent="#6f42c1" style="background-color: #6f42c1;" title="Tím"></button>
-                        </div>
-                    </div>
-                    <div class="font-selector">
-                        <h3>Font chữ Nội dung</h3>
-                        <select id="font-select">
-                            <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">Hệ thống (Mặc định)</option>
-                            <option value="'Lora', serif">Lora (Serif)</option>
-                            <option value="'Roboto', sans-serif">Roboto (Sans-serif)</option>
-                            <option value="'Open Sans', sans-serif">Open Sans (Sans-serif)</option>
-                            <option value="'Merriweather', serif">Merriweather (Serif)</option>
-                        </select>
-                    </div>
+                <div class="sidebar-footer">
+                    <button id="trash-icon-btn" class="sidebar-icon-button" title="Thùng rác / Tất cả Ghi chú">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66H14.5a.5.5 0 0 0 0-1H11Zm-1 1.007H6.5V13h3V3.5ZM5.036 3.5h5.928L10.202 13H5.797L5.036 3.5Z"/>
+                        </svg>
+                        </button>
+                    <button id="settings-icon-btn" class="sidebar-icon-button" title="Cài đặt Giao diện">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311a1.464 1.464 0 0 1-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.858 2.929 2.929 0 0 1 0 5.858"/>
+                        </svg>
+                    </button>
                 </div>
             </aside>
 
             <main class="content-area">
-
                 <div id="notes-grid-view">
                     <div class="grid-view-header">
                         <h2 id="main-view-title">Tất cả Ghi chú <span id="active-tag-display"></span></h2>
@@ -122,7 +87,6 @@
                         <p>Đang tải ghi chú...</p>
                     </div>
                 </div>
-
                 <div id="trash-view" style="display: none;">
                     <div class="grid-view-header">
                         <h2>Ghi chú trong Thùng rác</h2>
@@ -131,15 +95,10 @@
                         <p>Thùng rác trống.</p>
                     </div>
                 </div>
-
-
                 <div id="note-detail-view" style="display: none;">
                      <button id="back-to-grid-btn" class="button-secondary back-button">&larr; Quay lại danh sách</button>
                      <button id="pin-note-detail-btn" class="pin-button" title="Ghim/Bỏ ghim ghi chú">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle" viewBox="0 0 16 16">
-                            <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146"/>
-                            <path d="M6.559 2.788a1.527 1.527 0 0 1 .217.217l2.135 2.134a1.527 1.527 0 0 1 .217.217L6.428 7.47a.5.5 0 0 1-.707 0l-2.134-2.134a.5.5 0 0 1 0-.707l2.134-2.134a.5.5 0 0 1 .707 0z"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle" viewBox="0 0 16 16">...</svg>
                      </button>
                      <h2 id="note-detail-title"></h2>
                      <div id="note-detail-tags" class="tags-display"></div>
@@ -151,7 +110,6 @@
                           <button id="copy-code-btn" class="button-secondary" style="display: none;">Copy Code</button>
                      </div>
                 </div>
-
                 <div id="note-editor-view" style="display: none;">
                     <h2 id="editor-title">Soạn thảo Ghi chú</h2>
                     <input type="hidden" id="note-id-input">
@@ -159,25 +117,12 @@
                     <textarea id="note-content-input" placeholder="Nội dung ghi chú..." rows="10" required></textarea>
                     <div class="tag-input-container">
                         <input type="text" id="note-tags-input" placeholder="Tags (cách nhau bằng dấu phẩy)">
-                        <div id="tag-suggestions" class="tag-suggestions-list" style="display: none;">
-                            </div>
+                        <div id="tag-suggestions" class="tag-suggestions-list" style="display: none;"></div>
                     </div>
                     <div class="code-options">
                         <input type="checkbox" id="note-is-code-checkbox">
                         <label for="note-is-code-checkbox">Đây là code?</label>
-                        <select id="note-language-select" style="display: none;">
-                            <option value="plaintext">Plain Text</option>
-                            <option value="javascript">JavaScript</option>
-                            <option value="python">Python</option>
-                            <option value="html">HTML</option>
-                            <option value="css">CSS</option>
-                            <option value="sql">SQL</option>
-                            <option value="json">JSON</option>
-                            <option value="markdown">Markdown</option>
-                            <option value="java">Java</option>
-                            <option value="csharp">C#</option>
-                            <option value="php">PHP</option>
-                        </select>
+                        <select id="note-language-select" style="display: none;">...</select>
                     </div>
                     <div class="editor-actions">
                         <button id="save-note-btn" class="button-primary">Lưu Ghi Chú</button>
@@ -193,6 +138,47 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
     <button id="scrollToTopBtn" title="Cuộn lên đầu trang">&uarr;</button>
+
+    <div id="settings-overlay" style="display: none;"></div>
+    <div id="settings-panel" style="display: none;">
+        <div class="settings-panel-header">
+            <h2>Tùy chỉnh Giao diện</h2>
+            <button id="close-settings-btn" class="close-button">&times;</button>
+        </div>
+        <div class="settings-panel-content">
+            <div class="theme-selector">
+                 <h3>Chủ đề</h3>
+                 <div class="theme-options">
+                    <button data-theme="light" class="theme-button" title="Giao diện Sáng">Sáng</button>
+                    <button data-theme="dark" class="theme-button" title="Giao diện Tối">Tối</button>
+                    <button data-theme="gruvbox-light" class="theme-button" title="Giao diện Gruvbox Sáng">Gruvbox</button>
+                    <button data-theme="dracula" class="theme-button" title="Giao diện Dracula">Dracula</button>
+                    <button data-theme="solarized-light" class="theme-button" title="Giao diện Solarized Sáng">Solarized</button>
+                 </div>
+            </div>
+            <div class="accent-color-selector">
+                <h3>Màu nhấn</h3>
+                <div class="accent-color-options">
+                    <button class="accent-color-button" data-accent="#007bff" style="background-color: #007bff;" title="Xanh dương"></button>
+                    <button class="accent-color-button" data-accent="#198754" style="background-color: #198754;" title="Xanh lá"></button>
+                    <button class="accent-color-button" data-accent="#dc3545" style="background-color: #dc3545;" title="Đỏ"></button>
+                    <button class="accent-color-button" data-accent="#ffc107" style="background-color: #ffc107;" title="Vàng"></button>
+                    <button class="accent-color-button" data-accent="#fd7e14" style="background-color: #fd7e14;" title="Cam"></button>
+                    <button class="accent-color-button" data-accent="#6f42c1" style="background-color: #6f42c1;" title="Tím"></button>
+                </div>
+            </div>
+            <div class="font-selector">
+                <h3>Font chữ Nội dung</h3>
+                <select id="font-select">
+                    <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">Hệ thống</option>
+                    <option value="'Lora', serif">Lora</option>
+                    <option value="'Roboto', sans-serif">Roboto</option>
+                    <option value="'Open Sans', sans-serif">Open Sans</option>
+                    <option value="'Merriweather', serif">Merriweather</option>
+                </select>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
