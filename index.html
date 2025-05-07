@@ -39,6 +39,11 @@
 
     <div id="app-container" style="display: none;">
         <header class="app-header">
+            <button id="mobile-menu-btn" class="mobile-menu-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+                </svg>
+            </button>
             <h1>Ghi Chú Của Tôi</h1>
             <div class="user-info">
                 <span id="user-email"></span>
@@ -46,8 +51,8 @@
             </div>
         </header>
 
-        <div class="main-content">
-            <aside class="sidebar">
+        <div class="main-content has-sidebar">
+            <aside id="sidebar" class="sidebar">
                 <button id="add-note-btn" class="button-primary full-width">Thêm Ghi Chú Mới</button>
                 <hr>
                 <input type="search" id="search-input" placeholder="Tìm kiếm ghi chú...">
@@ -106,7 +111,7 @@
                 </div>
             </aside>
 
-            <main class="content-area">
+            <main id="content-area" class="content-area">
                 <div id="notes-grid-view">
                     <div class="grid-view-header">
                         <h2 id="main-view-title">Tất cả Ghi chú <span id="active-tag-display"></span></h2>
@@ -147,8 +152,7 @@
                      <pre id="note-detail-code" style="display: none;"><code class="language-plaintext"></code></pre>
                      <div id="note-detail-todos-container" style="display: none;">
                         <h3>Danh sách công việc:</h3>
-                        <ul id="note-detail-todos-list">
-                            </ul>
+                        <ul id="note-detail-todos-list"></ul>
                         <div id="note-detail-todos-progress" style="margin-top: 10px;"></div>
                      </div>
                      <div id="note-detail-actions">
@@ -198,8 +202,7 @@
 
                     <div id="note-editor-todos-container" style="margin-top: 20px;">
                         <h3>Danh sách công việc (<label for="enable-todo-checkbox">Bật/Tắt</label> <input type="checkbox" id="enable-todo-checkbox">)</h3>
-                        <ul id="note-editor-todos-list" style="list-style: none; padding-left: 0;">
-                            </ul>
+                        <ul id="note-editor-todos-list" style="list-style: none; padding-left: 0;"></ul>
                         <button type="button" id="add-todo-editor-item-btn" class="button-secondary" style="margin-top: 10px;">Thêm công việc</button>
                     </div>
 
@@ -211,6 +214,8 @@
                 </div>
             </main>
         </div>
+
+        <div id="sidebar-overlay"></div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
