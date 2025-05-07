@@ -121,8 +121,14 @@ let currentSortOption = 'updatedAt_desc';
 let currentTheme = 'light';
 let currentAccentColor = '#007bff';
 let currentContentFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'";
-let allUserTags = new Set(); // Vẫn dùng để gợi ý tag
+let allUserTags = new Set();
 let currentView = 'notes';
+
+// --- SVG Paths --- (Lưu trữ path để dễ dùng lại)
+const pinAngleSVGPath = "M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146zm-3.27 1.96a.5.5 0 0 1 0 .707L2.874 8.874a.5.5 0 1 1-.707-.707l3.687-3.687a.5.5 0 0 1 .707 0z";
+const pinAngleFillSVGPath = "M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z";
+const trashSVGPath = "M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66H14.5a.5.5 0 0 0 0-1H11Zm-1 1.007H6.5V13h3V3.5ZM5.036 3.5h5.928L10.202 13H5.797L5.036 3.5Z";
+const listSVGPath = "M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zM5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8m0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0M4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0";
 
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
@@ -153,14 +159,12 @@ function showAuth() {
     if(searchInput) searchInput.value = '';
     if(sortSelect) sortSelect.value = currentSortOption;
     if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
-    if (trashIconBtn) { // Reset nút thùng rác về trạng thái ban đầu
+    if (trashIconBtn) {
         trashIconBtn.classList.remove('active');
         trashIconBtn.title = "Thùng rác";
         const svg = trashIconBtn.querySelector('svg');
-        if (svg && !svg.classList.contains('bi-trash3')) {
-             svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66H14.5a.5.5 0 0 0 0-1H11Zm-1 1.007H6.5V13h3V3.5ZM5.036 3.5h5.928L10.202 13H5.797L5.036 3.5Z"/>
-                             </svg>`;
+        if (svg) {
+            svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"><path d="${trashSVGPath}"/></svg>`;
         }
     }
     loginForm.style.display = 'block';
@@ -188,7 +192,7 @@ function showMainNotesView() {
         trashIconBtn.title = "Thùng rác";
         const svg = trashIconBtn.querySelector('svg');
         if (svg && !svg.classList.contains('bi-trash3')) {
-             svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">...</svg>`; // SVG path
+             svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"><path d="${trashSVGPath}"/></svg>`;
         }
     }
     if (sortSelect) sortSelect.disabled = false;
@@ -211,7 +215,7 @@ function showTrashNotesView() {
         trashIconBtn.title = "Tất cả Ghi chú";
         const svg = trashIconBtn.querySelector('svg');
          if (svg && !svg.classList.contains('bi-card-list')) {
-             svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">...</svg>`; // SVG path
+             svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16"><path d="${listSVGPath}"/></svg>`;
         }
     }
     if (sortSelect) sortSelect.disabled = true;
@@ -801,7 +805,10 @@ function renderNotesList(notesFromCache) {
 
         const pinIcon = document.createElement('span');
         pinIcon.classList.add('pin-icon');
-        pinIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle${note.isPinned ? '-fill' : ''}" viewBox="0 0 16 16">...</svg>`; // SVG content
+        // *** SỬA LỖI SVG PATH: Sử dụng biến đã định nghĩa ở trên ***
+        pinIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle${note.isPinned ? '-fill' : ''}" viewBox="0 0 16 16">
+                                <path d="${note.isPinned ? pinAngleFillSVGPath : pinAngleSVGPath}"/>
+                             </svg>`;
         if (note.isPinned) pinIcon.classList.add('pinned');
         pinIcon.title = note.isPinned ? "Bỏ ghim" : "Ghim ghi chú";
         pinIcon.addEventListener('click', (e) => { e.stopPropagation(); togglePinStatus(note.id); });
@@ -898,6 +905,7 @@ function renderTagsList(notes) {
     });
     tagsListContainer.appendChild(allTagElement);
 
+    // *** SỬA LỖI: Dùng allUserTags thay vì duyệt lại notes ***
     [...allUserTags].sort().forEach(tag => {
         const tagElement = document.createElement('span');
         tagElement.classList.add('tag-item');
@@ -932,9 +940,14 @@ function displayNoteDetailContent(note) {
         pinNoteDetailBtn.title = note.isPinned ? "Bỏ ghim ghi chú" : "Ghim ghi chú";
         const svgIcon = pinNoteDetailBtn.querySelector('svg');
         if (svgIcon) {
+            // *** SỬA LỖI SVG PATH: Sử dụng biến đã định nghĩa ***
+            const pathElement = svgIcon.querySelector('path');
+            if(pathElement){
+                pathElement.setAttribute('d', note.isPinned ? pinAngleFillSVGPath : pinAngleSVGPath);
+            }
+            // Thay đổi class để CSS có thể xử lý nếu cần (ví dụ fill)
             svgIcon.classList.remove('bi-pin-angle', 'bi-pin-angle-fill');
             svgIcon.classList.add(note.isPinned ? 'bi-pin-angle-fill' : 'bi-pin-angle');
-            svgIcon.innerHTML = note.isPinned ? '<path d="M9.828.722...z"/>' : '<path d="M9.828.722...z"/><path d="M6.559...z"/>'; // Full SVG paths
         }
     }
     noteDetailTags.innerHTML = '';
