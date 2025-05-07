@@ -56,10 +56,19 @@ const sortSelect = document.getElementById('sort-select');
 
 const tagsListContainer = document.getElementById('tags-list-container');
 const addNoteBtn = document.getElementById('add-note-btn');
+// *** THÊM MỚI: Tham chiếu đến nút Thùng rác và Tất cả Ghi chú ***
+const showTrashBtn = document.getElementById('show-trash-btn');
+const showAllNotesBtn = document.getElementById('show-all-notes-btn');
+
 
 const notesGridView = document.getElementById('notes-grid-view');
 const noteDetailView = document.getElementById('note-detail-view');
 const noteEditorView = document.getElementById('note-editor-view');
+// *** THÊM MỚI: Tham chiếu đến view Thùng rác và list container của nó ***
+const trashView = document.getElementById('trash-view');
+const trashListContainer = document.getElementById('trash-list-container');
+const mainViewTitle = document.getElementById('main-view-title');
+
 
 const notesListContainer = document.getElementById('notes-list-container');
 const activeTagDisplay = document.getElementById('active-tag-display');
@@ -72,7 +81,7 @@ const noteDetailCode = document.getElementById('note-detail-code');
 const codeBlock = noteDetailCode.querySelector('code');
 const copyCodeBtn = document.getElementById('copy-code-btn');
 const editNoteBtn = document.getElementById('edit-note-btn');
-const deleteNoteBtn = document.getElementById('delete-note-btn');
+const deleteNoteBtn = document.getElementById('delete-note-btn'); // Nút này giờ sẽ "soft delete"
 const pinNoteDetailBtn = document.getElementById('pin-note-detail-btn');
 
 
@@ -99,16 +108,21 @@ const fontSelect = document.getElementById('font-select');
 
 // --- Biến trạng thái toàn cục ---
 let currentUser = null;
-let currentNoteId = null;
-let notesUnsubscribe = null;
+let currentNoteId = null; // ID của note đang xem chi tiết (nếu có)
+let notesUnsubscribe = null; // Listener cho notes chính
+let trashUnsubscribe = null; // Listener cho notes trong thùng rác
 let activeTag = null;
-let notesCache = {};
+let notesCache = {}; // Cache cho notes chính
+let trashedNotesCache = {}; // Cache cho notes trong thùng rác
 let currentSearchTerm = '';
 let currentSortOption = 'updatedAt_desc';
 let currentTheme = 'light';
 let currentAccentColor = '#007bff';
 let currentContentFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'";
 let allUserTags = new Set();
+// *** THÊM MỚI: Trạng thái đang xem view nào (notes, trash) ***
+let currentView = 'notes'; // 'notes' hoặc 'trash'
+
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
 function showApp() {
@@ -122,42 +136,75 @@ function showAuth() {
     currentUser = null;
     clearEditor();
     notesListContainer.innerHTML = '<p>Vui lòng đăng nhập.</p>';
+    trashListContainer.innerHTML = '<p>Vui lòng đăng nhập.</p>'; // Reset trash view
     tagsListContainer.innerHTML = '';
-    if (notesUnsubscribe) {
-        notesUnsubscribe();
-        notesUnsubscribe = null;
-    }
+    if (notesUnsubscribe) { notesUnsubscribe(); notesUnsubscribe = null; }
+    if (trashUnsubscribe) { trashUnsubscribe(); trashUnsubscribe = null; } // Hủy listener trash
     notesCache = {};
+    trashedNotesCache = {}; // Reset cache trash
     allUserTags.clear();
     activeTag = null;
     currentNoteId = null;
     currentSearchTerm = '';
     currentSortOption = 'updatedAt_desc';
+    currentView = 'notes'; // Reset về view notes
     if(searchInput) searchInput.value = '';
     if(sortSelect) sortSelect.value = currentSortOption;
     if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
+    if (showTrashBtn) showTrashBtn.style.display = 'flex'; // Hiện nút thùng rác
+    if (showAllNotesBtn) showAllNotesBtn.style.display = 'none'; // Ẩn nút tất cả notes
     loginForm.style.display = 'block';
     signupForm.style.display = 'none';
     loginError.textContent = '';
     signupError.textContent = '';
 }
 
-function showGridView() {
+/** Hiển thị Grid View chính, ẩn các view khác */
+function showMainNotesView() {
     notesGridView.style.display = 'block';
+    trashView.style.display = 'none'; // Ẩn view thùng rác
     noteDetailView.style.display = 'none';
     noteEditorView.style.display = 'none';
     currentNoteId = null;
+    currentView = 'notes';
+    if (mainViewTitle) mainViewTitle.textContent = "Tất cả Ghi chú";
     if (activeTag) {
         activeTagDisplay.textContent = `(Tag: ${activeTag})`;
     } else {
         activeTagDisplay.textContent = '';
     }
+    if (showTrashBtn) showTrashBtn.style.display = 'flex';
+    if (showAllNotesBtn) showAllNotesBtn.style.display = 'none';
+    if (sortSelect) sortSelect.disabled = false; // Bật lại sort cho notes chính
+    if (searchInput) searchInput.disabled = false; // Bật lại search
+    if (tagsListContainer) tagsListContainer.style.display = 'block'; // Hiện lại tags
+
     if (contentArea) contentArea.scrollTop = 0;
-    renderNotesList(Object.values(notesCache));
+    renderNotesList(Object.values(notesCache)); // Render notes từ cache chính
 }
+
+/** Hiển thị Thùng rác View, ẩn các view khác */
+function showTrashNotesView() {
+    notesGridView.style.display = 'none';
+    trashView.style.display = 'block'; // Hiện view thùng rác
+    noteDetailView.style.display = 'none';
+    noteEditorView.style.display = 'none';
+    currentNoteId = null;
+    currentView = 'trash';
+    if (showTrashBtn) showTrashBtn.style.display = 'none'; // Ẩn nút thùng rác
+    if (showAllNotesBtn) showAllNotesBtn.style.display = 'flex'; // Hiện nút tất cả notes
+    if (sortSelect) sortSelect.disabled = true; // Vô hiệu hóa sort trong thùng rác
+    if (searchInput) searchInput.disabled = true; // Vô hiệu hóa search
+    if (tagsListContainer) tagsListContainer.style.display = 'none'; // Ẩn tags
+
+    if (contentArea) contentArea.scrollTop = 0;
+    renderTrashedNotesList(Object.values(trashedNotesCache)); // Render notes từ cache thùng rác
+}
+
 
 function showEditor(note = null) {
     notesGridView.style.display = 'none';
+    trashView.style.display = 'none';
     noteDetailView.style.display = 'none';
     noteEditorView.style.display = 'block';
     editorError.textContent = '';
@@ -186,10 +233,11 @@ function showEditor(note = null) {
 function showDetailView(note) {
     if (!note || !note.id) {
         console.warn("Attempted to show detail view with invalid note data.");
-        showGridView();
+        showMainNotesView(); // Quay lại grid chính nếu lỗi
         return;
     }
     notesGridView.style.display = 'none';
+    trashView.style.display = 'none';
     noteEditorView.style.display = 'none';
     noteDetailView.style.display = 'block';
     currentNoteId = note.id;
@@ -250,7 +298,8 @@ function highlightText(text, searchTerm) {
 }
 
 
-// --- Logic xử lý Theme ---
+// --- Logic xử lý Theme, Màu Nhấn, Font --- (Giữ nguyên)
+// ... (Toàn bộ code cho applyTheme, loadSavedTheme, themeButtons, applyAccentColor, loadSavedAccentColor, accentColorButtons, applyContentFont, loadSavedContentFont, fontSelect) ...
 function applyTheme(themeName) {
     console.log("Applying theme:", themeName);
     document.body.classList.remove('theme-dark', 'theme-gruvbox-light', 'theme-dracula', 'theme-solarized-light');
@@ -305,7 +354,6 @@ themeButtons.forEach(button => {
     });
 });
 
-// --- Logic xử lý Màu Nhấn ---
 function hexToRgb(hex) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
@@ -368,7 +416,6 @@ accentColorButtons.forEach(button => {
     });
 });
 
-// --- Logic xử lý Font chữ Nội dung ---
 function applyContentFont(fontFamily) {
     console.log("Applying content font:", fontFamily);
     document.documentElement.style.setProperty('--font-content', fontFamily);
@@ -420,14 +467,16 @@ onAuthStateChanged(auth, (user) => {
         currentUser = user;
         userEmailDisplay.textContent = user.email;
         showApp();
-        loadNotesAndTags();
-        showGridView();
+        loadNotesAndTags(); // Tải notes chính
+        loadTrashedNotes(); // Tải notes trong thùng rác
+        showMainNotesView(); // Hiển thị view notes chính ban đầu
     } else {
         console.log("User logged out.");
         showAuth();
     }
 });
 
+// (Các hàm xử lý form login/signup/logout giữ nguyên)
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = loginForm['login-email'].value;
@@ -486,11 +535,21 @@ addNoteBtn.addEventListener('click', () => {
 
 cancelEditBtn.addEventListener('click', () => {
     clearEditor();
-    showGridView();
+    // Quay lại view trước đó (grid hoặc trash)
+    if (currentView === 'trash') {
+        showTrashNotesView();
+    } else {
+        showMainNotesView();
+    }
 });
 
 backToGridBtn.addEventListener('click', () => {
-    showGridView();
+    // Quay lại view trước đó (grid hoặc trash)
+    if (currentView === 'trash') {
+        showTrashNotesView();
+    } else {
+        showMainNotesView();
+    }
 });
 
 saveNoteBtn.addEventListener('click', async () => {
@@ -507,7 +566,7 @@ saveNoteBtn.addEventListener('click', async () => {
 
     if (!title || !content) {
         editorError.textContent = "Tiêu đề và Nội dung không được để trống!";
-        // showToast("Tiêu đề và Nội dung không được để trống!", 'error'); // Đã bỏ toast
+        alert("Tiêu đề và Nội dung không được để trống!");
         return;
     }
     editorError.textContent = '';
@@ -518,34 +577,32 @@ saveNoteBtn.addEventListener('click', async () => {
         title, content, tags, isCode, language,
         userId: currentUser.uid,
         updatedAt: Timestamp.now(),
-        isPinned: id ? (notesCache[id]?.isPinned || false) : false
+        isPinned: id ? (notesCache[id]?.isPinned || false) : false,
+        isTrashed: false // Khi lưu (tạo mới hoặc sửa) thì không nằm trong thùng rác
     };
 
     try {
-        let savedNoteId = id;
         if (id) {
             console.log("Updating note with ID:", id);
             const noteRef = doc(db, "notes", id);
             await updateDoc(noteRef, noteData);
             console.log("Note updated successfully");
-            notesCache[id] = { ...notesCache[id], ...noteData, id };
-            // showToast('Ghi chú đã được cập nhật!', 'success'); // Đã bỏ toast
+            // Cache sẽ được cập nhật bởi onSnapshot
+            alert('Ghi chú đã được cập nhật!');
         } else {
             console.log("Adding new note");
             noteData.createdAt = Timestamp.now();
             const docRef = await addDoc(collection(db, "notes"), noteData);
             console.log("Note added with ID:", docRef.id);
-            savedNoteId = docRef.id;
-            notesCache[savedNoteId] = { ...noteData, id: savedNoteId };
-            // showToast('Ghi chú mới đã được tạo!', 'success'); // Đã bỏ toast
+            alert('Ghi chú mới đã được tạo!');
         }
         clearEditor();
-        showGridView();
+        showMainNotesView(); // Luôn quay lại grid chính sau khi lưu
 
     } catch (error) {
         console.error("Error saving note: ", error);
         editorError.textContent = `Lỗi lưu ghi chú: ${error.message}`;
-        // showToast(`Lỗi lưu ghi chú: ${error.message}`, 'error'); // Đã bỏ toast
+        alert(`Lỗi lưu ghi chú: ${error.message}`);
     } finally {
         saveNoteBtn.disabled = false;
         saveNoteBtn.textContent = 'Lưu Ghi Chú';
@@ -554,33 +611,35 @@ saveNoteBtn.addEventListener('click', async () => {
 
 editNoteBtn.addEventListener('click', () => {
     if (!currentNoteId || !notesCache[currentNoteId]) {
-        alert("Vui lòng chọn một ghi chú để sửa."); // Giữ lại alert ở đây hoặc thay bằng cách khác
-        showGridView();
+        alert("Không tìm thấy dữ liệu ghi chú để sửa.");
+        showMainNotesView();
         return;
     };
     const noteToEdit = notesCache[currentNoteId];
     showEditor(noteToEdit);
 });
 
+// *** CẬP NHẬT: Nút deleteNoteBtn giờ sẽ "soft delete" ***
 deleteNoteBtn.addEventListener('click', async () => {
-     if (!currentNoteId) return;
+     if (!currentNoteId || !notesCache[currentNoteId]) return;
 
      const noteTitle = notesCache[currentNoteId]?.title || "ghi chú này";
-     if (confirm(`Bạn có chắc chắn muốn xóa ghi chú "${noteTitle}" không?`)) {
-        console.log("Deleting note ID:", currentNoteId);
-        const idToDelete = currentNoteId;
-        currentNoteId = null;
+     if (confirm(`Bạn có chắc chắn muốn chuyển ghi chú "${noteTitle}" vào thùng rác không?`)) {
+        console.log("Moving note to trash, ID:", currentNoteId);
+        const noteRef = doc(db, "notes", currentNoteId);
         try {
-            const noteRef = doc(db, "notes", idToDelete);
-            await deleteDoc(noteRef);
-            console.log("Note deleted successfully");
-            delete notesCache[idToDelete];
-            // showToast(`Đã xóa ghi chú "${noteTitle}".`, 'info'); // Đã bỏ toast
-            showGridView();
+            await updateDoc(noteRef, {
+                isTrashed: true,
+                trashedAt: Timestamp.now(),
+                updatedAt: Timestamp.now() // Cập nhật để thay đổi thứ tự nếu cần
+            });
+            console.log("Note moved to trash successfully");
+            alert(`Đã chuyển ghi chú "${noteTitle}" vào thùng rác.`);
+            showMainNotesView(); // Quay lại grid chính
+            // onSnapshot sẽ tự động cập nhật cả notesCache và trashedNotesCache
         } catch (error) {
-            console.error("Error deleting note: ", error);
-            alert(`Lỗi xóa ghi chú: ${error.message}`); // Giữ lại alert
-            currentNoteId = idToDelete;
+            console.error("Error moving note to trash:", error);
+            alert(`Lỗi khi chuyển vào thùng rác: ${error.message}`);
         }
      }
 });
@@ -590,41 +649,41 @@ copyCodeBtn.addEventListener('click', () => {
     if (codeToCopy) {
         navigator.clipboard.writeText(codeToCopy)
             .then(() => {
-                alert('Đã sao chép code vào clipboard!'); // Giữ lại alert hoặc thay bằng cách khác
+                alert('Đã sao chép code vào clipboard!');
                 copyCodeBtn.textContent = 'Đã chép!';
                 setTimeout(() => { copyCodeBtn.textContent = 'Copy Code'; }, 1500);
             })
             .catch(err => {
                 console.error('Clipboard copy failed:', err);
-                alert('Lỗi khi sao chép code.'); // Giữ lại alert
+                alert('Lỗi khi sao chép code.');
             });
     }
 });
 
 // --- Tải và Hiển thị Dữ liệu từ Firestore ---
+
+/** Tải danh sách ghi chú chính (không trong thùng rác) */
 function loadNotesAndTags() {
     if (!currentUser) return;
-    console.log(`Setting up Firestore listener for user: ${currentUser.uid}, Sort: ${currentSortOption}`);
+    console.log(`Loading main notes for user: ${currentUser.uid}, Sort: ${currentSortOption}`);
 
     const [sortField, sortDirection] = currentSortOption.split('_');
 
     let notesQuery = query(
         collection(db, "notes"),
-        where("userId", "==", currentUser.uid)
+        where("userId", "==", currentUser.uid),
+        where("isTrashed", "==", false) // Chỉ lấy notes không trong thùng rác
     );
     notesQuery = query(notesQuery, orderBy("isPinned", "desc"), orderBy(sortField, sortDirection));
 
 
-    if (notesUnsubscribe) {
-        console.log("Unsubscribing previous listener.");
-        notesUnsubscribe();
-    }
+    if (notesUnsubscribe) notesUnsubscribe();
 
     notesUnsubscribe = onSnapshot(notesQuery, (querySnapshot) => {
-        console.log("Firestore data received (onSnapshot)");
+        console.log("Main notes data received");
         const allNotes = [];
         const newNotesCache = {};
-        allUserTags.clear();
+        allUserTags.clear(); // Xóa tags cũ để cập nhật từ notes chính
 
         querySnapshot.forEach((doc) => {
             const note = { id: doc.id, ...doc.data() };
@@ -635,43 +694,78 @@ function loadNotesAndTags() {
             }
         });
 
-        console.log("Notes data changed, updating cache and UI.");
         notesCache = newNotesCache;
-        renderNotesList(Object.values(notesCache));
-        renderTagsList(allNotes);
+        if (currentView === 'notes') { // Chỉ render nếu đang ở view notes chính
+            renderNotesList(Object.values(notesCache));
+        }
+        renderTagsList(allNotes); // Luôn cập nhật tags dựa trên notes chính
 
-        if (currentNoteId && !notesCache[currentNoteId]) {
-            console.log("Current note removed, showing grid view.");
-            showGridView();
+        // Xử lý nếu note đang xem chi tiết bị xóa hoặc chuyển vào thùng rác
+        if (currentNoteId && !notesCache[currentNoteId] && noteDetailView.style.display === 'block') {
+            showMainNotesView();
         } else if (currentNoteId && notesCache[currentNoteId] && noteDetailView.style.display === 'block') {
             displayNoteDetailContent(notesCache[currentNoteId]);
         }
 
-
     }, (error) => {
-        console.error("Error listening to Firestore: ", error);
+        console.error("Error loading main notes: ", error);
         if (error.code === 'failed-precondition') {
-             const errorMsg = "Lỗi: Cần tạo chỉ mục (index) trong Firestore để sắp xếp. Hãy kiểm tra Console của trình duyệt để lấy link tạo chỉ mục.";
-             notesListContainer.innerHTML = `<p class="error-message">${errorMsg}</p>`;
-             // showToast(errorMsg, 'error', 5000); // Đã bỏ toast
+             notesListContainer.innerHTML = `<p class="error-message">Lỗi: Cần tạo chỉ mục (index) trong Firestore. Kiểm tra Console.</p>`;
              console.error("Firestore Index Required:", error.message);
         } else {
-            const errorMsg = `Lỗi tải ghi chú: ${error.message}`;
-            notesListContainer.innerHTML = `<p class="error-message">${errorMsg}</p>`;
-            // showToast(errorMsg, 'error', 5000); // Đã bỏ toast
+            notesListContainer.innerHTML = `<p class="error-message">Lỗi tải ghi chú: ${error.message}</p>`;
         }
     });
 }
 
+/** *** THÊM MỚI: Tải danh sách ghi chú trong thùng rác *** */
+function loadTrashedNotes() {
+    if (!currentUser) return;
+    console.log(`Loading trashed notes for user: ${currentUser.uid}`);
+
+    const trashQuery = query(
+        collection(db, "notes"),
+        where("userId", "==", currentUser.uid),
+        where("isTrashed", "==", true), // Chỉ lấy notes trong thùng rác
+        orderBy("trashedAt", "desc") // Sắp xếp theo ngày vào thùng rác mới nhất
+    );
+
+    if (trashUnsubscribe) trashUnsubscribe();
+
+    trashUnsubscribe = onSnapshot(trashQuery, (querySnapshot) => {
+        console.log("Trashed notes data received");
+        const allTrashedNotes = [];
+        const newTrashedNotesCache = {};
+
+        querySnapshot.forEach((doc) => {
+            const note = { id: doc.id, ...doc.data() };
+            allTrashedNotes.push(note);
+            newTrashedNotesCache[note.id] = note;
+        });
+        trashedNotesCache = newTrashedNotesCache;
+        if (currentView === 'trash') { // Chỉ render nếu đang ở view thùng rác
+            renderTrashedNotesList(Object.values(trashedNotesCache));
+        }
+    }, (error) => {
+        console.error("Error loading trashed notes: ", error);
+         if (error.code === 'failed-precondition') {
+             trashListContainer.innerHTML = `<p class="error-message">Lỗi: Cần tạo chỉ mục (index) cho thùng rác. Kiểm tra Console.</p>`;
+             console.error("Firestore Index Required for trash:", error.message);
+        } else {
+            trashListContainer.innerHTML = `<p class="error-message">Lỗi tải thùng rác: ${error.message}</p>`;
+        }
+    });
+}
+
+
+/** Hiển thị danh sách ghi chú chính */
 function renderNotesList(notesFromCache) {
     notesListContainer.innerHTML = '';
 
     const searchTermLower = currentSearchTerm.toLowerCase();
-
     let notesToRender = notesFromCache.filter(note => {
         const tagMatch = !activeTag || (note.tags && note.tags.includes(activeTag));
         if (!tagMatch) return false;
-
         if (searchTermLower) {
             const titleMatch = note.title?.toLowerCase().includes(searchTermLower);
             const contentMatch = note.content?.toLowerCase().includes(searchTermLower);
@@ -681,18 +775,12 @@ function renderNotesList(notesFromCache) {
         return true;
     });
 
-
     if (notesToRender.length === 0) {
-        let message = '';
-        if (activeTag && currentSearchTerm) {
-            message = `Không có ghi chú nào với tag "${activeTag}" khớp với "${currentSearchTerm}".`;
-        } else if (activeTag) {
-            message = `Không có ghi chú nào với tag "${activeTag}".`;
-        } else if (currentSearchTerm) {
-            message = `Không có ghi chú nào khớp với "${currentSearchTerm}".`;
-        } else {
-            message = 'Chưa có ghi chú nào. Hãy tạo ghi chú mới!';
-        }
+        let message = 'Chưa có ghi chú nào.';
+        if (activeTag && currentSearchTerm) message = `Không có ghi chú nào với tag "${activeTag}" khớp với "${currentSearchTerm}".`;
+        else if (activeTag) message = `Không có ghi chú nào với tag "${activeTag}".`;
+        else if (currentSearchTerm) message = `Không có ghi chú nào khớp với "${currentSearchTerm}".`;
+        else message = 'Chưa có ghi chú nào. Hãy tạo ghi chú mới!';
         notesListContainer.innerHTML = `<p>${message}</p>`;
         return;
     }
@@ -704,67 +792,102 @@ function renderNotesList(notesFromCache) {
 
         const pinIcon = document.createElement('span');
         pinIcon.classList.add('pin-icon');
-        pinIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle${note.isPinned ? '-fill' : ''}" viewBox="0 0 16 16">
-                                ${note.isPinned ? '<path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>'
-                                : '<path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146"/><path d="M6.559 2.788a1.527 1.527 0 0 1 .217.217l2.135 2.134a1.527 1.527 0 0 1 .217.217L6.428 7.47a.5.5 0 0 1-.707 0l-2.134-2.134a.5.5 0 0 1 0-.707l2.134-2.134a.5.5 0 0 1 .707 0z"/>'
-                                }
-                             </svg>`;
-        if (note.isPinned) {
-            pinIcon.classList.add('pinned');
-        }
+        pinIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle${note.isPinned ? '-fill' : ''}" viewBox="0 0 16 16">...</svg>`; // SVG content
+        if (note.isPinned) pinIcon.classList.add('pinned');
         pinIcon.title = note.isPinned ? "Bỏ ghim" : "Ghim ghi chú";
-        pinIcon.addEventListener('click', (e) => {
-            e.stopPropagation();
-            togglePinStatus(note.id);
-        });
+        pinIcon.addEventListener('click', (e) => { e.stopPropagation(); togglePinStatus(note.id); });
         noteElement.appendChild(pinIcon);
-
 
         const titleElement = document.createElement('h3');
         titleElement.innerHTML = highlightText(note.title || "Không có tiêu đề", currentSearchTerm);
-
         const contentPreview = document.createElement('div');
         contentPreview.classList.add('note-item-content-preview');
         contentPreview.innerHTML = highlightText(note.content || '', currentSearchTerm);
-
         const dateElement = document.createElement('div');
         dateElement.classList.add('note-item-date');
         if (note.updatedAt && note.updatedAt.toDate) {
-             dateElement.textContent = note.updatedAt.toDate().toLocaleDateString('vi-VN', {
-                day: '2-digit', month: '2-digit', year: 'numeric'
-             });
-        } else {
-             dateElement.textContent = "";
+             dateElement.textContent = note.updatedAt.toDate().toLocaleDateString('vi-VN', {day: '2-digit', month: '2-digit', year: 'numeric'});
         }
-
         noteElement.appendChild(titleElement);
         noteElement.appendChild(contentPreview);
         noteElement.appendChild(dateElement);
+        noteElement.addEventListener('click', () => showDetailView(note));
+        notesListContainer.appendChild(noteElement);
+    });
+}
 
-        noteElement.addEventListener('click', () => {
-            showDetailView(note);
+/** *** THÊM MỚI: Hiển thị danh sách ghi chú trong thùng rác *** */
+function renderTrashedNotesList(trashedNotes) {
+    trashListContainer.innerHTML = '';
+    if (trashedNotes.length === 0) {
+        trashListContainer.innerHTML = '<p>Thùng rác trống.</p>';
+        return;
+    }
+
+    trashedNotes.forEach(note => {
+        const noteElement = document.createElement('div');
+        noteElement.classList.add('note-item'); // Tái sử dụng class .note-item
+        noteElement.dataset.id = note.id;
+
+        const titleElement = document.createElement('h3');
+        titleElement.textContent = note.title || "Không có tiêu đề";
+
+        const contentPreview = document.createElement('div');
+        contentPreview.classList.add('note-item-content-preview');
+        contentPreview.textContent = note.content || ''; // Không cần highlight trong thùng rác
+
+        const trashedDateElement = document.createElement('div');
+        trashedDateElement.classList.add('note-item-date');
+        if (note.trashedAt && note.trashedAt.toDate) {
+            trashedDateElement.textContent = `Vào thùng rác: ${note.trashedAt.toDate().toLocaleDateString('vi-VN', {day: '2-digit', month: '2-digit', year: 'numeric'})}`;
+        }
+
+        // Nút hành động cho thùng rác
+        const actionsDiv = document.createElement('div');
+        actionsDiv.classList.add('trashed-note-actions');
+
+        const restoreBtn = document.createElement('button');
+        restoreBtn.classList.add('button-secondary'); // Hoặc class khác
+        restoreBtn.textContent = 'Khôi phục';
+        restoreBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            restoreNoteFromTrash(note.id);
         });
 
-        notesListContainer.appendChild(noteElement);
+        const deletePermanentlyBtn = document.createElement('button');
+        deletePermanentlyBtn.classList.add('button-danger');
+        deletePermanentlyBtn.textContent = 'Xóa vĩnh viễn';
+        deletePermanentlyBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteNotePermanently(note.id, note.title);
+        });
+
+        actionsDiv.appendChild(restoreBtn);
+        actionsDiv.appendChild(deletePermanentlyBtn);
+
+        noteElement.appendChild(titleElement);
+        noteElement.appendChild(contentPreview);
+        noteElement.appendChild(trashedDateElement);
+        noteElement.appendChild(actionsDiv);
+
+        // Không thêm sự kiện click để xem chi tiết cho note trong thùng rác
+        trashListContainer.appendChild(noteElement);
     });
 }
 
 
 function renderTagsList(notes) {
     tagsListContainer.innerHTML = '';
-
     const allTagElement = document.createElement('span');
     allTagElement.classList.add('tag-item');
     allTagElement.textContent = 'Tất cả';
-    if (activeTag === null) {
-        allTagElement.classList.add('active');
-    }
+    if (activeTag === null) allTagElement.classList.add('active');
     allTagElement.addEventListener('click', () => {
         if (activeTag !== null) {
             activeTag = null;
             setActiveTagItem(null);
             renderNotesList(Object.values(notesCache));
-            showGridView();
+            showMainNotesView(); // Đảm bảo quay về view notes chính
         }
     });
     tagsListContainer.appendChild(allTagElement);
@@ -774,19 +897,15 @@ function renderTagsList(notes) {
         tagElement.classList.add('tag-item');
         tagElement.textContent = tag;
         tagElement.dataset.tag = tag;
-        if (tag === activeTag) {
-            tagElement.classList.add('active');
-        }
-
+        if (tag === activeTag) tagElement.classList.add('active');
         tagElement.addEventListener('click', () => {
             if (activeTag !== tag) {
                 activeTag = tag;
                 setActiveTagItem(tag);
                 renderNotesList(Object.values(notesCache));
-                showGridView();
+                showMainNotesView(); // Đảm bảo quay về view notes chính
             }
         });
-
         tagsListContainer.appendChild(tagElement);
     });
 
@@ -801,9 +920,7 @@ function renderTagsList(notes) {
 
 function displayNoteDetailContent(note) {
     if (!note) return;
-
     noteDetailTitle.textContent = note.title;
-
     if (pinNoteDetailBtn) {
         pinNoteDetailBtn.classList.toggle('pinned', !!note.isPinned);
         pinNoteDetailBtn.title = note.isPinned ? "Bỏ ghim ghi chú" : "Ghim ghi chú";
@@ -811,12 +928,9 @@ function displayNoteDetailContent(note) {
         if (svgIcon) {
             svgIcon.classList.remove('bi-pin-angle', 'bi-pin-angle-fill');
             svgIcon.classList.add(note.isPinned ? 'bi-pin-angle-fill' : 'bi-pin-angle');
-            svgIcon.innerHTML = note.isPinned ? '<path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>'
-                                           : '<path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146"/><path d="M6.559 2.788a1.527 1.527 0 0 1 .217.217l2.135 2.134a1.527 1.527 0 0 1 .217.217L6.428 7.47a.5.5 0 0 1-.707 0l-2.134-2.134a.5.5 0 0 1 0-.707l2.134-2.134a.5.5 0 0 1 .707 0z"/>';
+            svgIcon.innerHTML = note.isPinned ? '<path d="M9.828.722...z"/>' : '<path d="M9.828.722...z"/><path d="M6.559...z"/>'; // Full SVG paths
         }
     }
-
-
     noteDetailTags.innerHTML = '';
     if (note.tags && note.tags.length > 0) {
         note.tags.forEach(tag => {
@@ -826,16 +940,13 @@ function displayNoteDetailContent(note) {
             noteDetailTags.appendChild(tagElement);
         });
     }
-
     if (note.isCode) {
         noteDetailContent.style.display = 'none';
         codeBlock.textContent = note.content;
         codeBlock.className = `language-${note.language || 'plaintext'}`;
         noteDetailCode.style.display = 'block';
         copyCodeBtn.style.display = 'inline-block';
-        if (window.Prism) {
-            Prism.highlightElement(codeBlock);
-        }
+        if (window.Prism) Prism.highlightElement(codeBlock);
     } else {
         noteDetailCode.style.display = 'none';
         copyCodeBtn.style.display = 'none';
@@ -847,18 +958,13 @@ function displayNoteDetailContent(note) {
 // --- Logic Ghim Ghi chú ---
 async function togglePinStatus(noteId) {
     if (!currentUser || !notesCache[noteId]) return;
-
     const noteRef = doc(db, "notes", noteId);
     const currentPinnedStatus = notesCache[noteId].isPinned || false;
     const newPinnedStatus = !currentPinnedStatus;
-
     try {
-        await updateDoc(noteRef, {
-            isPinned: newPinnedStatus,
-            updatedAt: Timestamp.now()
-        });
+        await updateDoc(noteRef, { isPinned: newPinnedStatus, updatedAt: Timestamp.now() });
         console.log(`Note ${noteId} pin status updated to ${newPinnedStatus}`);
-        // alert(newPinnedStatus ? "Đã ghim ghi chú!" : "Đã bỏ ghim ghi chú."); // Thay bằng toast nếu muốn
+        alert(newPinnedStatus ? "Đã ghim ghi chú!" : "Đã bỏ ghim ghi chú.");
     } catch (error) {
         console.error("Error updating pin status:", error);
         alert("Lỗi cập nhật trạng thái ghim.");
@@ -867,14 +973,58 @@ async function togglePinStatus(noteId) {
 
 if (pinNoteDetailBtn) {
     pinNoteDetailBtn.addEventListener('click', () => {
-        if (currentNoteId) {
-            togglePinStatus(currentNoteId);
-        }
+        if (currentNoteId) togglePinStatus(currentNoteId);
     });
 }
 
-// --- Logic Gợi ý Tag ---
+// --- *** THÊM MỚI: Logic cho Thùng rác *** ---
+/** Khôi phục ghi chú từ thùng rác */
+async function restoreNoteFromTrash(noteId) {
+    if (!currentUser || !trashedNotesCache[noteId]) return;
+    const noteRef = doc(db, "notes", noteId);
+    try {
+        await updateDoc(noteRef, {
+            isTrashed: false,
+            trashedAt: null, // Xóa thời điểm vào thùng rác
+            updatedAt: Timestamp.now()
+        });
+        console.log(`Note ${noteId} restored from trash.`);
+        alert("Đã khôi phục ghi chú.");
+        // onSnapshot sẽ tự động cập nhật cả trashedNotesCache và notesCache
+    } catch (error) {
+        console.error("Error restoring note:", error);
+        alert("Lỗi khôi phục ghi chú.");
+    }
+}
 
+/** Xóa vĩnh viễn ghi chú */
+async function deleteNotePermanently(noteId, noteTitle = "ghi chú này") {
+    if (!currentUser || !trashedNotesCache[noteId]) return;
+    if (confirm(`Bạn có chắc chắn muốn XÓA VĨNH VIỄN ghi chú "${noteTitle}" không? Hành động này KHÔNG THỂ hoàn tác.`)) {
+        const noteRef = doc(db, "notes", noteId);
+        try {
+            await deleteDoc(noteRef);
+            console.log(`Note ${noteId} permanently deleted.`);
+            alert("Đã xóa vĩnh viễn ghi chú.");
+            // onSnapshot sẽ tự động cập nhật trashedNotesCache
+        } catch (error) {
+            console.error("Error permanently deleting note:", error);
+            alert("Lỗi xóa vĩnh viễn ghi chú.");
+        }
+    }
+}
+
+// Gắn sự kiện cho các nút điều hướng view
+if (showTrashBtn) {
+    showTrashBtn.addEventListener('click', showTrashNotesView);
+}
+if (showAllNotesBtn) {
+    showAllNotesBtn.addEventListener('click', showMainNotesView);
+}
+
+
+// --- Logic Gợi ý Tag ---
+// (Giữ nguyên)
 function displayTagSuggestions(suggestions, currentTagValue) {
     if (!tagSuggestionsContainer) return;
     tagSuggestionsContainer.innerHTML = '';
@@ -935,6 +1085,7 @@ if (noteTagsInput) {
 
 
 // --- Logic cho nút Scroll to Top ---
+// (Giữ nguyên)
 function handleScroll() {
     if (!contentArea || !scrollToTopBtn) return;
     if (contentArea.scrollTop > 200) {
@@ -962,23 +1113,31 @@ if (scrollToTopBtn) {
 }
 
 // --- Logic tìm kiếm ---
+// (Giữ nguyên)
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
         currentSearchTerm = e.target.value.trim();
-        renderNotesList(Object.values(notesCache));
+        // Render lại view hiện tại (notes hoặc trash)
+        if (currentView === 'notes') {
+            renderNotesList(Object.values(notesCache));
+        } else if (currentView === 'trash') {
+            renderTrashedNotesList(Object.values(trashedNotesCache)); // Cần hàm render riêng cho trash nếu muốn tìm kiếm trong trash
+        }
     });
 } else {
     console.warn("Search input element not found.");
 }
 
 // --- Logic sắp xếp ---
+// (Giữ nguyên)
 if (sortSelect) {
     sortSelect.addEventListener('change', (e) => {
         const newSortOption = e.target.value;
         if (newSortOption !== currentSortOption) {
             console.log("Sort option changed to:", newSortOption);
             currentSortOption = newSortOption;
-            loadNotesAndTags();
+            loadNotesAndTags(); // Tải lại notes chính với sắp xếp mới
+            // Không cần tải lại trash vì trash có cách sắp xếp riêng
         }
     });
 } else {
