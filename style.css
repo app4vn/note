@@ -42,6 +42,9 @@
     --text-error: #dc3545;
     --text-code-block: #393a34;
     --text-highlight: #333;
+    /* *** THÊM MỚI/CẬP NHẬT: Màu cho tiêu đề ghi chú *** */
+    --text-note-title: var(--accent-color);
+
 
     --border-primary: #dee2e6;
     --border-secondary: #e0e0e0;
@@ -84,6 +87,8 @@ body.theme-dark {
     --text-error: #f17c7c;
     --text-code-block: #abb2bf;
     --text-highlight: #212529;
+    /* --text-note-title: var(--accent-color); */ /* Kế thừa từ root hoặc JS sẽ set */
+
 
     --border-primary: #495057;
     --border-secondary: #5c636a;
@@ -123,6 +128,7 @@ body.theme-gruvbox-light {
     --text-error: #cc241d;
     --text-code-block: #3c3836;
     --text-highlight: #3c3836;
+    /* --text-note-title: var(--accent-color); */
 
     --border-primary: #d5c4a1;
     --border-secondary: #bdae93;
@@ -161,6 +167,8 @@ body.theme-dracula {
     --text-error: #ff5555;
     --text-code-block: #f8f8f2;
     --text-highlight: #282a36;
+    /* --text-note-title: var(--accent-color); */
+
 
     --border-primary: #6272a4;
     --border-secondary: #44475a;
@@ -199,6 +207,7 @@ body.theme-solarized-light {
     --text-error: #dc322f;
     --text-code-block: #586e75;
     --text-highlight: #002b36;
+    /* --text-note-title: var(--accent-color); */
 
     --border-primary: #93a1a1;
     --border-secondary: #eee8d5;
@@ -498,7 +507,6 @@ hr {
 
 #tags-list-container {
     margin-top: 10px;
-    /* flex-grow: 1; */ /* Không cần flex-grow nếu settings ở cuối */
 }
 #tags-list-container .tag-item {
      display: inline-block;
@@ -621,10 +629,10 @@ body.theme-solarized-light .note-item::before {
 
 
 /* Nội dung bên trong thẻ */
-.note-item h3 {
+.note-item h3 { /* Tiêu đề thẻ */
     font-size: 1.1em;
     margin-bottom: 8px;
-    color: var(--text-primary);
+    color: var(--text-note-title); /* *** SỬ DỤNG BIẾN MÀU NHẤN CHO TIÊU ĐỀ THẺ *** */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -679,10 +687,10 @@ body.theme-solarized-light .note-item::before {
 #note-detail-view {
     position: relative;
 }
-#note-detail-view h2 {
+#note-detail-view h2 { /* Tiêu đề note chi tiết */
     padding-bottom: 15px;
     margin-bottom: 20px;
-    color: var(--text-primary);
+    color: var(--text-note-title); /* *** SỬ DỤNG BIẾN MÀU NHẤN CHO TIÊU ĐỀ CHI TIẾT *** */
     font-size: 1.8em;
     word-break: break-word;
     padding-right: 40px;
@@ -913,7 +921,7 @@ body.theme-solarized-light .note-item::before {
 .theme-selector, .accent-color-selector, .font-selector {
     margin-bottom: 15px;
 }
-.theme-selector h3, .accent-color-selector h3, .font-selector h3 { /* Đổi h2 thành h3 cho các mục con */
+.theme-selector h3, .accent-color-selector h3, .font-selector h3 {
     font-size: 0.95em;
     margin-bottom: 10px;
     padding-bottom: 0;
@@ -923,14 +931,14 @@ body.theme-solarized-light .note-item::before {
 }
 .theme-options {
     display: flex;
-    gap: 8px; /* Giảm gap một chút */
+    gap: 8px;
     flex-wrap: wrap;
 }
 .theme-button {
     flex: 1;
-    min-width: 55px; /* Giảm min-width */
-    padding: 6px 8px; /* Giảm padding */
-    font-size: 0.85em; /* Giảm font */
+    min-width: 55px;
+    padding: 6px 8px;
+    font-size: 0.85em;
     border: 1px solid var(--border-primary);
     background-color: var(--bg-secondary);
     color: var(--text-secondary);
