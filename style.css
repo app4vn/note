@@ -26,9 +26,8 @@
     --bg-note-item-active: #cfe2ff;
     --bg-tag-item: #6c757d;
     --bg-tag-item-active: #007bff;
-    /* *** THÊM MỚI: Màu cho dog ear *** */
-    --dog-ear-color: #e0e0e0; /* Màu nếp gấp */
-    --dog-ear-shadow: rgba(0,0,0,0.2); /* Màu shadow */
+    --dog-ear-color: #e0e0e0;
+    --dog-ear-shadow: rgba(0,0,0,0.2);
 
     --text-primary: #333;
     --text-secondary: #6c757d;
@@ -72,7 +71,6 @@ body.theme-dark {
     --bg-note-item-active: #0d6efd;
     --bg-tag-item: #5c636a;
     --bg-tag-item-active: #0d6efd;
-    /* *** THÊM MỚI: Màu dog ear cho theme tối *** */
     --dog-ear-color: #5c636a;
     --dog-ear-shadow: rgba(0,0,0,0.4);
 
@@ -101,24 +99,23 @@ body.theme-dark {
 
 body.theme-gruvbox-light {
     /* Theme Gruvbox Sáng */
-    --bg-primary: #fbf1c7;
-    --bg-secondary: #ebdbb2;
+    --bg-primary: #fbf1c7;       /* Nền chính body và content-area */
+    --bg-secondary: #ebdbb2;     /* Nền thẻ ghi chú, nền auth-container */
     --bg-sidebar: #f2e5bc;
     --bg-header: #3c3836;
-    --bg-input: #fbf1c7;
+    --bg-input: #fbf1c7;        /* Nền input giống nền chính */
     --bg-button-primary: #458588;
     --bg-button-primary-hover: #076678;
     --bg-button-secondary: #7c6f64;
     --bg-button-secondary-hover: #665c54;
     --bg-button-danger: #cc241d;
     --bg-button-danger-hover: #9d0006;
-    --bg-code-block: #f2e5bc;
-    --bg-content-display: #f2e5bc;
-    --bg-note-item-hover: #d5c4a1;
+    --bg-code-block: #f2e5bc;    /* Nền code block */
+    --bg-content-display: #f2e5bc; /* Nền khung text chi tiết */
+    --bg-note-item-hover: #d5c4a1; /* Nền thẻ khi hover, đậm hơn thẻ thường */
     --bg-note-item-active: #bdae93;
     --bg-tag-item: #7c6f64;
     --bg-tag-item-active: #458588;
-     /* *** THÊM MỚI: Màu dog ear cho theme gruvbox *** */
     --dog-ear-color: #bdae93;
     --dog-ear-shadow: rgba(60, 56, 54, 0.2);
 
@@ -133,11 +130,11 @@ body.theme-gruvbox-light {
     --text-code-block: #3c3836;
     --text-highlight: #3c3836;
 
-    --border-primary: #d5c4a1;
-    --border-secondary: #bdae93;
+    --border-primary: #d5c4a1;   /* Viền thẻ, viền sidebar */
+    --border-secondary: #bdae93; /* Viền hr, viền header grid */
     --border-input: #bdae93;
     --border-input-focus: #458588;
-    --border-content-display: #d5c4a1;
+    --border-content-display: #d5c4a1; /* Viền khung text chi tiết */
     --border-code-block: #bdae93;
 
     --shadow-primary: rgba(0,0,0,0.08);
@@ -413,10 +410,15 @@ hr {
 .content-area {
     flex-grow: 1;
     padding: 30px 40px;
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-secondary); /* Mặc định dùng --bg-secondary */
     overflow-y: auto;
     transition: background-color 0.3s ease;
 }
+/* *** THÊM MỚI: Override màu nền content-area cho Gruvbox *** */
+body.theme-gruvbox-light .content-area {
+    background-color: var(--bg-primary); /* Cho Gruvbox, content-area dùng nền chính */
+}
+
 
 /* Grid View */
 #notes-grid-view {
@@ -467,18 +469,18 @@ hr {
 
 /* Thẻ ghi chú trong lưới */
 #notes-list-container .note-item {
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-secondary); /* Thẻ note sẽ dùng --bg-secondary */
     border: 1px solid var(--border-primary);
     border-radius: 8px;
     padding: 15px 20px;
     cursor: pointer;
     transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
-    overflow: hidden; /* Quan trọng để dog ear không bị tràn */
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     min-height: 150px;
     box-shadow: 0 1px 3px var(--shadow-primary);
-    position: relative; /* *** THÊM MỚI: Cần thiết cho pseudo-element *** */
+    position: relative;
 }
 #notes-list-container .note-item:hover {
     box-shadow: 0 4px 12px var(--shadow-primary);
@@ -486,21 +488,25 @@ hr {
     background-color: var(--bg-note-item-hover);
 }
 
-/* *** THÊM MỚI: Style cho hiệu ứng Dog Ear *** */
+/* Style cho hiệu ứng Dog Ear */
 #notes-list-container .note-item::before {
     content: "";
     position: absolute;
     top: 0;
     right: 0;
-    border-width: 0 25px 25px 0; /* Kích thước góc gấp, điều chỉnh nếu cần */
+    border-width: 0 25px 25px 0;
     border-style: solid;
-    /* Màu của phần gấp (nền chính) và phần bị lộ ra (màu dog ear) */
+    /* Màu nếp gấp sẽ là màu nền chính của trang */
     border-color: var(--bg-primary) var(--bg-primary) var(--dog-ear-color) var(--dog-ear-color);
-    /* Tạo bóng đổ nhẹ cho nếp gấp */
     box-shadow: -1px 1px 3px var(--dog-ear-shadow);
-    /* Bo góc nhẹ cho phần gấp (tùy chọn) */
-    /* border-bottom-left-radius: 4px; */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Thêm transition */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+/* *** THÊM MỚI: Override màu nếp gấp cho Gruvbox *** */
+/* Khi content-area của Gruvbox dùng --bg-primary, thì nếp gấp của dog-ear cũng phải dùng --bg-primary */
+/* (Không cần override riêng nếu dog-ear-color đã được set đúng theo theme) */
+/* Tuy nhiên, màu của phần giấy bị lộ ra (border-color thứ 1 & 2) phải là màu nền của content-area */
+body.theme-gruvbox-light #notes-list-container .note-item::before {
+    border-color: var(--bg-primary) var(--bg-primary) var(--dog-ear-color) var(--dog-ear-color);
 }
 
 
@@ -548,7 +554,6 @@ hr {
 
 /* Chế độ xem chi tiết */
 #note-detail-view h2 { /* Tiêu đề note chi tiết */
-    /* border-bottom: 1px solid var(--border-secondary); */
     padding-bottom: 15px;
     margin-bottom: 20px;
     color: var(--text-primary);
