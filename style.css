@@ -32,9 +32,6 @@
     --dog-ear-color: #e0e0e0;
     --dog-ear-shadow: rgba(0,0,0,0.2);
 
-    /* Màu cho Toast Notifications (đã bỏ, giữ lại để tham khảo nếu cần) */
-    /* --toast-bg-success: #d1e7dd; ... */
-
     --text-primary: #333;
     --text-secondary: #6c757d;
     --text-header: #fff;
@@ -232,7 +229,7 @@ h1, h2 {
     font-weight: 600;
 }
 /* Tiêu đề lưới */
-#notes-grid-view h2, #trash-view h2 { /* Áp dụng cho cả tiêu đề thùng rác */
+#notes-grid-view h2, #trash-view h2 {
     margin-bottom: 20px;
     font-size: 1.6em;
     color: var(--text-primary);
@@ -469,24 +466,24 @@ hr {
      padding-bottom: 5px;
 }
 
-/* *** THÊM MỚI: Style cho các nút trong sidebar (Thùng rác, Tất cả notes) *** */
+/* Style cho các nút trong sidebar (Thùng rác, Tất cả notes) */
 .sidebar-button {
     display: flex;
     align-items: center;
-    gap: 8px; /* Khoảng cách giữa icon và text */
+    gap: 8px;
     width: 100%;
     text-align: left;
-    padding: 10px 12px; /* Điều chỉnh padding */
-    background-color: transparent; /* Nền trong suốt */
-    color: var(--text-primary); /* Màu chữ theo theme */
-    border: 1px solid transparent; /* Viền trong suốt ban đầu */
-    margin-bottom: 5px; /* Khoảng cách giữa các nút */
+    padding: 10px 12px;
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid transparent;
+    margin-bottom: 5px;
 }
 .sidebar-button:hover {
-    background-color: var(--bg-note-item-hover); /* Màu nền khi hover */
-    border-color: var(--border-primary); /* Hiện viền khi hover */
+    background-color: var(--bg-note-item-hover);
+    border-color: var(--border-primary);
 }
-.sidebar-button.active { /* Nút đang được chọn */
+.sidebar-button.active {
     background-color: var(--accent-color);
     color: var(--text-button);
     border-color: var(--accent-color);
@@ -495,12 +492,13 @@ hr {
 .sidebar-button svg {
     width: 16px;
     height: 16px;
-    flex-shrink: 0; /* Không cho icon co lại */
+    flex-shrink: 0;
 }
 
 
 #tags-list-container {
     margin-top: 10px;
+    /* flex-grow: 1; */ /* Không cần flex-grow nếu settings ở cuối */
 }
 #tags-list-container .tag-item {
      display: inline-block;
@@ -534,8 +532,8 @@ body.theme-solarized-light .content-area {
 
 
 /* Grid View */
-#notes-grid-view, #trash-view { /* Áp dụng cho cả trash view */
-    display: block; /* Mặc định block, JS sẽ đổi thành none khi cần */
+#notes-grid-view, #trash-view {
+    display: block;
 }
 
 /* Header của Grid View */
@@ -572,7 +570,7 @@ body.theme-solarized-light .content-area {
 }
 
 
-#notes-list-container, #trash-list-container { /* Áp dụng cho cả trash list */
+#notes-list-container, #trash-list-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
@@ -581,12 +579,11 @@ body.theme-solarized-light .content-area {
 }
 
 /* Thẻ ghi chú trong lưới (và trong thùng rác) */
-.note-item { /* Đổi tên class chung cho thẻ note */
+.note-item {
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-primary);
     border-radius: 8px;
     padding: 15px 20px;
-    /* cursor: pointer; */ /* Bỏ cursor pointer ở đây, chỉ đặt cho phần click được */
     transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
     overflow: hidden;
     display: flex;
@@ -595,18 +592,18 @@ body.theme-solarized-light .content-area {
     box-shadow: 0 1px 3px var(--shadow-primary);
     position: relative;
 }
-#notes-list-container .note-item:hover { /* Hover chỉ cho note trong danh sách chính */
+#notes-list-container .note-item:hover {
     box-shadow: 0 4px 12px var(--shadow-primary);
     border-color: var(--border-input-focus);
     background-color: var(--bg-note-item-hover);
 }
-#notes-list-container .note-item { /* Thêm lại cursor pointer cho note chính */
+#notes-list-container .note-item {
     cursor: pointer;
 }
 
 
 /* Style cho hiệu ứng Dog Ear */
-.note-item::before { /* Áp dụng cho tất cả note-item */
+.note-item::before {
     content: "";
     position: absolute;
     top: 0;
@@ -658,22 +655,22 @@ body.theme-solarized-light .note-item::before {
 }
 
 /* Thông báo khi không có note */
-#notes-list-container > p, #trash-list-container > p { /* Áp dụng cho cả trash */
+#notes-list-container > p, #trash-list-container > p {
     grid-column: 1 / -1;
     text-align: center;
     color: var(--text-secondary);
     margin-top: 30px;
 }
 
-/* *** THÊM MỚI: Style cho các nút trong thẻ ghi chú của thùng rác *** */
+/* Style cho các nút trong thẻ ghi chú của thùng rác */
 .trashed-note-actions {
     margin-top: 15px;
     display: flex;
     gap: 10px;
-    justify-content: flex-end; /* Căn các nút về bên phải */
+    justify-content: flex-end;
 }
 .trashed-note-actions button {
-    padding: 6px 10px; /* Padding nhỏ hơn cho nút trong thẻ */
+    padding: 6px 10px;
     font-size: 0.85em;
 }
 
@@ -904,7 +901,7 @@ body.theme-solarized-light .note-item::before {
     border-radius: 2px;
 }
 
-/* Style cho Bộ chọn Theme & Cài đặt khác */
+/* Style cho Bộ chọn Theme & Cài đặt khác trong Sidebar */
 .sidebar-settings {
     margin-top: auto;
     padding-top: 15px;
@@ -916,7 +913,7 @@ body.theme-solarized-light .note-item::before {
 .theme-selector, .accent-color-selector, .font-selector {
     margin-bottom: 15px;
 }
-.theme-selector h2, .accent-color-selector h3, .font-selector h3 {
+.theme-selector h3, .accent-color-selector h3, .font-selector h3 { /* Đổi h2 thành h3 cho các mục con */
     font-size: 0.95em;
     margin-bottom: 10px;
     padding-bottom: 0;
@@ -926,14 +923,14 @@ body.theme-solarized-light .note-item::before {
 }
 .theme-options {
     display: flex;
-    gap: 10px;
+    gap: 8px; /* Giảm gap một chút */
     flex-wrap: wrap;
 }
 .theme-button {
     flex: 1;
-    min-width: 60px;
-    padding: 6px 10px;
-    font-size: 0.9em;
+    min-width: 55px; /* Giảm min-width */
+    padding: 6px 8px; /* Giảm padding */
+    font-size: 0.85em; /* Giảm font */
     border: 1px solid var(--border-primary);
     background-color: var(--bg-secondary);
     color: var(--text-secondary);
@@ -952,8 +949,6 @@ body.theme-solarized-light .note-item::before {
 }
 
 /* Style cho Bộ chọn Màu Nhấn */
-.accent-color-selector {
-}
 .accent-color-options {
     display: flex;
     flex-wrap: wrap;
@@ -988,7 +983,7 @@ body.theme-solarized-light .note-item::before {
 
 /* Responsive Design */
 @media (max-width: 992px) {
-    #notes-list-container, #trash-list-container { /* Áp dụng cho cả trash */
+    #notes-list-container, #trash-list-container {
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 15px;
     }
@@ -1041,11 +1036,11 @@ body.theme-solarized-light .note-item::before {
         overflow-y: visible;
     }
 
-    #notes-list-container, #trash-list-container { /* Áp dụng cho cả trash */
+    #notes-list-container, #trash-list-container {
         grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); /* 1 cột */
         gap: 15px;
     }
-     #notes-grid-view h2, #trash-view h2 { /* Áp dụng cho cả trash */
+     #notes-grid-view h2, #trash-view h2 {
         font-size: 1.4em;
      }
      .grid-view-header {
