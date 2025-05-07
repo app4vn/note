@@ -88,9 +88,11 @@ const editorError = document.getElementById('editor-error');
 const scrollToTopBtn = document.getElementById('scrollToTopBtn');
 const contentArea = document.querySelector('.content-area');
 
-// *** THÊM MỚI: Tham chiếu đến các nút theme và link CSS Prism ***
 const themeButtons = document.querySelectorAll('.theme-button');
 const prismThemeLink = document.getElementById('prism-theme-link');
+// *** THÊM MỚI: Tham chiếu đến các nút chọn màu nhấn ***
+const accentColorButtons = document.querySelectorAll('.accent-color-button');
+
 
 // --- Biến trạng thái toàn cục ---
 let currentUser = null;
@@ -100,8 +102,9 @@ let activeTag = null;
 let notesCache = {};
 let currentSearchTerm = '';
 let currentSortOption = 'updatedAt_desc';
-// *** THÊM MỚI: Lưu trữ theme hiện tại ***
-let currentTheme = 'light'; // Mặc định là theme sáng
+let currentTheme = 'light';
+// *** THÊM MỚI: Lưu trữ màu nhấn hiện tại ***
+let currentAccentColor = '#007bff'; // Màu mặc định ban đầu
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
 // (Các hàm show/hide/clear/set/linkify/highlight giữ nguyên)
@@ -126,6 +129,8 @@ function showAuth() {
     currentNoteId = null;
     currentSearchTerm = '';
     currentSortOption = 'updatedAt_desc';
+    // currentTheme = 'light'; // Không reset theme khi logout để giữ lựa chọn người dùng
+    // currentAccentColor = '#007bff'; // Không reset màu nhấn
     if(searchInput) searchInput.value = '';
     if(sortSelect) sortSelect.value = currentSortOption;
     if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
@@ -133,8 +138,6 @@ function showAuth() {
     signupForm.style.display = 'none';
     loginError.textContent = '';
     signupError.textContent = '';
-    // Reset về theme mặc định khi logout (hoặc giữ theme cũ tùy ý)
-    // applyTheme('light'); // Nếu muốn reset về sáng
 }
 
 function showGridView() {
@@ -243,85 +246,150 @@ function highlightText(text, searchTerm) {
 }
 
 
-// --- *** THÊM MỚI: Logic xử lý Theme *** ---
+// --- Logic xử lý Theme ---
 
-/**
- * Áp dụng theme được chọn vào ứng dụng.
- * @param {string} themeName - Tên theme ('light', 'dark', 'gruvbox-light').
- */
 function applyTheme(themeName) {
     console.log("Applying theme:", themeName);
-    // Xóa các class theme cũ khỏi body
     document.body.classList.remove('theme-dark', 'theme-gruvbox-light');
-
-    // Thêm class theme mới nếu không phải là theme sáng (mặc định)
     if (themeName !== 'light') {
         document.body.classList.add(`theme-${themeName}`);
     }
-
-    // Cập nhật trạng thái active cho nút theme
     themeButtons.forEach(button => {
-        if (button.dataset.theme === themeName) {
-            button.classList.add('active');
-        } else {
-            button.classList.remove('active');
-        }
+        button.classList.toggle('active', button.dataset.theme === themeName);
     });
-
-    // Thay đổi theme cho PrismJS
     if (prismThemeLink) {
         let prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css'; // Default light
         if (themeName === 'dark') {
-            prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css'; // Dark theme
+            prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css';
         } else if (themeName === 'gruvbox-light') {
-            // Có thể dùng theme mặc định hoặc tìm theme gần giống, ví dụ solarized light
-            // prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-solarizedlight.min.css';
-            prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css'; // Tạm dùng default
+            prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css'; // Tạm dùng default cho Gruvbox
         }
         prismThemeLink.href = prismThemeUrl;
-    } else {
-        console.warn("Prism theme link element not found.");
     }
-
-    // Lưu lựa chọn theme vào localStorage
     try {
         localStorage.setItem('noteAppTheme', themeName);
-        currentTheme = themeName; // Cập nhật biến trạng thái
+        currentTheme = themeName;
     } catch (e) {
         console.error("Failed to save theme to localStorage:", e);
     }
 }
 
-/** Tải theme đã lưu từ localStorage khi khởi động */
 function loadSavedTheme() {
     try {
         const savedTheme = localStorage.getItem('noteAppTheme');
         if (savedTheme && ['light', 'dark', 'gruvbox-light'].includes(savedTheme)) {
             applyTheme(savedTheme);
         } else {
-            applyTheme('light'); // Áp dụng theme mặc định nếu không có hoặc không hợp lệ
+            applyTheme('light');
         }
     } catch (e) {
         console.error("Failed to load theme from localStorage:", e);
-        applyTheme('light'); // Áp dụng theme mặc định nếu lỗi
+        applyTheme('light');
     }
 }
 
-// Gắn sự kiện click cho các nút theme
 themeButtons.forEach(button => {
     button.addEventListener('click', () => {
         const selectedTheme = button.dataset.theme;
         if (selectedTheme !== currentTheme) {
             applyTheme(selectedTheme);
-            // Có thể cần re-highlight code đang hiển thị nếu có
-            if (noteDetailView.style.display === 'block' && codeBlock.textContent) {
-                 if (window.Prism) {
-                    Prism.highlightElement(codeBlock);
-                 }
+            if (noteDetailView.style.display === 'block' && codeBlock.textContent && window.Prism) {
+                Prism.highlightElement(codeBlock);
             }
         }
     });
 });
+
+// --- *** THÊM MỚI: Logic xử lý Màu Nhấn *** ---
+
+/**
+ * Chuyển đổi màu HEX sang RGB.
+ * @param {string} hex - Chuỗi màu HEX (ví dụ: #RRGGBB).
+ * @returns {{r: number, g: number, b: number} | null} - Đối tượng RGB hoặc null nếu không hợp lệ.
+ */
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+/**
+ * Làm tối một màu HEX.
+ * @param {string} hexColor - Màu HEX gốc.
+ * @param {number} percent - Phần trăm làm tối (0-100).
+ * @returns {string} - Màu HEX đã làm tối.
+ */
+function darkenColor(hexColor, percent) {
+    let { r, g, b } = hexToRgb(hexColor);
+    const factor = 1 - percent / 100;
+    r = Math.max(0, Math.min(255, Math.round(r * factor)));
+    g = Math.max(0, Math.min(255, Math.round(g * factor)));
+    b = Math.max(0, Math.min(255, Math.round(b * factor)));
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+}
+
+
+/**
+ * Áp dụng màu nhấn được chọn.
+ * @param {string} colorHex - Giá trị màu HEX (ví dụ: "#007bff").
+ */
+function applyAccentColor(colorHex) {
+    console.log("Applying accent color:", colorHex);
+    const root = document.documentElement;
+    root.style.setProperty('--accent-color', colorHex);
+
+    // Tạo màu hover đậm hơn một chút (ví dụ: đậm hơn 20%)
+    const hoverColor = darkenColor(colorHex, 15); // Làm tối đi 15%
+    root.style.setProperty('--accent-color-hover', hoverColor);
+
+    // Cập nhật màu shadow-focus với alpha
+    const rgb = hexToRgb(colorHex);
+    if (rgb) {
+        root.style.setProperty('--shadow-focus', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`);
+    }
+
+    // Cập nhật trạng thái active cho nút màu nhấn
+    accentColorButtons.forEach(button => {
+        button.classList.toggle('active', button.dataset.accent === colorHex);
+    });
+
+    // Lưu lựa chọn màu nhấn vào localStorage
+    try {
+        localStorage.setItem('noteAppAccentColor', colorHex);
+        currentAccentColor = colorHex;
+    } catch (e) {
+        console.error("Failed to save accent color to localStorage:", e);
+    }
+}
+
+/** Tải màu nhấn đã lưu từ localStorage khi khởi động */
+function loadSavedAccentColor() {
+    try {
+        const savedAccentColor = localStorage.getItem('noteAppAccentColor');
+        if (savedAccentColor) {
+            applyAccentColor(savedAccentColor);
+        } else {
+            applyAccentColor('#007bff'); // Màu nhấn mặc định nếu không có
+        }
+    } catch (e) {
+        console.error("Failed to load accent color from localStorage:", e);
+        applyAccentColor('#007bff'); // Màu nhấn mặc định nếu lỗi
+    }
+}
+
+// Gắn sự kiện click cho các nút chọn màu nhấn
+accentColorButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const selectedAccent = button.dataset.accent;
+        if (selectedAccent !== currentAccentColor) {
+            applyAccentColor(selectedAccent);
+        }
+    });
+});
+
 
 // --- Logic Xác thực (Authentication) ---
 onAuthStateChanged(auth, (user) => {
@@ -538,8 +606,8 @@ function loadNotesAndTags() {
 
         console.log("Notes data changed, updating cache and UI.");
         notesCache = newNotesCache;
-        renderNotesList(Object.values(notesCache)); // Render lại grid
-        renderTagsList(allNotes); // Render lại tags
+        renderNotesList(Object.values(notesCache));
+        renderTagsList(allNotes);
 
         if (currentNoteId && !notesCache[currentNoteId]) {
             console.log("Current note removed, showing grid view.");
@@ -709,7 +777,7 @@ function displayNoteDetailContent(note) {
     } else {
         noteDetailCode.style.display = 'none';
         copyCodeBtn.style.display = 'none';
-        noteDetailContent.innerHTML = linkify(note.content); // Chỉ linkify
+        noteDetailContent.innerHTML = linkify(note.content);
         noteDetailContent.style.display = 'block';
     }
 }
@@ -758,7 +826,7 @@ if (sortSelect) {
         if (newSortOption !== currentSortOption) {
             console.log("Sort option changed to:", newSortOption);
             currentSortOption = newSortOption;
-            loadNotesAndTags(); // Tải lại dữ liệu với sắp xếp mới
+            loadNotesAndTags();
         }
     });
 } else {
@@ -767,9 +835,9 @@ if (sortSelect) {
 
 
 // --- Khởi chạy ---
-// *** THÊM MỚI: Tải theme đã lưu khi trang tải xong ***
 document.addEventListener('DOMContentLoaded', () => {
     loadSavedTheme();
+    loadSavedAccentColor(); // *** THÊM MỚI: Tải màu nhấn đã lưu ***
 });
 
 console.log("Script loaded. Firebase Initialized. Waiting for Auth state change...");
