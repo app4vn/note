@@ -73,7 +73,6 @@ const codeBlock = noteDetailCode.querySelector('code');
 const copyCodeBtn = document.getElementById('copy-code-btn');
 const editNoteBtn = document.getElementById('edit-note-btn');
 const deleteNoteBtn = document.getElementById('delete-note-btn');
-// *** THÊM MỚI: Tham chiếu đến nút ghim trong view chi tiết ***
 const pinNoteDetailBtn = document.getElementById('pin-note-detail-btn');
 
 
@@ -82,6 +81,9 @@ const noteIdInput = document.getElementById('note-id-input');
 const noteTitleInput = document.getElementById('note-title-input');
 const noteContentInput = document.getElementById('note-content-input');
 const noteTagsInput = document.getElementById('note-tags-input');
+// *** THÊM MỚI: Tham chiếu đến container gợi ý tag ***
+const tagSuggestionsContainer = document.getElementById('tag-suggestions');
+
 const isCodeCheckbox = document.getElementById('note-is-code-checkbox');
 const languageSelect = document.getElementById('note-language-select');
 const saveNoteBtn = document.getElementById('save-note-btn');
@@ -108,6 +110,9 @@ let currentSortOption = 'updatedAt_desc';
 let currentTheme = 'light';
 let currentAccentColor = '#007bff';
 let currentContentFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'";
+// *** THÊM MỚI: Mảng lưu trữ tất cả các tag đã dùng ***
+let allUserTags = new Set();
+
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
 // (Các hàm show/hide/clear/set/linkify/highlight giữ nguyên)
@@ -128,6 +133,7 @@ function showAuth() {
         notesUnsubscribe = null;
     }
     notesCache = {};
+    allUserTags.clear(); // Xóa danh sách tag cũ
     activeTag = null;
     currentNoteId = null;
     currentSearchTerm = '';
@@ -160,6 +166,7 @@ function showEditor(note = null) {
     noteDetailView.style.display = 'none';
     noteEditorView.style.display = 'block';
     editorError.textContent = '';
+    hideTagSuggestions(); // Ẩn gợi ý khi mở editor
 
     if (note && note.id) { // Sửa
         editorTitle.textContent = "Sửa Ghi chú";
@@ -190,7 +197,7 @@ function showDetailView(note) {
     notesGridView.style.display = 'none';
     noteEditorView.style.display = 'none';
     noteDetailView.style.display = 'block';
-    currentNoteId = note.id; // Quan trọng: set currentNoteId
+    currentNoteId = note.id;
     displayNoteDetailContent(note);
     if (contentArea) contentArea.scrollTop = 0;
 }
@@ -198,11 +205,12 @@ function showDetailView(note) {
 function clearEditorFields() {
     noteTitleInput.value = '';
     noteContentInput.value = '';
-    noteTagsInput.value = '';
+    noteTagsInput.value = ''; // Xóa tags
     isCodeCheckbox.checked = false;
     languageSelect.value = 'plaintext';
     languageSelect.style.display = 'none';
     editorError.textContent = '';
+    hideTagSuggestions(); // Ẩn gợi ý khi xóa editor
 }
 
 function clearEditor() {
@@ -518,8 +526,7 @@ saveNoteBtn.addEventListener('click', async () => {
         title, content, tags, isCode, language,
         userId: currentUser.uid,
         updatedAt: Timestamp.now(),
-        // *** THÊM MỚI: Khởi tạo isPinned khi tạo note mới ***
-        isPinned: id ? (notesCache[id]?.isPinned || false) : false // Giữ nguyên nếu sửa, false nếu tạo mới
+        isPinned: id ? (notesCache[id]?.isPinned || false) : false
     };
 
     try {
@@ -527,7 +534,7 @@ saveNoteBtn.addEventListener('click', async () => {
         if (id) {
             console.log("Updating note with ID:", id);
             const noteRef = doc(db, "notes", id);
-            await updateDoc(noteRef, noteData); // noteData đã bao gồm isPinned
+            await updateDoc(noteRef, noteData);
             console.log("Note updated successfully");
             notesCache[id] = { ...notesCache[id], ...noteData, id };
         } else {
@@ -608,12 +615,7 @@ function loadNotesAndTags() {
     let notesQuery = query(
         collection(db, "notes"),
         where("userId", "==", currentUser.uid)
-        // ** Sắp xếp chính sẽ được thực hiện sau khi tách pinned notes **
-        // orderBy(sortField, sortDirection) // Tạm thời comment lại để sắp xếp sau
     );
-    // Thay vào đó, chúng ta sẽ sắp xếp theo isPinned trước, sau đó mới đến các trường khác
-    // Firestore yêu cầu trường bất bình đẳng (nếu có) phải đứng trước
-    // Vì isPinned là boolean, chúng ta có thể sắp xếp giảm dần để true (ghim) lên đầu
     notesQuery = query(notesQuery, orderBy("isPinned", "desc"), orderBy(sortField, sortDirection));
 
 
@@ -626,23 +628,27 @@ function loadNotesAndTags() {
         console.log("Firestore data received (onSnapshot)");
         const allNotes = [];
         const newNotesCache = {};
+        allUserTags.clear(); // Xóa tags cũ trước khi cập nhật
 
         querySnapshot.forEach((doc) => {
             const note = { id: doc.id, ...doc.data() };
             allNotes.push(note);
             newNotesCache[note.id] = note;
+            // Thu thập tất cả tags
+            if (note.tags && Array.isArray(note.tags)) {
+                note.tags.forEach(tag => allUserTags.add(tag));
+            }
         });
 
         console.log("Notes data changed, updating cache and UI.");
         notesCache = newNotesCache;
-        renderNotesList(Object.values(notesCache)); // Dữ liệu đã được sắp xếp từ Firestore
-        renderTagsList(allNotes);
+        renderNotesList(Object.values(notesCache));
+        renderTagsList(allNotes); // Truyền allNotes để renderTagsList không phụ thuộc vào notesCache (có thể đã bị lọc)
 
         if (currentNoteId && !notesCache[currentNoteId]) {
             console.log("Current note removed, showing grid view.");
             showGridView();
         } else if (currentNoteId && notesCache[currentNoteId] && noteDetailView.style.display === 'block') {
-            // Cập nhật lại trạng thái nút ghim nếu note đang xem chi tiết
             displayNoteDetailContent(notesCache[currentNoteId]);
         }
 
@@ -658,16 +664,11 @@ function loadNotesAndTags() {
     });
 }
 
-/**
- * Hiển thị danh sách ghi chú lên Grid View.
- * @param {Array<object>} notesFromCache - Mảng tất cả ghi chú từ cache (đã được sắp xếp bởi Firestore).
- */
 function renderNotesList(notesFromCache) {
     notesListContainer.innerHTML = '';
 
     const searchTermLower = currentSearchTerm.toLowerCase();
 
-    // Lọc client-side sau khi đã sắp xếp từ Firestore
     let notesToRender = notesFromCache.filter(note => {
         const tagMatch = !activeTag || (note.tags && note.tags.includes(activeTag));
         if (!tagMatch) return false;
@@ -680,11 +681,6 @@ function renderNotesList(notesFromCache) {
         }
         return true;
     });
-
-    // ** Không cần sắp xếp lại ở client nữa vì Firestore đã làm **
-    // const pinnedNotes = notesToRender.filter(note => note.isPinned);
-    // const unpinnedNotes = notesToRender.filter(note => !note.isPinned);
-    // notesToRender = [...pinnedNotes, ...unpinnedNotes];
 
 
     if (notesToRender.length === 0) {
@@ -707,7 +703,6 @@ function renderNotesList(notesFromCache) {
         noteElement.classList.add('note-item');
         noteElement.dataset.id = note.id;
 
-        // *** THÊM MỚI: Tạo và thêm icon ghim vào thẻ ***
         const pinIcon = document.createElement('span');
         pinIcon.classList.add('pin-icon');
         pinIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle${note.isPinned ? '-fill' : ''}" viewBox="0 0 16 16">
@@ -720,7 +715,7 @@ function renderNotesList(notesFromCache) {
         }
         pinIcon.title = note.isPinned ? "Bỏ ghim" : "Ghim ghi chú";
         pinIcon.addEventListener('click', (e) => {
-            e.stopPropagation(); // Ngăn sự kiện click lan ra thẻ note item
+            e.stopPropagation();
             togglePinStatus(note.id);
         });
         noteElement.appendChild(pinIcon);
@@ -757,13 +752,7 @@ function renderNotesList(notesFromCache) {
 
 
 function renderTagsList(notes) {
-    const allTags = new Set();
-    notes.forEach(note => {
-        if (note.tags && Array.isArray(note.tags)) {
-            note.tags.forEach(tag => allTags.add(tag));
-        }
-    });
-
+    // allUserTags đã được cập nhật trong onSnapshot
     tagsListContainer.innerHTML = '';
 
     const allTagElement = document.createElement('span');
@@ -782,7 +771,7 @@ function renderTagsList(notes) {
     });
     tagsListContainer.appendChild(allTagElement);
 
-    [...allTags].sort().forEach(tag => {
+    [...allUserTags].sort().forEach(tag => { // Sử dụng allUserTags đã được cập nhật
         const tagElement = document.createElement('span');
         tagElement.classList.add('tag-item');
         tagElement.textContent = tag;
@@ -803,7 +792,7 @@ function renderTagsList(notes) {
         tagsListContainer.appendChild(tagElement);
     });
 
-     if (allTags.size === 0) {
+     if (allUserTags.size === 0) {
         const noTags = document.createElement('p');
         noTags.textContent = 'Chưa có tag nào.';
         noTags.style.fontSize = '0.9em';
@@ -817,17 +806,16 @@ function displayNoteDetailContent(note) {
 
     noteDetailTitle.textContent = note.title;
 
-    // *** CẬP NHẬT: Trạng thái nút ghim trong view chi tiết ***
     if (pinNoteDetailBtn) {
         pinNoteDetailBtn.classList.toggle('pinned', !!note.isPinned);
         pinNoteDetailBtn.title = note.isPinned ? "Bỏ ghim ghi chú" : "Ghim ghi chú";
-        // Cập nhật icon SVG nếu cần
         const svgIcon = pinNoteDetailBtn.querySelector('svg');
         if (svgIcon) {
             svgIcon.classList.remove('bi-pin-angle', 'bi-pin-angle-fill');
             svgIcon.classList.add(note.isPinned ? 'bi-pin-angle-fill' : 'bi-pin-angle');
-            // Cập nhật path của SVG nếu bạn dùng 2 SVG khác nhau
-            // Hiện tại đang dùng class để CSS có thể đổi fill hoặc stroke
+            // Cập nhật SVG path cho icon ghim/bỏ ghim
+            svgIcon.innerHTML = note.isPinned ? '<path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>'
+                                           : '<path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146"/><path d="M6.559 2.788a1.527 1.527 0 0 1 .217.217l2.135 2.134a1.527 1.527 0 0 1 .217.217L6.428 7.47a.5.5 0 0 1-.707 0l-2.134-2.134a.5.5 0 0 1 0-.707l2.134-2.134a.5.5 0 0 1 .707 0z"/>';
         }
     }
 
@@ -859,7 +847,7 @@ function displayNoteDetailContent(note) {
     }
 }
 
-// --- *** THÊM MỚI: Hàm xử lý ghim/bỏ ghim *** ---
+// --- Logic Ghim Ghi chú ---
 async function togglePinStatus(noteId) {
     if (!currentUser || !notesCache[noteId]) return;
 
@@ -870,23 +858,88 @@ async function togglePinStatus(noteId) {
     try {
         await updateDoc(noteRef, {
             isPinned: newPinnedStatus,
-            updatedAt: Timestamp.now() // Cập nhật luôn updatedAt để nó có thể nổi lên nếu sắp xếp theo updatedAt
+            updatedAt: Timestamp.now()
         });
         console.log(`Note ${noteId} pin status updated to ${newPinnedStatus}`);
-        // Cache sẽ được cập nhật bởi onSnapshot, và onSnapshot sẽ gọi renderNotesList
-        // Không cần gọi renderNotesList trực tiếp ở đây để tránh render 2 lần.
+        // onSnapshot sẽ tự động cập nhật UI
     } catch (error) {
         console.error("Error updating pin status:", error);
         alert("Lỗi cập nhật trạng thái ghim.");
     }
 }
 
-// *** THÊM MỚI: Gắn sự kiện cho nút ghim trong view chi tiết ***
 if (pinNoteDetailBtn) {
     pinNoteDetailBtn.addEventListener('click', () => {
         if (currentNoteId) {
             togglePinStatus(currentNoteId);
         }
+    });
+}
+
+// --- *** THÊM MỚI: Logic Gợi ý Tag *** ---
+
+/** Hiển thị danh sách gợi ý tag */
+function displayTagSuggestions(suggestions, currentTagValue) {
+    if (!tagSuggestionsContainer) return;
+    tagSuggestionsContainer.innerHTML = ''; // Xóa gợi ý cũ
+    if (suggestions.length === 0) {
+        hideTagSuggestions();
+        return;
+    }
+
+    suggestions.forEach(tag => {
+        const suggestionItem = document.createElement('div');
+        suggestionItem.classList.add('suggestion-item');
+        suggestionItem.textContent = tag;
+        suggestionItem.addEventListener('click', () => {
+            const tagsArray = noteTagsInput.value.split(',').map(t => t.trim());
+            tagsArray.pop(); // Xóa phần tag đang gõ dở
+            tagsArray.push(tag); // Thêm tag đã chọn
+            noteTagsInput.value = tagsArray.join(', ') + ', '; // Thêm dấu phẩy và cách
+            hideTagSuggestions();
+            noteTagsInput.focus();
+        });
+        tagSuggestionsContainer.appendChild(suggestionItem);
+    });
+    tagSuggestionsContainer.style.display = 'block';
+}
+
+/** Ẩn danh sách gợi ý tag */
+function hideTagSuggestions() {
+    if (tagSuggestionsContainer) {
+        tagSuggestionsContainer.style.display = 'none';
+    }
+}
+
+// Lắng nghe sự kiện input trên ô nhập tag
+if (noteTagsInput) {
+    noteTagsInput.addEventListener('input', () => {
+        const inputValue = noteTagsInput.value;
+        const tagsArray = inputValue.split(',').map(t => t.trim());
+        const currentTypingTag = tagsArray[tagsArray.length - 1].toLowerCase();
+
+        if (currentTypingTag) {
+            const suggestions = [...allUserTags].filter(tag =>
+                tag.toLowerCase().startsWith(currentTypingTag) && !tagsArray.slice(0, -1).includes(tag) // Không gợi ý tag đã nhập hoàn chỉnh
+            );
+            displayTagSuggestions(suggestions, currentTypingTag);
+        } else {
+            hideTagSuggestions();
+        }
+    });
+
+    // Ẩn gợi ý khi click ra ngoài ô input
+    noteTagsInput.addEventListener('blur', () => {
+        // Dùng setTimeout để sự kiện click vào suggestion kịp xảy ra trước khi blur ẩn đi
+        setTimeout(hideTagSuggestions, 150);
+    });
+
+    // Ẩn gợi ý khi nhấn phím Escape
+    noteTagsInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            hideTagSuggestions();
+        }
+        // (Có thể thêm xử lý phím mũi tên lên/xuống và Enter để chọn gợi ý sau)
     });
 }
 
@@ -954,4 +1007,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log("Script loaded. Firebase Initialized. Waiting for Auth state change...");
-
