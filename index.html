@@ -69,51 +69,44 @@
                     </svg>
                      Tất cả Ghi chú
                 </button>
-
                 <div class="sidebar-settings">
                     <hr>
-                    <h2 id="toggle-settings-btn" class="settings-toggle">
-                        Giao diện
-                        <span class="toggle-arrow">▼</span>
-                    </h2>
-                    <div id="settings-options-content" class="settings-options-content" style="display: none;">
-                        <div class="theme-selector">
-                             <h3>Chủ đề</h3>
-                             <div class="theme-options">
-                                <button data-theme="light" class="theme-button" title="Giao diện Sáng">Sáng</button>
-                                <button data-theme="dark" class="theme-button" title="Giao diện Tối">Tối</button>
-                                <button data-theme="gruvbox-light" class="theme-button" title="Giao diện Gruvbox Sáng">Gruvbox</button>
-                                <button data-theme="dracula" class="theme-button" title="Giao diện Dracula">Dracula</button>
-                                <button data-theme="solarized-light" class="theme-button" title="Giao diện Solarized Sáng">Solarized</button>
-                             </div>
+                    <h2>Giao diện</h2>
+                    <div class="theme-selector">
+                         <h3>Chủ đề</h3>
+                         <div class="theme-options">
+                            <button data-theme="light" class="theme-button" title="Giao diện Sáng">Sáng</button>
+                            <button data-theme="dark" class="theme-button" title="Giao diện Tối">Tối</button>
+                            <button data-theme="gruvbox-light" class="theme-button" title="Giao diện Gruvbox Sáng">Gruvbox</button>
+                            <button data-theme="dracula" class="theme-button" title="Giao diện Dracula">Dracula</button>
+                            <button data-theme="solarized-light" class="theme-button" title="Giao diện Solarized Sáng">Solarized</button>
+                         </div>
+                    </div>
+                    <div class="accent-color-selector">
+                        <h3>Màu nhấn</h3>
+                        <div class="accent-color-options">
+                            <button class="accent-color-button" data-accent="#007bff" style="background-color: #007bff;" title="Xanh dương (Mặc định)"></button>
+                            <button class="accent-color-button" data-accent="#198754" style="background-color: #198754;" title="Xanh lá"></button>
+                            <button class="accent-color-button" data-accent="#dc3545" style="background-color: #dc3545;" title="Đỏ"></button>
+                            <button class="accent-color-button" data-accent="#ffc107" style="background-color: #ffc107;" title="Vàng"></button>
+                            <button class="accent-color-button" data-accent="#fd7e14" style="background-color: #fd7e14;" title="Cam"></button>
+                            <button class="accent-color-button" data-accent="#6f42c1" style="background-color: #6f42c1;" title="Tím"></button>
                         </div>
-                        <div class="accent-color-selector">
-                            <h3>Màu nhấn</h3>
-                            <div class="accent-color-options">
-                                <button class="accent-color-button" data-accent="#007bff" style="background-color: #007bff;" title="Xanh dương (Mặc định)"></button>
-                                <button class="accent-color-button" data-accent="#198754" style="background-color: #198754;" title="Xanh lá"></button>
-                                <button class="accent-color-button" data-accent="#dc3545" style="background-color: #dc3545;" title="Đỏ"></button>
-                                <button class="accent-color-button" data-accent="#ffc107" style="background-color: #ffc107;" title="Vàng"></button>
-                                <button class="accent-color-button" data-accent="#fd7e14" style="background-color: #fd7e14;" title="Cam"></button>
-                                <button class="accent-color-button" data-accent="#6f42c1" style="background-color: #6f42c1;" title="Tím"></button>
-                            </div>
-                        </div>
-                        <div class="font-selector">
-                            <h3>Font chữ Nội dung</h3>
-                            <select id="font-select">
-                                <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">Hệ thống (Mặc định)</option>
-                                <option value="'Lora', serif">Lora (Serif)</option>
-                                <option value="'Roboto', sans-serif">Roboto (Sans-serif)</option>
-                                <option value="'Open Sans', sans-serif">Open Sans (Sans-serif)</option>
-                                <option value="'Merriweather', serif">Merriweather (Serif)</option>
-                            </select>
-                        </div>
+                    </div>
+                    <div class="font-selector">
+                        <h3>Font chữ Nội dung</h3>
+                        <select id="font-select">
+                            <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">Hệ thống (Mặc định)</option>
+                            <option value="'Lora', serif">Lora (Serif)</option>
+                            <option value="'Roboto', sans-serif">Roboto (Sans-serif)</option>
+                            <option value="'Open Sans', sans-serif">Open Sans (Sans-serif)</option>
+                            <option value="'Merriweather', serif">Merriweather (Serif)</option>
+                        </select>
                     </div>
                 </div>
             </aside>
 
             <main class="content-area">
-
                 <div id="notes-grid-view">
                     <div class="grid-view-header">
                         <h2 id="main-view-title">Tất cả Ghi chú <span id="active-tag-display"></span></h2>
@@ -141,7 +134,6 @@
                     </div>
                 </div>
 
-
                 <div id="note-detail-view" style="display: none;">
                      <button id="back-to-grid-btn" class="button-secondary back-button">&larr; Quay lại danh sách</button>
                      <button id="pin-note-detail-btn" class="pin-button" title="Ghim/Bỏ ghim ghi chú">
@@ -150,8 +142,6 @@
                      <h2 id="note-detail-title"></h2>
                      <div id="note-detail-tags" class="tags-display"></div>
                      <div id="note-detail-content" class="content-display"></div>
-                     <div id="note-detail-todolist" class="todolist-display" style="display: none;">
-                        </div>
                      <pre id="note-detail-code" style="display: none;"><code class="language-plaintext"></code></pre>
                      <div id="note-detail-actions">
                           <button id="edit-note-btn" class="button-secondary">Sửa</button>
@@ -163,46 +153,16 @@
                 <div id="note-editor-view" style="display: none;">
                     <h2 id="editor-title">Soạn thảo Ghi chú</h2>
                     <input type="hidden" id="note-id-input">
-
-                    <div class="form-group">
-                        <label for="note-type-select">Loại ghi chú:</label>
-                        <select id="note-type-select">
-                            <option value="text" selected>Ghi chú thường</option>
-                            <option value="code">Code Snippet</option>
-                            <option value="todolist">To-do List</option>
-                        </select>
-                    </div>
-
                     <input type="text" id="note-title-input" placeholder="Tiêu đề" required>
-
-                    <div id="text-code-content-editor">
-                        <textarea id="note-content-input" placeholder="Nội dung ghi chú..." rows="10" required></textarea>
-                        <div class="code-options"> <input type="checkbox" id="note-is-code-checkbox" style="display: none;"> <label for="note-is-code-checkbox" id="note-is-code-label" style="display: none;">Đây là code?</label>
-                            <select id="note-language-select" style="display: none;">
-                                <option value="plaintext">Plain Text</option>
-                                <option value="javascript">JavaScript</option>
-                                <option value="python">Python</option>
-                                <option value="html">HTML</option>
-                                <option value="css">CSS</option>
-                                <option value="sql">SQL</option>
-                                <option value="json">JSON</option>
-                                <option value="markdown">Markdown</option>
-                                <option value="java">Java</option>
-                                <option value="csharp">C#</option>
-                                <option value="php">PHP</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="todolist-editor" style="display: none;">
-                        <div id="todolist-items-container">
-                            </div>
-                        <button type="button" id="add-todo-item-btn" class="button-secondary">Thêm Mục</button>
-                    </div>
-
+                    <textarea id="note-content-input" placeholder="Nội dung ghi chú..." rows="10" required></textarea>
                     <div class="tag-input-container">
                         <input type="text" id="note-tags-input" placeholder="Tags (cách nhau bằng dấu phẩy)">
                         <div id="tag-suggestions" class="tag-suggestions-list" style="display: none;"></div>
+                    </div>
+                    <div class="code-options">
+                        <input type="checkbox" id="note-is-code-checkbox">
+                        <label for="note-is-code-checkbox">Đây là code?</label>
+                        <select id="note-language-select" style="display: none;">...</select>
                     </div>
                     <div class="editor-actions">
                         <button id="save-note-btn" class="button-primary">Lưu Ghi Chú</button>
@@ -219,5 +179,5 @@
 
     <button id="scrollToTopBtn" title="Cuộn lên đầu trang">&uarr;</button>
 
-</body>
+    </body>
 </html>
