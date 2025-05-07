@@ -97,10 +97,6 @@ const prismThemeLink = document.getElementById('prism-theme-link');
 const accentColorButtons = document.querySelectorAll('.accent-color-button');
 const fontSelect = document.getElementById('font-select');
 
-// *** THÊM MỚI: Tham chiếu đến Toast Container ***
-const toastContainer = document.getElementById('toast-container');
-
-
 // --- Biến trạng thái toàn cục ---
 let currentUser = null;
 let currentNoteId = null;
@@ -114,43 +110,7 @@ let currentAccentColor = '#007bff';
 let currentContentFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'";
 let allUserTags = new Set();
 
-// --- *** THÊM MỚI: Hàm hiển thị Toast Notification *** ---
-/**
- * Hiển thị một thông báo toast.
- * @param {string} message - Nội dung thông báo.
- * @param {string} type - Loại thông báo ('info', 'success', 'error'). Mặc định là 'info'.
- * @param {number} duration - Thời gian hiển thị (ms). Mặc định là 3000ms.
- */
-function showToast(message, type = 'info', duration = 3000) {
-    if (!toastContainer) return;
-
-    const toast = document.createElement('div');
-    toast.classList.add('toast-message', type); // Thêm class type (success, error, info)
-    toast.textContent = message;
-
-    toastContainer.appendChild(toast);
-
-    // Kích hoạt animation hiển thị
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10); // Delay nhỏ để trình duyệt kịp render trước khi thêm class show
-
-    // Tự động xóa toast sau một khoảng thời gian
-    setTimeout(() => {
-        toast.classList.remove('show');
-        toast.classList.add('hide'); // Kích hoạt animation ẩn
-        // Xóa hẳn phần tử toast sau khi animation ẩn hoàn tất
-        toast.addEventListener('transitionend', () => {
-            if (toast.parentNode) { // Kiểm tra xem toast còn trong DOM không
-                toast.remove();
-            }
-        }, { once: true }); // Đảm bảo event listener chỉ chạy 1 lần
-    }, duration);
-}
-
-
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
-// (Các hàm show/hide/clear/set/linkify/highlight giữ nguyên)
 function showApp() {
     authContainer.style.display = 'none';
     appContainer.style.display = 'flex';
@@ -291,7 +251,6 @@ function highlightText(text, searchTerm) {
 
 
 // --- Logic xử lý Theme ---
-// (Giữ nguyên)
 function applyTheme(themeName) {
     console.log("Applying theme:", themeName);
     document.body.classList.remove('theme-dark', 'theme-gruvbox-light', 'theme-dracula', 'theme-solarized-light');
@@ -347,7 +306,6 @@ themeButtons.forEach(button => {
 });
 
 // --- Logic xử lý Màu Nhấn ---
-// (Giữ nguyên)
 function hexToRgb(hex) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
@@ -411,7 +369,6 @@ accentColorButtons.forEach(button => {
 });
 
 // --- Logic xử lý Font chữ Nội dung ---
-// (Giữ nguyên)
 function applyContentFont(fontFamily) {
     console.log("Applying content font:", fontFamily);
     document.documentElement.style.setProperty('--font-content', fontFamily);
@@ -471,7 +428,6 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// (Các hàm xử lý form login/signup/logout giữ nguyên)
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = loginForm['login-email'].value;
@@ -479,10 +435,7 @@ loginForm.addEventListener('submit', (e) => {
     loginError.textContent = '';
     signInWithEmailAndPassword(auth, email, password)
         .then(() => loginForm.reset())
-        .catch((error) => {
-            loginError.textContent = `Lỗi: ${error.message}`;
-            // showToast(`Lỗi đăng nhập: ${error.message}`, 'error'); // Ví dụ
-        });
+        .catch((error) => loginError.textContent = `Lỗi: ${error.message}`);
 });
 
 signupForm.addEventListener('submit', (e) => {
@@ -492,17 +445,11 @@ signupForm.addEventListener('submit', (e) => {
     signupError.textContent = '';
     createUserWithEmailAndPassword(auth, email, password)
         .then(() => signupForm.reset())
-        .catch((error) => {
-            signupError.textContent = `Lỗi: ${error.message}`;
-            // showToast(`Lỗi đăng ký: ${error.message}`, 'error'); // Ví dụ
-        });
+        .catch((error) => signupError.textContent = `Lỗi: ${error.message}`);
 });
 
 logoutButton.addEventListener('click', () => {
-    signOut(auth).catch((error) => {
-        console.error("Logout error:", error);
-        showToast(`Lỗi đăng xuất: ${error.message}`, 'error');
-    });
+    signOut(auth).catch((error) => alert(`Lỗi đăng xuất: ${error.message}`));
 });
 
 if (showSignupLink) {
@@ -560,7 +507,7 @@ saveNoteBtn.addEventListener('click', async () => {
 
     if (!title || !content) {
         editorError.textContent = "Tiêu đề và Nội dung không được để trống!";
-        showToast("Tiêu đề và Nội dung không được để trống!", 'error');
+        // showToast("Tiêu đề và Nội dung không được để trống!", 'error'); // Đã bỏ toast
         return;
     }
     editorError.textContent = '';
@@ -582,7 +529,7 @@ saveNoteBtn.addEventListener('click', async () => {
             await updateDoc(noteRef, noteData);
             console.log("Note updated successfully");
             notesCache[id] = { ...notesCache[id], ...noteData, id };
-            showToast('Ghi chú đã được cập nhật!', 'success');
+            // showToast('Ghi chú đã được cập nhật!', 'success'); // Đã bỏ toast
         } else {
             console.log("Adding new note");
             noteData.createdAt = Timestamp.now();
@@ -590,7 +537,7 @@ saveNoteBtn.addEventListener('click', async () => {
             console.log("Note added with ID:", docRef.id);
             savedNoteId = docRef.id;
             notesCache[savedNoteId] = { ...noteData, id: savedNoteId };
-            showToast('Ghi chú mới đã được tạo!', 'success');
+            // showToast('Ghi chú mới đã được tạo!', 'success'); // Đã bỏ toast
         }
         clearEditor();
         showGridView();
@@ -598,7 +545,7 @@ saveNoteBtn.addEventListener('click', async () => {
     } catch (error) {
         console.error("Error saving note: ", error);
         editorError.textContent = `Lỗi lưu ghi chú: ${error.message}`;
-        showToast(`Lỗi lưu ghi chú: ${error.message}`, 'error');
+        // showToast(`Lỗi lưu ghi chú: ${error.message}`, 'error'); // Đã bỏ toast
     } finally {
         saveNoteBtn.disabled = false;
         saveNoteBtn.textContent = 'Lưu Ghi Chú';
@@ -607,7 +554,7 @@ saveNoteBtn.addEventListener('click', async () => {
 
 editNoteBtn.addEventListener('click', () => {
     if (!currentNoteId || !notesCache[currentNoteId]) {
-        showToast("Vui lòng chọn một ghi chú để sửa.", 'info');
+        alert("Vui lòng chọn một ghi chú để sửa."); // Giữ lại alert ở đây hoặc thay bằng cách khác
         showGridView();
         return;
     };
@@ -628,11 +575,11 @@ deleteNoteBtn.addEventListener('click', async () => {
             await deleteDoc(noteRef);
             console.log("Note deleted successfully");
             delete notesCache[idToDelete];
-            showToast(`Đã xóa ghi chú "${noteTitle}".`, 'info');
+            // showToast(`Đã xóa ghi chú "${noteTitle}".`, 'info'); // Đã bỏ toast
             showGridView();
         } catch (error) {
             console.error("Error deleting note: ", error);
-            showToast(`Lỗi xóa ghi chú: ${error.message}`, 'error');
+            alert(`Lỗi xóa ghi chú: ${error.message}`); // Giữ lại alert
             currentNoteId = idToDelete;
         }
      }
@@ -643,19 +590,18 @@ copyCodeBtn.addEventListener('click', () => {
     if (codeToCopy) {
         navigator.clipboard.writeText(codeToCopy)
             .then(() => {
-                showToast('Đã sao chép code vào clipboard!', 'success');
-                copyCodeBtn.textContent = 'Đã chép!'; // Vẫn giữ để có phản hồi nhanh
+                alert('Đã sao chép code vào clipboard!'); // Giữ lại alert hoặc thay bằng cách khác
+                copyCodeBtn.textContent = 'Đã chép!';
                 setTimeout(() => { copyCodeBtn.textContent = 'Copy Code'; }, 1500);
             })
             .catch(err => {
                 console.error('Clipboard copy failed:', err);
-                showToast('Lỗi khi sao chép code.', 'error');
+                alert('Lỗi khi sao chép code.'); // Giữ lại alert
             });
     }
 });
 
 // --- Tải và Hiển thị Dữ liệu từ Firestore ---
-// (Giữ nguyên)
 function loadNotesAndTags() {
     if (!currentUser) return;
     console.log(`Setting up Firestore listener for user: ${currentUser.uid}, Sort: ${currentSortOption}`);
@@ -707,12 +653,12 @@ function loadNotesAndTags() {
         if (error.code === 'failed-precondition') {
              const errorMsg = "Lỗi: Cần tạo chỉ mục (index) trong Firestore để sắp xếp. Hãy kiểm tra Console của trình duyệt để lấy link tạo chỉ mục.";
              notesListContainer.innerHTML = `<p class="error-message">${errorMsg}</p>`;
-             showToast(errorMsg, 'error', 5000);
+             // showToast(errorMsg, 'error', 5000); // Đã bỏ toast
              console.error("Firestore Index Required:", error.message);
         } else {
             const errorMsg = `Lỗi tải ghi chú: ${error.message}`;
             notesListContainer.innerHTML = `<p class="error-message">${errorMsg}</p>`;
-            showToast(errorMsg, 'error', 5000);
+            // showToast(errorMsg, 'error', 5000); // Đã bỏ toast
         }
     });
 }
@@ -805,7 +751,6 @@ function renderNotesList(notesFromCache) {
 
 
 function renderTagsList(notes) {
-    // allUserTags đã được cập nhật trong onSnapshot
     tagsListContainer.innerHTML = '';
 
     const allTagElement = document.createElement('span');
@@ -824,7 +769,7 @@ function renderTagsList(notes) {
     });
     tagsListContainer.appendChild(allTagElement);
 
-    [...allUserTags].sort().forEach(tag => { // Sử dụng allUserTags đã được cập nhật
+    [...allUserTags].sort().forEach(tag => {
         const tagElement = document.createElement('span');
         tagElement.classList.add('tag-item');
         tagElement.textContent = tag;
@@ -913,10 +858,10 @@ async function togglePinStatus(noteId) {
             updatedAt: Timestamp.now()
         });
         console.log(`Note ${noteId} pin status updated to ${newPinnedStatus}`);
-        showToast(newPinnedStatus ? "Đã ghim ghi chú!" : "Đã bỏ ghim ghi chú.", 'info', 2000);
+        // alert(newPinnedStatus ? "Đã ghim ghi chú!" : "Đã bỏ ghim ghi chú."); // Thay bằng toast nếu muốn
     } catch (error) {
         console.error("Error updating pin status:", error);
-        showToast("Lỗi cập nhật trạng thái ghim.", 'error');
+        alert("Lỗi cập nhật trạng thái ghim.");
     }
 }
 
@@ -990,7 +935,6 @@ if (noteTagsInput) {
 
 
 // --- Logic cho nút Scroll to Top ---
-// (Giữ nguyên)
 function handleScroll() {
     if (!contentArea || !scrollToTopBtn) return;
     if (contentArea.scrollTop > 200) {
@@ -1018,7 +962,6 @@ if (scrollToTopBtn) {
 }
 
 // --- Logic tìm kiếm ---
-// (Giữ nguyên)
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
         currentSearchTerm = e.target.value.trim();
@@ -1029,7 +972,6 @@ if (searchInput) {
 }
 
 // --- Logic sắp xếp ---
-// (Giữ nguyên)
 if (sortSelect) {
     sortSelect.addEventListener('change', (e) => {
         const newSortOption = e.target.value;
