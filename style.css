@@ -14,8 +14,12 @@
     --bg-sidebar: #f8f9fa;
     --bg-header: #343a40;
     --bg-input: #fff;
-    --bg-button-primary: #007bff;
-    --bg-button-primary-hover: #0056b3;
+    /* Màu nhấn mặc định */
+    --accent-color: #007bff;
+    --accent-color-hover: #0056b3;
+
+    --bg-button-primary: var(--accent-color); /* Nút chính dùng màu nhấn */
+    --bg-button-primary-hover: var(--accent-color-hover); /* Hover nút chính */
     --bg-button-secondary: #6c757d;
     --bg-button-secondary-hover: #5a6268;
     --bg-button-danger: #dc3545;
@@ -25,7 +29,7 @@
     --bg-note-item-hover: #e9ecef;
     --bg-note-item-active: #cfe2ff;
     --bg-tag-item: #6c757d;
-    --bg-tag-item-active: #007bff;
+    --bg-tag-item-active: var(--accent-color); /* Tag active dùng màu nhấn */
     --dog-ear-color: #e0e0e0;
     --dog-ear-shadow: rgba(0,0,0,0.2);
 
@@ -33,8 +37,8 @@
     --text-secondary: #6c757d;
     --text-header: #fff;
     --text-button: #fff;
-    --text-link: #007bff;
-    --text-link-hover: #0056b3;
+    --text-link: var(--accent-color); /* Link dùng màu nhấn */
+    --text-link-hover: var(--accent-color-hover); /* Hover link */
     --text-placeholder: #6c757d;
     --text-error: #dc3545;
     --text-code-block: #393a34;
@@ -43,12 +47,12 @@
     --border-primary: #dee2e6;
     --border-secondary: #e0e0e0;
     --border-input: #ccc;
-    --border-input-focus: #007bff;
+    --border-input-focus: var(--accent-color); /* Border focus dùng màu nhấn */
     --border-content-display: #e9ecef;
     --border-code-block: #ddd;
 
     --shadow-primary: rgba(0,0,0,0.1);
-    --shadow-focus: rgba(0, 123, 255, 0.2);
+    --shadow-focus: rgba(0, 123, 255, 0.2); /* Sẽ được cập nhật theo màu nhấn */
     --highlight-bg: yellow;
 }
 
@@ -59,8 +63,10 @@ body.theme-dark {
     --bg-sidebar: #2b3035;
     --bg-header: #1c1e21;
     --bg-input: #495057;
-    --bg-button-primary: #0d6efd;
-    --bg-button-primary-hover: #0b5ed7;
+    /* Màu nhấn mặc định cho theme tối (có thể giữ nguyên hoặc thay đổi) */
+    /* --accent-color: #0d6efd; */
+    /* --accent-color-hover: #0b5ed7; */
+
     --bg-button-secondary: #5c636a;
     --bg-button-secondary-hover: #4f555a;
     --bg-button-danger: #dc3545;
@@ -68,9 +74,9 @@ body.theme-dark {
     --bg-code-block: #282c34;
     --bg-content-display: #3a3f44;
     --bg-note-item-hover: #495057;
-    --bg-note-item-active: #0d6efd;
+    --bg-note-item-active: var(--accent-color); /* Dùng màu nhấn */
     --bg-tag-item: #5c636a;
-    --bg-tag-item-active: #0d6efd;
+    /* --bg-tag-item-active: var(--accent-color); */ /* Đã có ở :root */
     --dog-ear-color: #5c636a;
     --dog-ear-shadow: rgba(0,0,0,0.4);
 
@@ -78,8 +84,8 @@ body.theme-dark {
     --text-secondary: #adb5bd;
     --text-header: #fff;
     --text-button: #fff;
-    --text-link: #6ea8fe;
-    --text-link-hover: #8bb9fe;
+    /* --text-link: #6ea8fe; */ /* Sẽ dùng var(--accent-color) */
+    /* --text-link-hover: #8bb9fe; */
     --text-placeholder: #adb5bd;
     --text-error: #f17c7c;
     --text-code-block: #abb2bf;
@@ -88,57 +94,59 @@ body.theme-dark {
     --border-primary: #495057;
     --border-secondary: #5c636a;
     --border-input: #6c757d;
-    --border-input-focus: #6ea8fe;
+    /* --border-input-focus: #6ea8fe; */ /* Sẽ dùng var(--accent-color) */
     --border-content-display: #495057;
     --border-code-block: #5c636a;
 
     --shadow-primary: rgba(255,255,255,0.1);
-    --shadow-focus: rgba(110, 168, 254, 0.25);
+    /* --shadow-focus: rgba(110, 168, 254, 0.25); */ /* Sẽ được cập nhật theo màu nhấn */
     --highlight-bg: #ffec80;
 }
 
 body.theme-gruvbox-light {
     /* Theme Gruvbox Sáng */
-    --bg-primary: #fbf1c7;       /* Nền chính body và content-area */
-    --bg-secondary: #ebdbb2;     /* Nền thẻ ghi chú, nền auth-container */
+    --bg-primary: #fbf1c7;
+    --bg-secondary: #ebdbb2;
     --bg-sidebar: #f2e5bc;
     --bg-header: #3c3836;
-    --bg-input: #fbf1c7;        /* Nền input giống nền chính */
-    --bg-button-primary: #458588;
-    --bg-button-primary-hover: #076678;
+    --bg-input: #fbf1c7;
+    /* Màu nhấn mặc định cho Gruvbox (có thể giữ nguyên hoặc thay đổi) */
+    /* --accent-color: #458588; */
+    /* --accent-color-hover: #076678; */
+
     --bg-button-secondary: #7c6f64;
     --bg-button-secondary-hover: #665c54;
     --bg-button-danger: #cc241d;
     --bg-button-danger-hover: #9d0006;
-    --bg-code-block: #f2e5bc;    /* Nền code block */
-    --bg-content-display: #f2e5bc; /* Nền khung text chi tiết */
-    --bg-note-item-hover: #d5c4a1; /* Nền thẻ khi hover, đậm hơn thẻ thường */
-    --bg-note-item-active: #bdae93;
+    --bg-code-block: #f2e5bc;
+    --bg-content-display: #f2e5bc;
+    --bg-note-item-hover: #d5c4a1;
+    --bg-note-item-active: #bdae93; /* Có thể đổi sang màu nhấn */
     --bg-tag-item: #7c6f64;
-    --bg-tag-item-active: #458588;
+    /* --bg-tag-item-active: var(--accent-color); */
     --dog-ear-color: #bdae93;
     --dog-ear-shadow: rgba(60, 56, 54, 0.2);
 
     --text-primary: #3c3836;
     --text-secondary: #665c54;
     --text-header: #ebdbb2;
-    --text-button: #ebdbb2;
-    --text-link: #458588;
-    --text-link-hover: #076678;
+    --text-button: #ebdbb2; /* Chữ trên nút màu nhấn cần tương phản */
+    /* --text-link: #458588; */
+    /* --text-link-hover: #076678; */
     --text-placeholder: #928374;
     --text-error: #cc241d;
     --text-code-block: #3c3836;
     --text-highlight: #3c3836;
 
-    --border-primary: #d5c4a1;   /* Viền thẻ, viền sidebar */
-    --border-secondary: #bdae93; /* Viền hr, viền header grid */
+    --border-primary: #d5c4a1;
+    --border-secondary: #bdae93;
     --border-input: #bdae93;
-    --border-input-focus: #458588;
-    --border-content-display: #d5c4a1; /* Viền khung text chi tiết */
+    /* --border-input-focus: #458588; */
+    --border-content-display: #d5c4a1;
     --border-code-block: #bdae93;
 
     --shadow-primary: rgba(0,0,0,0.08);
-    --shadow-focus: rgba(69, 133, 136, 0.2);
+    /* --shadow-focus: rgba(69, 133, 136, 0.2); */
     --highlight-bg: #fabd2f;
 }
 
@@ -170,7 +178,7 @@ h1, h2 {
 }
 #notes-grid-view h2 #active-tag-display {
     font-size: 0.8em;
-    color: var(--text-link);
+    color: var(--text-link); /* Sử dụng màu nhấn */
     font-weight: 500;
     margin-left: 10px;
 }
@@ -226,8 +234,8 @@ input::placeholder, textarea::placeholder {
 }
 input:focus, textarea:focus, select:focus {
     outline: none;
-    border-color: var(--border-input-focus);
-    box-shadow: 0 0 0 3px var(--shadow-focus);
+    border-color: var(--border-input-focus); /* Sử dụng màu nhấn */
+    box-shadow: 0 0 0 3px var(--shadow-focus); /* Sẽ được cập nhật bằng JS */
 }
 /* Ô tìm kiếm trong sidebar */
 #search-input {
@@ -256,11 +264,11 @@ hr {
 
 /* Kiểu nút */
 .button-primary {
-    background-color: var(--bg-button-primary);
+    background-color: var(--bg-button-primary); /* Sử dụng màu nhấn */
     color: var(--text-button);
 }
 .button-primary:hover:not(:disabled) {
-    background-color: var(--bg-button-primary-hover);
+    background-color: var(--bg-button-primary-hover); /* Sử dụng màu nhấn hover */
 }
 
 .button-secondary {
@@ -319,13 +327,13 @@ hr {
     color: var(--text-secondary);
 }
 .auth-switch-link span {
-    color: var(--text-link);
+    color: var(--text-link); /* Sử dụng màu nhấn */
     text-decoration: underline;
     cursor: pointer;
     transition: color 0.2s ease;
 }
 .auth-switch-link span:hover {
-    color: var(--text-link-hover);
+    color: var(--text-link-hover); /* Sử dụng màu nhấn hover */
 }
 
 
@@ -385,6 +393,20 @@ hr {
     color: var(--text-primary);
     padding-bottom: 8px;
 }
+.sidebar .sidebar-settings h2 { /* Tiêu đề "Giao diện" nhỏ hơn */
+    font-size: 1em;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-secondary);
+}
+.sidebar .sidebar-settings h3 { /* Tiêu đề "Màu nhấn" */
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-top: 15px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
 
 #tags-list-container {
     margin-top: 10px;
@@ -403,20 +425,19 @@ hr {
 }
 #tags-list-container .tag-item:hover,
 #tags-list-container .tag-item.active {
-    background-color: var(--bg-tag-item-active);
+    background-color: var(--bg-tag-item-active); /* Sử dụng màu nhấn */
 }
 
 
 .content-area {
     flex-grow: 1;
     padding: 30px 40px;
-    background-color: var(--bg-secondary); /* Mặc định dùng --bg-secondary */
+    background-color: var(--bg-secondary);
     overflow-y: auto;
     transition: background-color 0.3s ease;
 }
-/* *** THÊM MỚI: Override màu nền content-area cho Gruvbox *** */
 body.theme-gruvbox-light .content-area {
-    background-color: var(--bg-primary); /* Cho Gruvbox, content-area dùng nền chính */
+    background-color: var(--bg-primary);
 }
 
 
@@ -469,7 +490,7 @@ body.theme-gruvbox-light .content-area {
 
 /* Thẻ ghi chú trong lưới */
 #notes-list-container .note-item {
-    background-color: var(--bg-secondary); /* Thẻ note sẽ dùng --bg-secondary */
+    background-color: var(--bg-secondary);
     border: 1px solid var(--border-primary);
     border-radius: 8px;
     padding: 15px 20px;
@@ -484,7 +505,7 @@ body.theme-gruvbox-light .content-area {
 }
 #notes-list-container .note-item:hover {
     box-shadow: 0 4px 12px var(--shadow-primary);
-    border-color: var(--border-input-focus);
+    border-color: var(--border-input-focus); /* Sử dụng màu nhấn */
     background-color: var(--bg-note-item-hover);
 }
 
@@ -496,15 +517,10 @@ body.theme-gruvbox-light .content-area {
     right: 0;
     border-width: 0 25px 25px 0;
     border-style: solid;
-    /* Màu nếp gấp sẽ là màu nền chính của trang */
     border-color: var(--bg-primary) var(--bg-primary) var(--dog-ear-color) var(--dog-ear-color);
     box-shadow: -1px 1px 3px var(--dog-ear-shadow);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-/* *** THÊM MỚI: Override màu nếp gấp cho Gruvbox *** */
-/* Khi content-area của Gruvbox dùng --bg-primary, thì nếp gấp của dog-ear cũng phải dùng --bg-primary */
-/* (Không cần override riêng nếu dog-ear-color đã được set đúng theo theme) */
-/* Tuy nhiên, màu của phần giấy bị lộ ra (border-color thứ 1 & 2) phải là màu nền của content-area */
 body.theme-gruvbox-light #notes-list-container .note-item::before {
     border-color: var(--bg-primary) var(--bg-primary) var(--dog-ear-color) var(--dog-ear-color);
 }
@@ -565,7 +581,7 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
 }
 .tags-display .tag {
     display: inline-block;
-    background-color: var(--bg-button-primary);
+    background-color: var(--bg-button-primary); /* Sử dụng màu nhấn */
     color: var(--text-button);
     padding: 4px 10px;
     border-radius: 6px;
@@ -660,7 +676,7 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
   z-index: 99;
   border: none;
   outline: none;
-  background-color: var(--bg-button-primary);
+  background-color: var(--bg-button-primary); /* Sử dụng màu nhấn */
   color: var(--text-button);
   cursor: pointer;
   padding: 10px 15px;
@@ -673,7 +689,7 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
 }
 
 #scrollToTopBtn:hover {
-  background-color: var(--bg-button-primary-hover);
+  background-color: var(--bg-button-primary-hover); /* Sử dụng màu nhấn hover */
   opacity: 1;
 }
 #scrollToTopBtn:active {
@@ -689,19 +705,26 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
 }
 
 /* Style cho Bộ chọn Theme */
-.theme-selector {
-    margin-top: auto;
+.sidebar-settings { /* Container cho các cài đặt trong sidebar */
+    margin-top: auto; /* Đẩy xuống cuối sidebar */
     padding-top: 15px;
 }
-.theme-selector h2 {
+.theme-selector {
+    /* margin-top: auto; */ /* Bỏ margin-top ở đây vì đã có ở .sidebar-settings */
+    /* padding-top: 15px; */
+}
+.theme-selector h2, .accent-color-selector h3 { /* Tiêu đề nhỏ hơn cho cài đặt */
     margin-bottom: 10px;
-    font-size: 1em;
+    font-size: 0.95em; /* Điều chỉnh lại */
     padding-bottom: 0;
+    color: var(--text-secondary);
+    font-weight: 500;
 }
 .theme-options {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    margin-bottom: 15px; /* Khoảng cách với phần chọn màu nhấn */
 }
 .theme-button {
     flex: 1;
@@ -714,15 +737,43 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 .theme-button.active {
-    background-color: var(--bg-button-primary);
+    background-color: var(--bg-button-primary); /* Sử dụng màu nhấn */
     color: var(--text-button);
-    border-color: var(--bg-button-primary);
+    border-color: var(--bg-button-primary); /* Sử dụng màu nhấn */
     font-weight: bold;
 }
 .theme-button:not(.active):hover {
      background-color: var(--bg-note-item-hover);
      border-color: var(--border-input);
      color: var(--text-primary);
+}
+
+/* *** THÊM MỚI: Style cho Bộ chọn Màu Nhấn *** */
+.accent-color-selector {
+    margin-top: 10px; /* Khoảng cách với phần chọn theme */
+}
+.accent-color-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px; /* Khoảng cách giữa các nút màu */
+}
+.accent-color-button {
+    width: 28px; /* Kích thước nút màu */
+    height: 28px;
+    border-radius: 50%; /* Bo tròn */
+    border: 2px solid var(--bg-sidebar); /* Viền nhẹ để tách biệt */
+    padding: 0; /* Bỏ padding mặc định của button */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+.accent-color-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.accent-color-button.active {
+    border-color: var(--text-primary); /* Viền đậm hơn cho nút active */
+    box-shadow: 0 0 0 2px var(--bg-sidebar), 0 0 0 4px var(--text-primary); /* Hiệu ứng viền kép */
+    transform: scale(1.1);
 }
 
 
@@ -764,12 +815,12 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
     .sidebar #search-input {
         margin-bottom: 0;
     }
-    .theme-selector {
+    .sidebar-settings { /* Điều chỉnh cài đặt sidebar trên mobile */
         margin-top: 15px;
         padding-top: 10px;
     }
-    .theme-options {
-        justify-content: space-around;
+    .theme-options, .accent-color-options {
+        justify-content: flex-start; /* Căn trái các nút trên mobile */
     }
 
 
