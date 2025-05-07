@@ -104,7 +104,6 @@ const themeButtons = document.querySelectorAll('.sidebar-settings .theme-button'
 const prismThemeLink = document.getElementById('prism-theme-link');
 const accentColorButtons = document.querySelectorAll('.sidebar-settings .accent-color-button');
 const fontSelect = document.querySelector('.sidebar-settings #font-select');
-// *** THÊM MỚI: Tham chiếu đến nút toggle và content của settings ***
 const settingsToggleBtn = document.getElementById('toggle-settings-btn');
 const settingsOptionsContent = document.getElementById('settings-options-content');
 
@@ -133,7 +132,6 @@ const listSVGPath = "M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5
 
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
-// (Các hàm khác giữ nguyên)
 function showApp() {
     authContainer.style.display = 'none';
     appContainer.style.display = 'flex';
@@ -166,7 +164,6 @@ function showAuth() {
     signupForm.style.display = 'none';
     loginError.textContent = '';
     signupError.textContent = '';
-     // Đảm bảo phần cài đặt ẩn khi logout
     if (settingsOptionsContent) settingsOptionsContent.style.display = 'none';
     if (settingsToggleBtn && settingsToggleBtn.parentElement) settingsToggleBtn.parentElement.classList.remove('expanded');
 }
@@ -468,6 +465,22 @@ if (fontSelect) {
     console.warn("Font select element not found.");
 }
 
+// *** THÊM MỚI: Logic cho nút Toggle Settings ***
+if (settingsToggleBtn && settingsOptionsContent) {
+    settingsToggleBtn.addEventListener('click', () => {
+        const isExpanded = settingsOptionsContent.style.display === 'block' || settingsOptionsContent.style.maxHeight;
+        if (isExpanded) {
+            settingsOptionsContent.style.maxHeight = null; // Hoặc '0px'
+            // settingsOptionsContent.style.display = 'none'; // Nếu không dùng max-height
+            settingsToggleBtn.parentElement.classList.remove('expanded');
+        } else {
+            // settingsOptionsContent.style.display = 'block'; // Nếu không dùng max-height
+            settingsOptionsContent.style.maxHeight = settingsOptionsContent.scrollHeight + "px";
+            settingsToggleBtn.parentElement.classList.add('expanded');
+        }
+    });
+}
+
 
 // --- Logic Xác thực (Authentication) ---
 onAuthStateChanged(auth, (user) => {
@@ -600,7 +613,6 @@ saveNoteBtn.addEventListener('click', async () => {
             noteData.createdAt = Timestamp.now();
             const docRef = await addDoc(collection(db, "notes"), noteData);
             console.log("Note added with ID:", docRef.id);
-            // Bỏ alert khi tạo mới
         }
         clearEditor();
         showMainNotesView();
@@ -1132,6 +1144,29 @@ if (sortSelect) {
     });
 } else {
     console.warn("Sort select element not found.");
+}
+
+// *** THÊM MỚI: Logic cho nút Toggle Settings ***
+if (settingsToggleBtn && settingsOptionsContent) {
+    settingsToggleBtn.addEventListener('click', () => {
+        const settingsDiv = settingsToggleBtn.parentElement; // div.sidebar-settings
+        const isExpanded = settingsDiv.classList.contains('expanded');
+
+        if (isExpanded) {
+            settingsOptionsContent.style.maxHeight = null;
+            settingsDiv.classList.remove('expanded');
+        } else {
+            settingsOptionsContent.style.display = 'block'; // Cần để tính scrollHeight
+            settingsOptionsContent.style.maxHeight = settingsOptionsContent.scrollHeight + "px";
+            settingsDiv.classList.add('expanded');
+            // Sau khi animation hoàn tất, nếu không muốn giữ display: block thì có thể bỏ
+            // settingsOptionsContent.addEventListener('transitionend', () => {
+            //     if (!settingsDiv.classList.contains('expanded')) {
+            //         settingsOptionsContent.style.display = 'none';
+            //     }
+            // }, { once: true });
+        }
+    });
 }
 
 
