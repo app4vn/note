@@ -81,7 +81,6 @@ const noteIdInput = document.getElementById('note-id-input');
 const noteTitleInput = document.getElementById('note-title-input');
 const noteContentInput = document.getElementById('note-content-input');
 const noteTagsInput = document.getElementById('note-tags-input');
-// *** THÊM MỚI: Tham chiếu đến container gợi ý tag ***
 const tagSuggestionsContainer = document.getElementById('tag-suggestions');
 
 const isCodeCheckbox = document.getElementById('note-is-code-checkbox');
@@ -98,6 +97,9 @@ const prismThemeLink = document.getElementById('prism-theme-link');
 const accentColorButtons = document.querySelectorAll('.accent-color-button');
 const fontSelect = document.getElementById('font-select');
 
+// *** THÊM MỚI: Tham chiếu đến Toast Container ***
+const toastContainer = document.getElementById('toast-container');
+
 
 // --- Biến trạng thái toàn cục ---
 let currentUser = null;
@@ -110,8 +112,41 @@ let currentSortOption = 'updatedAt_desc';
 let currentTheme = 'light';
 let currentAccentColor = '#007bff';
 let currentContentFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'";
-// *** THÊM MỚI: Mảng lưu trữ tất cả các tag đã dùng ***
 let allUserTags = new Set();
+
+// --- *** THÊM MỚI: Hàm hiển thị Toast Notification *** ---
+/**
+ * Hiển thị một thông báo toast.
+ * @param {string} message - Nội dung thông báo.
+ * @param {string} type - Loại thông báo ('info', 'success', 'error'). Mặc định là 'info'.
+ * @param {number} duration - Thời gian hiển thị (ms). Mặc định là 3000ms.
+ */
+function showToast(message, type = 'info', duration = 3000) {
+    if (!toastContainer) return;
+
+    const toast = document.createElement('div');
+    toast.classList.add('toast-message', type); // Thêm class type (success, error, info)
+    toast.textContent = message;
+
+    toastContainer.appendChild(toast);
+
+    // Kích hoạt animation hiển thị
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10); // Delay nhỏ để trình duyệt kịp render trước khi thêm class show
+
+    // Tự động xóa toast sau một khoảng thời gian
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.classList.add('hide'); // Kích hoạt animation ẩn
+        // Xóa hẳn phần tử toast sau khi animation ẩn hoàn tất
+        toast.addEventListener('transitionend', () => {
+            if (toast.parentNode) { // Kiểm tra xem toast còn trong DOM không
+                toast.remove();
+            }
+        }, { once: true }); // Đảm bảo event listener chỉ chạy 1 lần
+    }, duration);
+}
 
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
@@ -133,7 +168,7 @@ function showAuth() {
         notesUnsubscribe = null;
     }
     notesCache = {};
-    allUserTags.clear(); // Xóa danh sách tag cũ
+    allUserTags.clear();
     activeTag = null;
     currentNoteId = null;
     currentSearchTerm = '';
@@ -166,7 +201,7 @@ function showEditor(note = null) {
     noteDetailView.style.display = 'none';
     noteEditorView.style.display = 'block';
     editorError.textContent = '';
-    hideTagSuggestions(); // Ẩn gợi ý khi mở editor
+    hideTagSuggestions();
 
     if (note && note.id) { // Sửa
         editorTitle.textContent = "Sửa Ghi chú";
@@ -205,12 +240,12 @@ function showDetailView(note) {
 function clearEditorFields() {
     noteTitleInput.value = '';
     noteContentInput.value = '';
-    noteTagsInput.value = ''; // Xóa tags
+    noteTagsInput.value = '';
     isCodeCheckbox.checked = false;
     languageSelect.value = 'plaintext';
     languageSelect.style.display = 'none';
     editorError.textContent = '';
-    hideTagSuggestions(); // Ẩn gợi ý khi xóa editor
+    hideTagSuggestions();
 }
 
 function clearEditor() {
@@ -444,7 +479,10 @@ loginForm.addEventListener('submit', (e) => {
     loginError.textContent = '';
     signInWithEmailAndPassword(auth, email, password)
         .then(() => loginForm.reset())
-        .catch((error) => loginError.textContent = `Lỗi: ${error.message}`);
+        .catch((error) => {
+            loginError.textContent = `Lỗi: ${error.message}`;
+            // showToast(`Lỗi đăng nhập: ${error.message}`, 'error'); // Ví dụ
+        });
 });
 
 signupForm.addEventListener('submit', (e) => {
@@ -454,11 +492,17 @@ signupForm.addEventListener('submit', (e) => {
     signupError.textContent = '';
     createUserWithEmailAndPassword(auth, email, password)
         .then(() => signupForm.reset())
-        .catch((error) => signupError.textContent = `Lỗi: ${error.message}`);
+        .catch((error) => {
+            signupError.textContent = `Lỗi: ${error.message}`;
+            // showToast(`Lỗi đăng ký: ${error.message}`, 'error'); // Ví dụ
+        });
 });
 
 logoutButton.addEventListener('click', () => {
-    signOut(auth).catch((error) => alert(`Lỗi đăng xuất: ${error.message}`));
+    signOut(auth).catch((error) => {
+        console.error("Logout error:", error);
+        showToast(`Lỗi đăng xuất: ${error.message}`, 'error');
+    });
 });
 
 if (showSignupLink) {
@@ -516,6 +560,7 @@ saveNoteBtn.addEventListener('click', async () => {
 
     if (!title || !content) {
         editorError.textContent = "Tiêu đề và Nội dung không được để trống!";
+        showToast("Tiêu đề và Nội dung không được để trống!", 'error');
         return;
     }
     editorError.textContent = '';
@@ -537,6 +582,7 @@ saveNoteBtn.addEventListener('click', async () => {
             await updateDoc(noteRef, noteData);
             console.log("Note updated successfully");
             notesCache[id] = { ...notesCache[id], ...noteData, id };
+            showToast('Ghi chú đã được cập nhật!', 'success');
         } else {
             console.log("Adding new note");
             noteData.createdAt = Timestamp.now();
@@ -544,6 +590,7 @@ saveNoteBtn.addEventListener('click', async () => {
             console.log("Note added with ID:", docRef.id);
             savedNoteId = docRef.id;
             notesCache[savedNoteId] = { ...noteData, id: savedNoteId };
+            showToast('Ghi chú mới đã được tạo!', 'success');
         }
         clearEditor();
         showGridView();
@@ -551,6 +598,7 @@ saveNoteBtn.addEventListener('click', async () => {
     } catch (error) {
         console.error("Error saving note: ", error);
         editorError.textContent = `Lỗi lưu ghi chú: ${error.message}`;
+        showToast(`Lỗi lưu ghi chú: ${error.message}`, 'error');
     } finally {
         saveNoteBtn.disabled = false;
         saveNoteBtn.textContent = 'Lưu Ghi Chú';
@@ -559,7 +607,7 @@ saveNoteBtn.addEventListener('click', async () => {
 
 editNoteBtn.addEventListener('click', () => {
     if (!currentNoteId || !notesCache[currentNoteId]) {
-        alert("Không tìm thấy dữ liệu ghi chú để sửa.");
+        showToast("Vui lòng chọn một ghi chú để sửa.", 'info');
         showGridView();
         return;
     };
@@ -580,10 +628,11 @@ deleteNoteBtn.addEventListener('click', async () => {
             await deleteDoc(noteRef);
             console.log("Note deleted successfully");
             delete notesCache[idToDelete];
+            showToast(`Đã xóa ghi chú "${noteTitle}".`, 'info');
             showGridView();
         } catch (error) {
             console.error("Error deleting note: ", error);
-            alert(`Lỗi xóa ghi chú: ${error.message}`);
+            showToast(`Lỗi xóa ghi chú: ${error.message}`, 'error');
             currentNoteId = idToDelete;
         }
      }
@@ -594,18 +643,19 @@ copyCodeBtn.addEventListener('click', () => {
     if (codeToCopy) {
         navigator.clipboard.writeText(codeToCopy)
             .then(() => {
-                copyCodeBtn.textContent = 'Đã chép!';
+                showToast('Đã sao chép code vào clipboard!', 'success');
+                copyCodeBtn.textContent = 'Đã chép!'; // Vẫn giữ để có phản hồi nhanh
                 setTimeout(() => { copyCodeBtn.textContent = 'Copy Code'; }, 1500);
             })
             .catch(err => {
                 console.error('Clipboard copy failed:', err);
-                alert('Lỗi khi sao chép code.');
+                showToast('Lỗi khi sao chép code.', 'error');
             });
     }
 });
 
 // --- Tải và Hiển thị Dữ liệu từ Firestore ---
-
+// (Giữ nguyên)
 function loadNotesAndTags() {
     if (!currentUser) return;
     console.log(`Setting up Firestore listener for user: ${currentUser.uid}, Sort: ${currentSortOption}`);
@@ -628,13 +678,12 @@ function loadNotesAndTags() {
         console.log("Firestore data received (onSnapshot)");
         const allNotes = [];
         const newNotesCache = {};
-        allUserTags.clear(); // Xóa tags cũ trước khi cập nhật
+        allUserTags.clear();
 
         querySnapshot.forEach((doc) => {
             const note = { id: doc.id, ...doc.data() };
             allNotes.push(note);
             newNotesCache[note.id] = note;
-            // Thu thập tất cả tags
             if (note.tags && Array.isArray(note.tags)) {
                 note.tags.forEach(tag => allUserTags.add(tag));
             }
@@ -643,7 +692,7 @@ function loadNotesAndTags() {
         console.log("Notes data changed, updating cache and UI.");
         notesCache = newNotesCache;
         renderNotesList(Object.values(notesCache));
-        renderTagsList(allNotes); // Truyền allNotes để renderTagsList không phụ thuộc vào notesCache (có thể đã bị lọc)
+        renderTagsList(allNotes);
 
         if (currentNoteId && !notesCache[currentNoteId]) {
             console.log("Current note removed, showing grid view.");
@@ -656,10 +705,14 @@ function loadNotesAndTags() {
     }, (error) => {
         console.error("Error listening to Firestore: ", error);
         if (error.code === 'failed-precondition') {
-             notesListContainer.innerHTML = `<p class="error-message">Lỗi: Cần tạo chỉ mục (index) trong Firestore để sắp xếp. Hãy kiểm tra Console của trình duyệt để lấy link tạo chỉ mục.</p>`;
+             const errorMsg = "Lỗi: Cần tạo chỉ mục (index) trong Firestore để sắp xếp. Hãy kiểm tra Console của trình duyệt để lấy link tạo chỉ mục.";
+             notesListContainer.innerHTML = `<p class="error-message">${errorMsg}</p>`;
+             showToast(errorMsg, 'error', 5000);
              console.error("Firestore Index Required:", error.message);
         } else {
-            notesListContainer.innerHTML = `<p class="error-message">Lỗi tải ghi chú: ${error.message}</p>`;
+            const errorMsg = `Lỗi tải ghi chú: ${error.message}`;
+            notesListContainer.innerHTML = `<p class="error-message">${errorMsg}</p>`;
+            showToast(errorMsg, 'error', 5000);
         }
     });
 }
@@ -813,7 +866,6 @@ function displayNoteDetailContent(note) {
         if (svgIcon) {
             svgIcon.classList.remove('bi-pin-angle', 'bi-pin-angle-fill');
             svgIcon.classList.add(note.isPinned ? 'bi-pin-angle-fill' : 'bi-pin-angle');
-            // Cập nhật SVG path cho icon ghim/bỏ ghim
             svgIcon.innerHTML = note.isPinned ? '<path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>'
                                            : '<path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146"/><path d="M6.559 2.788a1.527 1.527 0 0 1 .217.217l2.135 2.134a1.527 1.527 0 0 1 .217.217L6.428 7.47a.5.5 0 0 1-.707 0l-2.134-2.134a.5.5 0 0 1 0-.707l2.134-2.134a.5.5 0 0 1 .707 0z"/>';
         }
@@ -861,10 +913,10 @@ async function togglePinStatus(noteId) {
             updatedAt: Timestamp.now()
         });
         console.log(`Note ${noteId} pin status updated to ${newPinnedStatus}`);
-        // onSnapshot sẽ tự động cập nhật UI
+        showToast(newPinnedStatus ? "Đã ghim ghi chú!" : "Đã bỏ ghim ghi chú.", 'info', 2000);
     } catch (error) {
         console.error("Error updating pin status:", error);
-        alert("Lỗi cập nhật trạng thái ghim.");
+        showToast("Lỗi cập nhật trạng thái ghim.", 'error');
     }
 }
 
@@ -876,12 +928,11 @@ if (pinNoteDetailBtn) {
     });
 }
 
-// --- *** THÊM MỚI: Logic Gợi ý Tag *** ---
+// --- Logic Gợi ý Tag ---
 
-/** Hiển thị danh sách gợi ý tag */
 function displayTagSuggestions(suggestions, currentTagValue) {
     if (!tagSuggestionsContainer) return;
-    tagSuggestionsContainer.innerHTML = ''; // Xóa gợi ý cũ
+    tagSuggestionsContainer.innerHTML = '';
     if (suggestions.length === 0) {
         hideTagSuggestions();
         return;
@@ -893,9 +944,9 @@ function displayTagSuggestions(suggestions, currentTagValue) {
         suggestionItem.textContent = tag;
         suggestionItem.addEventListener('click', () => {
             const tagsArray = noteTagsInput.value.split(',').map(t => t.trim());
-            tagsArray.pop(); // Xóa phần tag đang gõ dở
-            tagsArray.push(tag); // Thêm tag đã chọn
-            noteTagsInput.value = tagsArray.join(', ') + ', '; // Thêm dấu phẩy và cách
+            tagsArray.pop();
+            tagsArray.push(tag);
+            noteTagsInput.value = tagsArray.join(', ') + ', ';
             hideTagSuggestions();
             noteTagsInput.focus();
         });
@@ -904,14 +955,12 @@ function displayTagSuggestions(suggestions, currentTagValue) {
     tagSuggestionsContainer.style.display = 'block';
 }
 
-/** Ẩn danh sách gợi ý tag */
 function hideTagSuggestions() {
     if (tagSuggestionsContainer) {
         tagSuggestionsContainer.style.display = 'none';
     }
 }
 
-// Lắng nghe sự kiện input trên ô nhập tag
 if (noteTagsInput) {
     noteTagsInput.addEventListener('input', () => {
         const inputValue = noteTagsInput.value;
@@ -920,7 +969,7 @@ if (noteTagsInput) {
 
         if (currentTypingTag) {
             const suggestions = [...allUserTags].filter(tag =>
-                tag.toLowerCase().startsWith(currentTypingTag) && !tagsArray.slice(0, -1).includes(tag) // Không gợi ý tag đã nhập hoàn chỉnh
+                tag.toLowerCase().startsWith(currentTypingTag) && !tagsArray.slice(0, -1).includes(tag)
             );
             displayTagSuggestions(suggestions, currentTypingTag);
         } else {
@@ -928,18 +977,14 @@ if (noteTagsInput) {
         }
     });
 
-    // Ẩn gợi ý khi click ra ngoài ô input
     noteTagsInput.addEventListener('blur', () => {
-        // Dùng setTimeout để sự kiện click vào suggestion kịp xảy ra trước khi blur ẩn đi
         setTimeout(hideTagSuggestions, 150);
     });
 
-    // Ẩn gợi ý khi nhấn phím Escape
     noteTagsInput.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             hideTagSuggestions();
         }
-        // (Có thể thêm xử lý phím mũi tên lên/xuống và Enter để chọn gợi ý sau)
     });
 }
 
@@ -1007,3 +1052,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log("Script loaded. Firebase Initialized. Waiting for Auth state change...");
+
