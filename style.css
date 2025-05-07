@@ -632,7 +632,7 @@ body.theme-solarized-light #notes-list-container .note-item::before {
 
 /* Chế độ xem chi tiết */
 #note-detail-view {
-    position: relative; /* Cần cho nút ghim */
+    position: relative;
 }
 #note-detail-view h2 {
     padding-bottom: 15px;
@@ -640,7 +640,7 @@ body.theme-solarized-light #notes-list-container .note-item::before {
     color: var(--text-primary);
     font-size: 1.8em;
     word-break: break-word;
-    padding-right: 40px; /* Tạo không gian cho nút ghim */
+    padding-right: 40px;
 }
 .tags-display {
     margin-bottom: 20px;
@@ -691,44 +691,38 @@ body.theme-solarized-light #notes-list-container .note-item::before {
     margin-top: 10px;
 }
 
-/* *** THÊM MỚI: Style cho nút Ghim *** */
+/* Style cho nút Ghim */
 .pin-button {
     background: none;
     border: none;
     padding: 5px;
     cursor: pointer;
-    color: var(--text-secondary); /* Màu icon mặc định */
+    color: var(--text-secondary);
     transition: color 0.2s ease, transform 0.2s ease;
-    /* Đặt vị trí cho nút ghim trong detail view */
     position: absolute;
-    top: 25px; /* Điều chỉnh cho phù hợp với padding của content-area và margin của h2 */
-    right: 20px; /* Điều chỉnh cho phù hợp với padding của content-area */
+    top: 25px;
+    right: 20px;
 }
 .pin-button svg {
-    width: 20px; /* Kích thước icon */
+    width: 20px;
     height: 20px;
     vertical-align: middle;
 }
 .pin-button:hover {
-    color: var(--text-primary); /* Đậm hơn khi hover */
+    color: var(--text-primary);
     transform: scale(1.1);
 }
 .pin-button.pinned {
-    color: var(--accent-color); /* Màu nhấn khi đã ghim */
+    color: var(--accent-color);
 }
-.pin-button.pinned svg {
-    /* Có thể đổi icon thành ghim đầy (pin-angle-fill) hoặc chỉ đổi màu */
-    /* fill: var(--accent-color); */ /* Nếu SVG không tự kế thừa màu */
-}
-/* Style cho icon ghim trên thẻ note item (sẽ được thêm bằng JS) */
 .note-item .pin-icon {
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 1.2em; /* Kích thước icon */
+    font-size: 1.2em;
     color: var(--text-secondary);
     cursor: pointer;
-    z-index: 5; /* Nằm trên dog-ear */
+    z-index: 5;
     padding: 3px;
 }
 .note-item .pin-icon.pinned {
@@ -752,6 +746,47 @@ body.theme-solarized-light #notes-list-container .note-item::before {
 #note-editor-view textarea#note-content-input {
     font-family: var(--font-content);
 }
+/* *** THÊM MỚI: Style cho container nhập tag và danh sách gợi ý *** */
+.tag-input-container {
+    position: relative; /* Để định vị tuyệt đối cho danh sách gợi ý */
+    margin-bottom: 12px; /* Giữ margin bottom giống input khác */
+}
+#note-tags-input {
+    margin-bottom: 0; /* Bỏ margin bottom của input vì container đã có */
+}
+.tag-suggestions-list {
+    position: absolute;
+    top: 100%; /* Hiển thị ngay dưới ô input */
+    left: 0;
+    right: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-input);
+    border-top: none; /* Bỏ viền trên để liền với input */
+    border-radius: 0 0 6px 6px; /* Bo góc dưới */
+    max-height: 150px; /* Giới hạn chiều cao, có scroll nếu nhiều */
+    overflow-y: auto;
+    z-index: 100; /* Nằm trên các phần tử khác */
+    box-shadow: 0 4px 8px var(--shadow-primary);
+}
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-secondary);
+}
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+.suggestion-item:hover {
+    background-color: var(--bg-note-item-hover);
+}
+.suggestion-item.active { /* Khi dùng phím mũi tên để chọn */
+    background-color: var(--accent-color);
+    color: var(--text-button);
+}
+
+
 .code-options {
     margin-top: 15px;
     margin-bottom: 20px;
@@ -1018,14 +1053,18 @@ body.theme-solarized-light #notes-list-container .note-item::before {
         padding: 8px 12px;
         font-size: 16px;
     }
-    /* *** THÊM MỚI: Điều chỉnh vị trí nút ghim trên mobile *** */
     .pin-button {
-        top: 15px; /* Gần hơn với padding của content-area */
+        top: 15px;
         right: 15px;
     }
     .pin-button svg {
         width: 18px;
         height: 18px;
     }
+    /* *** THÊM MỚI: Điều chỉnh gợi ý tag trên mobile *** */
+    .tag-suggestions-list {
+        font-size: 0.9em; /* Giảm cỡ chữ gợi ý trên mobile nếu cần */
+    }
+
 
 }
