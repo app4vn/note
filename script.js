@@ -77,7 +77,7 @@ const deleteNoteBtn = document.getElementById('delete-note-btn');
 const editorTitle = document.getElementById('editor-title');
 const noteIdInput = document.getElementById('note-id-input');
 const noteTitleInput = document.getElementById('note-title-input');
-const noteContentInput = document.getElementById('note-content-input');
+const noteContentInput = document.getElementById('note-content-input'); // Textarea soạn thảo
 const noteTagsInput = document.getElementById('note-tags-input');
 const isCodeCheckbox = document.getElementById('note-is-code-checkbox');
 const languageSelect = document.getElementById('note-language-select');
@@ -90,8 +90,9 @@ const contentArea = document.querySelector('.content-area');
 
 const themeButtons = document.querySelectorAll('.theme-button');
 const prismThemeLink = document.getElementById('prism-theme-link');
-// *** THÊM MỚI: Tham chiếu đến các nút chọn màu nhấn ***
 const accentColorButtons = document.querySelectorAll('.accent-color-button');
+// *** THÊM MỚI: Tham chiếu đến ô chọn font ***
+const fontSelect = document.getElementById('font-select');
 
 
 // --- Biến trạng thái toàn cục ---
@@ -103,8 +104,9 @@ let notesCache = {};
 let currentSearchTerm = '';
 let currentSortOption = 'updatedAt_desc';
 let currentTheme = 'light';
-// *** THÊM MỚI: Lưu trữ màu nhấn hiện tại ***
-let currentAccentColor = '#007bff'; // Màu mặc định ban đầu
+let currentAccentColor = '#007bff';
+// *** THÊM MỚI: Lưu trữ font chữ nội dung hiện tại ***
+let currentContentFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'"; // Font hệ thống mặc định
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
 // (Các hàm show/hide/clear/set/linkify/highlight giữ nguyên)
@@ -129,8 +131,9 @@ function showAuth() {
     currentNoteId = null;
     currentSearchTerm = '';
     currentSortOption = 'updatedAt_desc';
-    // currentTheme = 'light'; // Không reset theme khi logout để giữ lựa chọn người dùng
-    // currentAccentColor = '#007bff'; // Không reset màu nhấn
+    // currentTheme = 'light'; // Giữ lựa chọn
+    // currentAccentColor = '#007bff'; // Giữ lựa chọn
+    // currentContentFont = "..."; // Giữ lựa chọn
     if(searchInput) searchInput.value = '';
     if(sortSelect) sortSelect.value = currentSortOption;
     if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
@@ -258,11 +261,11 @@ function applyTheme(themeName) {
         button.classList.toggle('active', button.dataset.theme === themeName);
     });
     if (prismThemeLink) {
-        let prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css'; // Default light
+        let prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css';
         if (themeName === 'dark') {
             prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css';
         } else if (themeName === 'gruvbox-light') {
-            prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css'; // Tạm dùng default cho Gruvbox
+            prismThemeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css';
         }
         prismThemeLink.href = prismThemeUrl;
     }
@@ -300,13 +303,8 @@ themeButtons.forEach(button => {
     });
 });
 
-// --- *** THÊM MỚI: Logic xử lý Màu Nhấn *** ---
+// --- Logic xử lý Màu Nhấn ---
 
-/**
- * Chuyển đổi màu HEX sang RGB.
- * @param {string} hex - Chuỗi màu HEX (ví dụ: #RRGGBB).
- * @returns {{r: number, g: number, b: number} | null} - Đối tượng RGB hoặc null nếu không hợp lệ.
- */
 function hexToRgb(hex) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
@@ -316,12 +314,6 @@ function hexToRgb(hex) {
     } : null;
 }
 
-/**
- * Làm tối một màu HEX.
- * @param {string} hexColor - Màu HEX gốc.
- * @param {number} percent - Phần trăm làm tối (0-100).
- * @returns {string} - Màu HEX đã làm tối.
- */
 function darkenColor(hexColor, percent) {
     let { r, g, b } = hexToRgb(hexColor);
     const factor = 1 - percent / 100;
@@ -331,32 +323,19 @@ function darkenColor(hexColor, percent) {
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
 }
 
-
-/**
- * Áp dụng màu nhấn được chọn.
- * @param {string} colorHex - Giá trị màu HEX (ví dụ: "#007bff").
- */
 function applyAccentColor(colorHex) {
     console.log("Applying accent color:", colorHex);
     const root = document.documentElement;
     root.style.setProperty('--accent-color', colorHex);
-
-    // Tạo màu hover đậm hơn một chút (ví dụ: đậm hơn 20%)
-    const hoverColor = darkenColor(colorHex, 15); // Làm tối đi 15%
+    const hoverColor = darkenColor(colorHex, 15);
     root.style.setProperty('--accent-color-hover', hoverColor);
-
-    // Cập nhật màu shadow-focus với alpha
     const rgb = hexToRgb(colorHex);
     if (rgb) {
         root.style.setProperty('--shadow-focus', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`);
     }
-
-    // Cập nhật trạng thái active cho nút màu nhấn
     accentColorButtons.forEach(button => {
         button.classList.toggle('active', button.dataset.accent === colorHex);
     });
-
-    // Lưu lựa chọn màu nhấn vào localStorage
     try {
         localStorage.setItem('noteAppAccentColor', colorHex);
         currentAccentColor = colorHex;
@@ -365,22 +344,20 @@ function applyAccentColor(colorHex) {
     }
 }
 
-/** Tải màu nhấn đã lưu từ localStorage khi khởi động */
 function loadSavedAccentColor() {
     try {
         const savedAccentColor = localStorage.getItem('noteAppAccentColor');
         if (savedAccentColor) {
             applyAccentColor(savedAccentColor);
         } else {
-            applyAccentColor('#007bff'); // Màu nhấn mặc định nếu không có
+            applyAccentColor('#007bff');
         }
     } catch (e) {
         console.error("Failed to load accent color from localStorage:", e);
-        applyAccentColor('#007bff'); // Màu nhấn mặc định nếu lỗi
+        applyAccentColor('#007bff');
     }
 }
 
-// Gắn sự kiện click cho các nút chọn màu nhấn
 accentColorButtons.forEach(button => {
     button.addEventListener('click', () => {
         const selectedAccent = button.dataset.accent;
@@ -389,6 +366,63 @@ accentColorButtons.forEach(button => {
         }
     });
 });
+
+// --- *** THÊM MỚI: Logic xử lý Font chữ Nội dung *** ---
+
+/**
+ * Áp dụng font chữ được chọn cho nội dung.
+ * @param {string} fontFamily - Chuỗi font-family (ví dụ: "'Lora', serif").
+ */
+function applyContentFont(fontFamily) {
+    console.log("Applying content font:", fontFamily);
+    document.documentElement.style.setProperty('--font-content', fontFamily);
+
+    // Cập nhật trực tiếp font cho textarea soạn thảo
+    if (noteContentInput) {
+        noteContentInput.style.fontFamily = fontFamily;
+    }
+
+    // Cập nhật giá trị của select dropdown (nếu cần)
+    if (fontSelect && fontSelect.value !== fontFamily) {
+        fontSelect.value = fontFamily;
+    }
+
+    // Lưu lựa chọn font vào localStorage
+    try {
+        localStorage.setItem('noteAppContentFont', fontFamily);
+        currentContentFont = fontFamily;
+    } catch (e) {
+        console.error("Failed to save content font to localStorage:", e);
+    }
+}
+
+/** Tải font chữ nội dung đã lưu từ localStorage khi khởi động */
+function loadSavedContentFont() {
+    try {
+        const savedFont = localStorage.getItem('noteAppContentFont');
+        const defaultFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'";
+        if (savedFont) {
+            applyContentFont(savedFont);
+        } else {
+            applyContentFont(defaultFont);
+        }
+    } catch (e) {
+        console.error("Failed to load content font from localStorage:", e);
+        applyContentFont(defaultFont);
+    }
+}
+
+// Gắn sự kiện change cho ô chọn font
+if (fontSelect) {
+    fontSelect.addEventListener('change', (e) => {
+        const selectedFont = e.target.value;
+        if (selectedFont !== currentContentFont) {
+            applyContentFont(selectedFont);
+        }
+    });
+} else {
+    console.warn("Font select element not found.");
+}
 
 
 // --- Logic Xác thực (Authentication) ---
@@ -837,7 +871,8 @@ if (sortSelect) {
 // --- Khởi chạy ---
 document.addEventListener('DOMContentLoaded', () => {
     loadSavedTheme();
-    loadSavedAccentColor(); // *** THÊM MỚI: Tải màu nhấn đã lưu ***
+    loadSavedAccentColor();
+    loadSavedContentFont(); // *** THÊM MỚI: Tải font chữ đã lưu ***
 });
 
 console.log("Script loaded. Firebase Initialized. Waiting for Auth state change...");
