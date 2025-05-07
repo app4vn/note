@@ -63,13 +63,10 @@ body.theme-dark {
     --bg-sidebar: #2b3035;
     --bg-header: #1c1e21;
     --bg-input: #495057;
-    /* Màu nhấn cho theme tối sẽ được JS set dựa trên lựa chọn người dùng */
-    /* --accent-color: #0d6efd; */
-    /* --accent-color-hover: #0b5ed7; */
 
     --bg-button-secondary: #5c636a;
     --bg-button-secondary-hover: #4f555a;
-    --bg-button-danger: #dc3545; /* Giữ nguyên hoặc đổi sang màu đỏ tối hơn */
+    --bg-button-danger: #dc3545;
     --bg-button-danger-hover: #bb2d3b;
     --bg-code-block: #282c34;
     --bg-content-display: #3a3f44;
@@ -105,8 +102,6 @@ body.theme-gruvbox-light {
     --bg-sidebar: #f2e5bc;
     --bg-header: #3c3836;
     --bg-input: #fbf1c7;
-    /* --accent-color: #458588; */
-    /* --accent-color-hover: #076678; */
 
     --bg-button-secondary: #7c6f64;
     --bg-button-secondary-hover: #665c54;
@@ -139,22 +134,18 @@ body.theme-gruvbox-light {
     --highlight-bg: #fabd2f;
 }
 
-/* *** THÊM MỚI: Theme Dracula *** */
 body.theme-dracula {
-    --bg-primary: #282a36; /* Main background */
-    --bg-secondary: #44475a; /* Cards, content area background */
-    --bg-sidebar: #3a3c4e; /* Sidebar background */
-    --bg-header: #1e1f29; /* Header background */
+    --bg-primary: #282a36;
+    --bg-secondary: #44475a;
+    --bg-sidebar: #3a3c4e;
+    --bg-header: #1e1f29;
     --bg-input: #44475a;
-    /* Màu nhấn cho Dracula (có thể giữ màu nhấn người dùng chọn hoặc đặt mặc định) */
-    /* --accent-color: #bd93f9; */ /* Purple */
-    /* --accent-color-hover: #aa7ee6; */
 
-    --bg-button-secondary: #6272a4; /* Comment color as secondary button */
+    --bg-button-secondary: #6272a4;
     --bg-button-secondary-hover: #52608d;
-    --bg-button-danger: #ff5555; /* Red */
+    --bg-button-danger: #ff5555;
     --bg-button-danger-hover: #e84444;
-    --bg-code-block: #21222c; /* Darker for code block */
+    --bg-code-block: #21222c;
     --bg-content-display: #44475a;
     --bg-note-item-hover: #53566e;
     --bg-note-item-active: var(--accent-color);
@@ -162,64 +153,61 @@ body.theme-dracula {
     --dog-ear-color: #6272a4;
     --dog-ear-shadow: rgba(0,0,0,0.5);
 
-    --text-primary: #f8f8f2; /* Foreground */
-    --text-secondary: #bd93f9; /* Purple for secondary text */
+    --text-primary: #f8f8f2;
+    --text-secondary: #bd93f9;
     --text-header: #f8f8f2;
     --text-button: #f8f8f2;
     --text-placeholder: #9a9bb7;
     --text-error: #ff5555;
-    --text-code-block: #f8f8f2; /* Code text */
-    --text-highlight: #282a36; /* Text on highlight */
+    --text-code-block: #f8f8f2;
+    --text-highlight: #282a36;
 
-    --border-primary: #6272a4; /* Comment color as border */
+    --border-primary: #6272a4;
     --border-secondary: #44475a;
     --border-input: #6272a4;
     --border-content-display: #6272a4;
     --border-code-block: #44475a;
 
     --shadow-primary: rgba(0,0,0,0.3);
-    --highlight-bg: #f1fa8c; /* Yellow */
+    --highlight-bg: #f1fa8c;
 }
 
-/* *** THÊM MỚI: Theme Solarized Light *** */
 body.theme-solarized-light {
-    --bg-primary: #fdf6e3; /* base3 */
-    --bg-secondary: #eee8d5; /* base2 */
-    --bg-sidebar: #f6f0e0; /* Slightly off base3 */
-    --bg-header: #002b36; /* base03 (dark) for header */
+    --bg-primary: #fdf6e3;
+    --bg-secondary: #eee8d5;
+    --bg-sidebar: #f6f0e0;
+    --bg-header: #002b36;
     --bg-input: #fdf6e3;
-    /* --accent-color: #268bd2; */ /* Blue */
-    /* --accent-color-hover: #1e73b0; */
 
-    --bg-button-secondary: #93a1a1; /* base1 */
-    --bg-button-secondary-hover: #839496; /* base0 */
-    --bg-button-danger: #dc322f; /* red */
-    --bg-button-danger-hover: #cb4b16; /* orange as darker red */
-    --bg-code-block: #f6f0e0; /* Slightly off base3 */
+    --bg-button-secondary: #93a1a1;
+    --bg-button-secondary-hover: #839496;
+    --bg-button-danger: #dc322f;
+    --bg-button-danger-hover: #cb4b16;
+    --bg-code-block: #f6f0e0;
     --bg-content-display: #eee8d5;
     --bg-note-item-hover: #e0daca;
     --bg-note-item-active: var(--accent-color);
     --bg-tag-item: #93a1a1;
-    --dog-ear-color: #93a1a1; /* base1 */
+    --dog-ear-color: #93a1a1;
     --dog-ear-shadow: rgba(0, 43, 54, 0.2);
 
-    --text-primary: #586e75; /* base01 (darker text) */
-    --text-secondary: #839496; /* base0 */
-    --text-header: #eee8d5; /* base2 (light text on dark header) */
-    --text-button: #fdf6e3; /* Light text on colored buttons */
+    --text-primary: #586e75;
+    --text-secondary: #839496;
+    --text-header: #eee8d5;
+    --text-button: #fdf6e3;
     --text-placeholder: #93a1a1;
     --text-error: #dc322f;
     --text-code-block: #586e75;
     --text-highlight: #002b36;
 
-    --border-primary: #93a1a1; /* base1 */
-    --border-secondary: #eee8d5; /* base2 */
+    --border-primary: #93a1a1;
+    --border-secondary: #eee8d5;
     --border-input: #93a1a1;
     --border-content-display: #93a1a1;
     --border-code-block: #93a1a1;
 
     --shadow-primary: rgba(0, 43, 54, 0.15);
-    --highlight-bg: #b58900; /* yellow */
+    --highlight-bg: #b58900;
 }
 
 
@@ -229,7 +217,7 @@ html {
 
 
 body {
-    font-family: var(--font-content); /* *** SỬ DỤNG BIẾN FONT CHUNG CHO BODY *** */
+    font-family: var(--font-content);
     line-height: 1.6;
     color: var(--text-primary);
     background-color: var(--bg-primary);
@@ -315,7 +303,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 
-textarea#note-content-input { /* Chỉ áp dụng cho textarea soạn thảo nội dung */
+textarea#note-content-input {
     min-height: 150px;
     resize: vertical;
     font-family: var(--font-content);
@@ -459,7 +447,7 @@ hr {
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.sidebar h2 { /* Tiêu đề "Tags", "Giao diện" */
+.sidebar h2 {
     font-size: 1.1em;
     margin-top: 0;
     color: var(--text-primary);
@@ -507,10 +495,8 @@ hr {
     overflow-y: auto;
     transition: background-color 0.3s ease;
 }
-body.theme-gruvbox-light .content-area {
-    background-color: var(--bg-primary);
-}
-body.theme-solarized-light .content-area { /* Solarized Light content area giống nền chính */
+body.theme-gruvbox-light .content-area,
+body.theme-solarized-light .content-area {
     background-color: var(--bg-primary);
 }
 
@@ -596,13 +582,13 @@ body.theme-solarized-light .content-area { /* Solarized Light content area giố
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 body.theme-gruvbox-light #notes-list-container .note-item::before,
-body.theme-solarized-light #notes-list-container .note-item::before { /* Áp dụng cho cả Solarized */
+body.theme-solarized-light #notes-list-container .note-item::before {
     border-color: var(--bg-primary) var(--bg-primary) var(--dog-ear-color) var(--dog-ear-color);
 }
 
 
 /* Nội dung bên trong thẻ */
-.note-item h3 { /* Tiêu đề thẻ */
+.note-item h3 {
     font-size: 1.1em;
     margin-bottom: 8px;
     color: var(--text-primary);
@@ -614,7 +600,7 @@ body.theme-solarized-light #notes-list-container .note-item::before { /* Áp d�
     white-space: normal;
     min-height: 2.4em;
 }
-.note-item-content-preview { /* Nội dung xem trước */
+.note-item-content-preview {
     font-size: 0.9em;
     color: var(--text-secondary);
     flex-grow: 1;
@@ -628,7 +614,7 @@ body.theme-solarized-light #notes-list-container .note-item::before { /* Áp d�
     word-break: break-word;
     font-family: var(--font-content);
 }
-.note-item-date { /* Ngày tháng */
+.note-item-date {
     font-size: 0.8em;
     color: var(--text-secondary);
     margin-top: auto;
@@ -645,12 +631,16 @@ body.theme-solarized-light #notes-list-container .note-item::before { /* Áp d�
 
 
 /* Chế độ xem chi tiết */
-#note-detail-view h2 { /* Tiêu đề note chi tiết */
+#note-detail-view {
+    position: relative; /* Cần cho nút ghim */
+}
+#note-detail-view h2 {
     padding-bottom: 15px;
     margin-bottom: 20px;
     color: var(--text-primary);
     font-size: 1.8em;
     word-break: break-word;
+    padding-right: 40px; /* Tạo không gian cho nút ghim */
 }
 .tags-display {
     margin-bottom: 20px;
@@ -666,7 +656,7 @@ body.theme-solarized-light #notes-list-container .note-item::before { /* Áp d�
     margin-bottom: 8px;
 }
 
-.content-display { /* Khung nội dung text */
+.content-display {
     margin-top: 15px;
     margin-bottom: 25px;
     white-space: pre-wrap;
@@ -681,7 +671,7 @@ body.theme-solarized-light #notes-list-container .note-item::before { /* Áp d�
     font-family: var(--font-content);
 }
 
-#note-detail-code { /* Thẻ <pre> cho code */
+#note-detail-code {
     background-color: var(--bg-code-block);
     color: var(--text-code-block);
     padding: 20px;
@@ -701,7 +691,55 @@ body.theme-solarized-light #notes-list-container .note-item::before { /* Áp d�
     margin-top: 10px;
 }
 
-/* Chế độ soạn thảo (Giữ nguyên) */
+/* *** THÊM MỚI: Style cho nút Ghim *** */
+.pin-button {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: var(--text-secondary); /* Màu icon mặc định */
+    transition: color 0.2s ease, transform 0.2s ease;
+    /* Đặt vị trí cho nút ghim trong detail view */
+    position: absolute;
+    top: 25px; /* Điều chỉnh cho phù hợp với padding của content-area và margin của h2 */
+    right: 20px; /* Điều chỉnh cho phù hợp với padding của content-area */
+}
+.pin-button svg {
+    width: 20px; /* Kích thước icon */
+    height: 20px;
+    vertical-align: middle;
+}
+.pin-button:hover {
+    color: var(--text-primary); /* Đậm hơn khi hover */
+    transform: scale(1.1);
+}
+.pin-button.pinned {
+    color: var(--accent-color); /* Màu nhấn khi đã ghim */
+}
+.pin-button.pinned svg {
+    /* Có thể đổi icon thành ghim đầy (pin-angle-fill) hoặc chỉ đổi màu */
+    /* fill: var(--accent-color); */ /* Nếu SVG không tự kế thừa màu */
+}
+/* Style cho icon ghim trên thẻ note item (sẽ được thêm bằng JS) */
+.note-item .pin-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2em; /* Kích thước icon */
+    color: var(--text-secondary);
+    cursor: pointer;
+    z-index: 5; /* Nằm trên dog-ear */
+    padding: 3px;
+}
+.note-item .pin-icon.pinned {
+    color: var(--accent-color);
+}
+.note-item .pin-icon:hover {
+    color: var(--text-primary);
+}
+
+
+/* Chế độ soạn thảo */
 #note-editor-view {
     max-width: 800px;
 }
@@ -711,7 +749,7 @@ body.theme-solarized-light #notes-list-container .note-item::before { /* Áp d�
      margin-bottom: 20px;
      color: var(--text-primary);
 }
-#note-editor-view textarea#note-content-input { /* Áp dụng font cho textarea soạn thảo */
+#note-editor-view textarea#note-content-input {
     font-family: var(--font-content);
 }
 .code-options {
@@ -980,4 +1018,14 @@ body.theme-solarized-light #notes-list-container .note-item::before { /* Áp d�
         padding: 8px 12px;
         font-size: 16px;
     }
+    /* *** THÊM MỚI: Điều chỉnh vị trí nút ghim trên mobile *** */
+    .pin-button {
+        top: 15px; /* Gần hơn với padding của content-area */
+        right: 15px;
+    }
+    .pin-button svg {
+        width: 18px;
+        height: 18px;
+    }
+
 }
