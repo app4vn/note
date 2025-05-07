@@ -104,6 +104,9 @@ const themeButtons = document.querySelectorAll('.sidebar-settings .theme-button'
 const prismThemeLink = document.getElementById('prism-theme-link');
 const accentColorButtons = document.querySelectorAll('.sidebar-settings .accent-color-button');
 const fontSelect = document.querySelector('.sidebar-settings #font-select');
+// *** THÊM MỚI: Tham chiếu đến nút toggle và content của settings ***
+const settingsToggleBtn = document.getElementById('toggle-settings-btn');
+const settingsOptionsContent = document.getElementById('settings-options-content');
 
 
 // --- Biến trạng thái toàn cục ---
@@ -125,9 +128,12 @@ let currentView = 'notes';
 // --- SVG Paths ---
 const pinAngleSVGPath = "M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146zm-3.27 1.96a.5.5 0 0 1 0 .707L2.874 8.874a.5.5 0 1 1-.707-.707l3.687-3.687a.5.5 0 0 1 .707 0z";
 const pinAngleFillSVGPath = "M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z";
+const trashSVGPath = "M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66H14.5a.5.5 0 0 0 0-1H11Zm-1 1.007H6.5V13h3V3.5ZM5.036 3.5h5.928L10.202 13H5.797L5.036 3.5Z";
+const listSVGPath = "M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zM5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8m0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0M4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0";
 
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
+// (Các hàm khác giữ nguyên)
 function showApp() {
     authContainer.style.display = 'none';
     appContainer.style.display = 'flex';
@@ -160,6 +166,9 @@ function showAuth() {
     signupForm.style.display = 'none';
     loginError.textContent = '';
     signupError.textContent = '';
+     // Đảm bảo phần cài đặt ẩn khi logout
+    if (settingsOptionsContent) settingsOptionsContent.style.display = 'none';
+    if (settingsToggleBtn && settingsToggleBtn.parentElement) settingsToggleBtn.parentElement.classList.remove('expanded');
 }
 
 function showMainNotesView() {
@@ -476,6 +485,7 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
+// (Các hàm xử lý form login/signup/logout giữ nguyên)
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = loginForm['login-email'].value;
