@@ -42,7 +42,6 @@
     --text-error: #dc3545;
     --text-code-block: #393a34;
     --text-highlight: #333;
-    /* *** THÊM MỚI/CẬP NHẬT: Màu cho tiêu đề ghi chú *** */
     --text-note-title: var(--accent-color);
 
 
@@ -87,8 +86,6 @@ body.theme-dark {
     --text-error: #f17c7c;
     --text-code-block: #abb2bf;
     --text-highlight: #212529;
-    /* --text-note-title: var(--accent-color); */ /* Kế thừa từ root hoặc JS sẽ set */
-
 
     --border-primary: #495057;
     --border-secondary: #5c636a;
@@ -128,7 +125,6 @@ body.theme-gruvbox-light {
     --text-error: #cc241d;
     --text-code-block: #3c3836;
     --text-highlight: #3c3836;
-    /* --text-note-title: var(--accent-color); */
 
     --border-primary: #d5c4a1;
     --border-secondary: #bdae93;
@@ -167,8 +163,6 @@ body.theme-dracula {
     --text-error: #ff5555;
     --text-code-block: #f8f8f2;
     --text-highlight: #282a36;
-    /* --text-note-title: var(--accent-color); */
-
 
     --border-primary: #6272a4;
     --border-secondary: #44475a;
@@ -207,7 +201,6 @@ body.theme-solarized-light {
     --text-error: #dc322f;
     --text-code-block: #586e75;
     --text-highlight: #002b36;
-    /* --text-note-title: var(--accent-color); */
 
     --border-primary: #93a1a1;
     --border-secondary: #eee8d5;
@@ -629,10 +622,10 @@ body.theme-solarized-light .note-item::before {
 
 
 /* Nội dung bên trong thẻ */
-.note-item h3 { /* Tiêu đề thẻ */
+.note-item h3 {
     font-size: 1.1em;
     margin-bottom: 8px;
-    color: var(--text-note-title); /* *** SỬ DỤNG BIẾN MÀU NHẤN CHO TIÊU ĐỀ THẺ *** */
+    color: var(--text-note-title);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -687,10 +680,10 @@ body.theme-solarized-light .note-item::before {
 #note-detail-view {
     position: relative;
 }
-#note-detail-view h2 { /* Tiêu đề note chi tiết */
+#note-detail-view h2 {
     padding-bottom: 15px;
     margin-bottom: 20px;
-    color: var(--text-note-title); /* *** SỬ DỤNG BIẾN MÀU NHẤN CHO TIÊU ĐỀ CHI TIẾT *** */
+    color: var(--text-note-title);
     font-size: 1.8em;
     word-break: break-word;
     padding-right: 40px;
@@ -723,6 +716,45 @@ body.theme-solarized-light .note-item::before {
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     font-family: var(--font-content);
 }
+
+/* *** THÊM MỚI: Style cho khu vực hiển thị To-do List *** */
+.todolist-display {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    /* Có thể thêm style giống .content-display nếu muốn có khung */
+    /* background-color: var(--bg-content-display);
+    padding: 20px;
+    border: 1px solid var(--border-content-display);
+    border-radius: 8px; */
+}
+.todolist-display .todo-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-secondary);
+}
+.todolist-display .todo-item:last-child {
+    border-bottom: none;
+}
+.todolist-display .todo-item input[type="checkbox"] {
+    width: auto; /* Reset width */
+    margin-right: 12px;
+    cursor: pointer;
+    /* Tăng kích thước checkbox cho dễ nhấn */
+    transform: scale(1.2);
+}
+.todolist-display .todo-item label {
+    flex-grow: 1;
+    color: var(--text-primary);
+    cursor: pointer; /* Cho phép click vào label để toggle checkbox */
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+.todolist-display .todo-item input[type="checkbox"]:checked + label {
+    color: var(--text-secondary);
+    text-decoration: line-through;
+}
+
 
 #note-detail-code {
     background-color: var(--bg-code-block);
@@ -799,6 +831,67 @@ body.theme-solarized-light .note-item::before {
 #note-editor-view textarea#note-content-input {
     font-family: var(--font-content);
 }
+/* *** THÊM MỚI: Style cho phần chọn Loại Ghi chú *** */
+#note-editor-view .form-group {
+    margin-bottom: 15px;
+}
+#note-editor-view .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+#note-editor-view .form-group select {
+    margin-bottom: 0; /* Bỏ margin của select vì đã có ở form-group */
+}
+
+/* *** THÊM MỚI: Style cho trình soạn thảo To-do List *** */
+#todolist-editor {
+    margin-bottom: 15px;
+}
+#todolist-items-container .todo-editor-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 8px;
+    background-color: var(--bg-input); /* Nền giống input */
+    border: 1px solid var(--border-input);
+    border-radius: 6px;
+}
+#todolist-items-container .todo-editor-item input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    transform: scale(1.1);
+}
+#todolist-items-container .todo-editor-item input[type="text"] {
+    flex-grow: 1;
+    border: none; /* Bỏ viền riêng của input text */
+    padding: 6px 8px;
+    margin-bottom: 0; /* Bỏ margin của input text */
+    background-color: transparent; /* Nền trong suốt */
+}
+#todolist-items-container .todo-editor-item input[type="text"]:focus {
+    box-shadow: none; /* Bỏ shadow khi focus */
+}
+#todolist-items-container .todo-editor-item .delete-todo-item-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 5px;
+    margin-left: 8px;
+    font-size: 1.2em; /* Làm icon to hơn chút */
+    line-height: 1;
+}
+#todolist-items-container .todo-editor-item .delete-todo-item-btn:hover {
+    color: var(--text-error);
+}
+#add-todo-item-btn {
+    margin-top: 10px;
+    padding: 8px 12px;
+    font-size: 0.9em;
+}
+
+
 .tag-input-container {
     position: relative;
     margin-bottom: 12px;
@@ -914,20 +1007,48 @@ body.theme-solarized-light .note-item::before {
     margin-top: auto;
     padding-top: 15px;
 }
-.sidebar .sidebar-settings h2 {
+.sidebar .settings-toggle {
+    font-size: 1.1em;
+    color: var(--text-primary);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
     border-bottom: 1px solid var(--border-secondary);
-    padding-bottom: 5px;
 }
+.sidebar .settings-toggle .toggle-arrow {
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+    margin-left: 5px;
+}
+.sidebar .sidebar-settings.expanded .settings-toggle .toggle-arrow {
+    transform: rotate(180deg);
+}
+.settings-options-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding-left: 5px;
+}
+.sidebar-settings.expanded .settings-options-content {
+    max-height: 500px;
+}
+
+
 .theme-selector, .accent-color-selector, .font-selector {
     margin-bottom: 15px;
 }
-.theme-selector h3, .accent-color-selector h3, .font-selector h3 {
+.sidebar .sidebar-settings h3 {
     font-size: 0.95em;
     margin-bottom: 10px;
     padding-bottom: 0;
     color: var(--text-secondary);
     font-weight: 500;
     border-bottom: none;
+    margin-top: 0;
 }
 .theme-options {
     display: flex;
@@ -1114,4 +1235,9 @@ body.theme-solarized-light .note-item::before {
     .tag-suggestions-list {
         font-size: 0.9em;
     }
+    /* Style cho trình soạn thảo to-do list trên mobile */
+    #todolist-editor .todo-editor-item input[type="text"] {
+        font-size: 1em; /* Đảm bảo input text dễ đọc */
+    }
+
 }
