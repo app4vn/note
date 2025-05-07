@@ -32,18 +32,6 @@
     --dog-ear-color: #e0e0e0;
     --dog-ear-shadow: rgba(0,0,0,0.2);
 
-    /* *** THÊM MỚI: Màu cho Toast Notifications *** */
-    --toast-bg-success: #d1e7dd;
-    --toast-text-success: #0f5132;
-    --toast-border-success: #badbcc;
-    --toast-bg-error: #f8d7da;
-    --toast-text-error: #842029;
-    --toast-border-error: #f5c2c7;
-    --toast-bg-info: #cff4fc;
-    --toast-text-info: #055160;
-    --toast-border-info: #b6effb;
-
-
     --text-primary: #333;
     --text-secondary: #6c757d;
     --text-header: #fff;
@@ -88,17 +76,6 @@ body.theme-dark {
     --dog-ear-color: #5c636a;
     --dog-ear-shadow: rgba(0,0,0,0.4);
 
-    /* Toast colors for dark theme */
-    --toast-bg-success: #143625;
-    --toast-text-success: #75b798;
-    --toast-border-success: #1c5135;
-    --toast-bg-error: #58151c;
-    --toast-text-error: #ea868f;
-    --toast-border-error: #842029;
-    --toast-bg-info: #032830;
-    --toast-text-info: #6edff6;
-    --toast-border-info: #055160;
-
     --text-primary: #e9ecef;
     --text-secondary: #adb5bd;
     --text-header: #fff;
@@ -138,17 +115,6 @@ body.theme-gruvbox-light {
     --dog-ear-color: #bdae93;
     --dog-ear-shadow: rgba(60, 56, 54, 0.2);
 
-    /* Toast colors for gruvbox-light theme */
-    --toast-bg-success: #d4edda; /* Giữ giống theme sáng hoặc tùy chỉnh */
-    --toast-text-success: #155724;
-    --toast-border-success: #c3e6cb;
-    --toast-bg-error: #f8d7da;
-    --toast-text-error: #721c24;
-    --toast-border-error: #f5c6cb;
-    --toast-bg-info: #d1ecf1;
-    --toast-text-info: #0c5460;
-    --toast-border-info: #bee5eb;
-
     --text-primary: #3c3836;
     --text-secondary: #665c54;
     --text-header: #ebdbb2;
@@ -186,17 +152,6 @@ body.theme-dracula {
     --bg-tag-item: #6272a4;
     --dog-ear-color: #6272a4;
     --dog-ear-shadow: rgba(0,0,0,0.5);
-
-    /* Toast colors for dracula theme */
-    --toast-bg-success: #50fa7b33; /* Green with alpha */
-    --toast-text-success: #50fa7b;
-    --toast-border-success: #50fa7b80;
-    --toast-bg-error: #ff555533;   /* Red with alpha */
-    --toast-text-error: #ff5555;
-    --toast-border-error: #ff555580;
-    --toast-bg-info: #8be9fd33;    /* Cyan with alpha */
-    --toast-text-info: #8be9fd;
-    --toast-border-info: #8be9fd80;
 
     --text-primary: #f8f8f2;
     --text-secondary: #bd93f9;
@@ -236,17 +191,6 @@ body.theme-solarized-light {
     --dog-ear-color: #93a1a1;
     --dog-ear-shadow: rgba(0, 43, 54, 0.2);
 
-    /* Toast colors for solarized-light theme */
-    --toast-bg-success: #c3e6cb; /* Lấy từ theme sáng hoặc tùy chỉnh */
-    --toast-text-success: #155724;
-    --toast-border-success: #badbcc;
-    --toast-bg-error: #f5c6cb;
-    --toast-text-error: #721c24;
-    --toast-border-error: #f8d7da;
-    --toast-bg-info: #bee5eb;
-    --toast-text-info: #0c5460;
-    --toast-border-info: #d1ecf1;
-
     --text-primary: #586e75;
     --text-secondary: #839496;
     --text-header: #eee8d5;
@@ -280,66 +224,600 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* (Các style khác giữ nguyên) */
-/* ... */
-/* (Bỏ qua phần style đã có để cho ngắn gọn, chỉ thêm phần mới) */
-/* ... */
-
-/* *** THÊM MỚI: Style cho Toast Notifications *** */
-#toast-container {
-    position: fixed; /* Vị trí cố định trên màn hình */
-    top: 20px; /* Cách top 20px */
-    right: 20px; /* Cách phải 20px */
-    z-index: 1050; /* Nằm trên hầu hết các phần tử khác */
-    display: flex; /* Sắp xếp các toast theo cột */
-    flex-direction: column;
-    align-items: flex-end; /* Căn các toast về bên phải */
-    gap: 10px; /* Khoảng cách giữa các toast */
+h1, h2 {
+    margin-bottom: 0.8em;
+    font-weight: 600;
+}
+/* Tiêu đề lưới */
+#notes-grid-view h2 {
+    margin-bottom: 20px;
+    font-size: 1.6em;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-secondary);
+    padding-bottom: 10px;
+}
+#notes-grid-view h2 #active-tag-display {
+    font-size: 0.8em;
+    color: var(--text-link);
+    font-weight: 500;
+    margin-left: 10px;
 }
 
-.toast-message {
-    background-color: var(--bg-secondary); /* Nền mặc định */
-    color: var(--text-primary); /* Chữ mặc định */
-    padding: 15px 20px;
+
+button {
+    cursor: pointer;
+    padding: 10px 15px;
+    border: none;
     border-radius: 6px;
-    box-shadow: 0 4px 12px var(--shadow-primary);
-    border-left: 5px solid var(--border-primary); /* Viền trái để chỉ thị loại */
-    min-width: 250px; /* Chiều rộng tối thiểu */
-    max-width: 350px; /* Chiều rộng tối đa */
-    opacity: 0; /* Ẩn ban đầu */
-    transform: translateX(100%); /* Hiệu ứng trượt từ phải vào */
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    font-size: 1em;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+button:active:not(:disabled) {
+     transform: translateY(1px);
+     box-shadow: inset 0 1px 3px var(--shadow-primary);
+}
+/* Nút quay lại */
+.back-button {
+    margin-bottom: 20px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+}
+.back-button:hover {
+    background-color: var(--bg-note-item-hover);
+}
+
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-input);
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+}
+input::placeholder, textarea::placeholder {
+    color: var(--text-placeholder);
+    opacity: 1; /* Firefox */
+}
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--border-input-focus);
+    box-shadow: 0 0 0 3px var(--shadow-focus);
+}
+/* Ô tìm kiếm trong sidebar */
+#search-input {
+    margin-bottom: 0;
+}
+
+
+textarea#note-content-input {
+    min-height: 150px;
+    resize: vertical;
+    font-family: var(--font-content);
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: var(--border-secondary);
+    margin: 20px 0;
+}
+/* hr trong sidebar */
+.sidebar hr {
+    margin: 15px 0;
+    background-color: var(--border-primary);
+}
+
+
+/* Kiểu nút */
+.button-primary {
+    background-color: var(--bg-button-primary);
+    color: var(--text-button);
+}
+.button-primary:hover:not(:disabled) {
+    background-color: var(--bg-button-primary-hover);
+}
+
+.button-secondary {
+    background-color: var(--bg-button-secondary);
+    color: var(--text-button);
+}
+.button-secondary:hover:not(:disabled) {
+    background-color: var(--bg-button-secondary-hover);
+}
+
+.button-danger {
+    background-color: var(--bg-button-danger);
+    color: var(--text-button);
+}
+.button-danger:hover:not(:disabled) {
+    background-color: var(--bg-button-danger-hover);
+}
+
+.full-width {
+    width: 100%;
+}
+
+/* Thông báo lỗi */
+.error-message {
+    color: var(--text-error);
+    font-size: 0.9em;
+    margin-top: 5px;
+    min-height: 1.2em;
+    text-align: left;
+}
+
+/* Khu vực xác thực */
+#auth-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px var(--shadow-primary);
+    text-align: center;
+    border: 1px solid var(--border-primary);
+}
+#auth-forms hr {
+    background-color: var(--border-secondary);
+    margin: 25px 0;
+}
+#auth-forms h2 {
+    margin-bottom: 15px;
+    font-size: 1.4em;
+    color: var(--text-primary);
+}
+
+.auth-switch-link {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+.auth-switch-link span {
+    color: var(--text-link);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.auth-switch-link span:hover {
+    color: var(--text-link-hover);
+}
+
+
+/* Khu vực ứng dụng chính */
+#app-container {
+    display: none;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-header {
+    background-color: var(--bg-header);
+    color: var(--text-header);
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 5px var(--shadow-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.app-header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.user-info span {
+    margin-right: 15px;
+    font-weight: 500;
+}
+
+/* Bố cục chính (Sidebar + Content) */
+.main-content {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background-color: var(--bg-sidebar);
+    padding: 20px;
+    border-right: 1px solid var(--border-primary);
+    overflow-y: auto;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sidebar h2 {
+    font-size: 1.1em;
+    margin-top: 0;
+    color: var(--text-primary);
+    padding-bottom: 8px;
+}
+.sidebar .sidebar-settings h2, .sidebar .sidebar-settings h3 {
+    font-size: 0.95em;
+    margin-bottom: 10px;
+    padding-bottom: 0;
+    color: var(--text-secondary);
+    font-weight: 500;
+    border-bottom: none;
+}
+.sidebar .sidebar-settings h2 {
+     border-bottom: 1px solid var(--border-secondary);
+     padding-bottom: 5px;
+}
+
+
+#tags-list-container {
+    margin-top: 10px;
+}
+#tags-list-container .tag-item {
+     display: inline-block;
+     background-color: var(--bg-tag-item);
+     color: var(--text-button);
+     padding: 4px 10px;
+     border-radius: 15px;
+     font-size: 0.85em;
+     margin-right: 6px;
+     margin-bottom: 6px;
+     cursor: pointer;
+     transition: background-color 0.2s ease;
+}
+#tags-list-container .tag-item:hover,
+#tags-list-container .tag-item.active {
+    background-color: var(--bg-tag-item-active);
+}
+
+
+.content-area {
+    flex-grow: 1;
+    padding: 30px 40px;
+    background-color: var(--bg-secondary);
+    overflow-y: auto;
+    transition: background-color 0.3s ease;
+}
+body.theme-gruvbox-light .content-area,
+body.theme-solarized-light .content-area {
+    background-color: var(--bg-primary);
+}
+
+
+/* Grid View */
+#notes-grid-view {
+    display: block;
+}
+
+/* Header của Grid View */
+.grid-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-secondary);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.grid-view-header h2 {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.sort-options {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.sort-options label {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+.sort-options select {
+    width: auto;
+    min-width: 200px;
+    margin-bottom: 0;
+    padding: 8px 12px;
     font-size: 0.9em;
 }
 
-.toast-message.show {
-    opacity: 1;
-    transform: translateX(0);
+
+#notes-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 0;
+    padding: 5px;
 }
 
-.toast-message.hide {
-    opacity: 0;
-    transform: translateX(100%);
+/* Thẻ ghi chú trong lưới */
+#notes-list-container .note-item {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 150px;
+    box-shadow: 0 1px 3px var(--shadow-primary);
+    position: relative;
+}
+#notes-list-container .note-item:hover {
+    box-shadow: 0 4px 12px var(--shadow-primary);
+    border-color: var(--border-input-focus);
+    background-color: var(--bg-note-item-hover);
 }
 
-/* Kiểu cho từng loại toast */
-.toast-message.success {
-    background-color: var(--toast-bg-success);
-    color: var(--toast-text-success);
-    border-left-color: var(--toast-border-success);
+/* Style cho hiệu ứng Dog Ear */
+#notes-list-container .note-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-width: 0 25px 25px 0;
+    border-style: solid;
+    border-color: var(--bg-primary) var(--bg-primary) var(--dog-ear-color) var(--dog-ear-color);
+    box-shadow: -1px 1px 3px var(--dog-ear-shadow);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+body.theme-gruvbox-light #notes-list-container .note-item::before,
+body.theme-solarized-light #notes-list-container .note-item::before {
+    border-color: var(--bg-primary) var(--bg-primary) var(--dog-ear-color) var(--dog-ear-color);
 }
 
-.toast-message.error {
-    background-color: var(--toast-bg-error);
-    color: var(--toast-text-error);
-    border-left-color: var(--toast-border-error);
+
+/* Nội dung bên trong thẻ */
+.note-item h3 {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    min-height: 2.4em;
+}
+.note-item-content-preview {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    flex-grow: 1;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-word;
+    font-family: var(--font-content);
+}
+.note-item-date {
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    margin-top: auto;
+    text-align: right;
 }
 
-.toast-message.info {
-    background-color: var(--toast-bg-info);
-    color: var(--toast-text-info);
-    border-left-color: var(--toast-border-info);
+/* Thông báo khi không có note */
+#notes-list-container > p {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-secondary);
+    margin-top: 30px;
 }
+
+
+/* Chế độ xem chi tiết */
+#note-detail-view {
+    position: relative;
+}
+#note-detail-view h2 {
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    font-size: 1.8em;
+    word-break: break-word;
+    padding-right: 40px;
+}
+.tags-display {
+    margin-bottom: 20px;
+}
+.tags-display .tag {
+    display: inline-block;
+    background-color: var(--bg-button-primary);
+    color: var(--text-button);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.content-display {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.7;
+    color: var(--text-primary);
+    background-color: var(--bg-content-display);
+    padding: 20px;
+    border: 1px solid var(--border-content-display);
+    border-radius: 8px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    font-family: var(--font-content);
+}
+
+#note-detail-code {
+    background-color: var(--bg-code-block);
+    color: var(--text-code-block);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    white-space: pre;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.95em;
+    line-height: 1.5;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    border: 1px solid var(--border-code-block);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+#note-detail-actions button {
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+/* Style cho nút Ghim */
+.pin-button {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color 0.2s ease, transform 0.2s ease;
+    position: absolute;
+    top: 25px;
+    right: 20px;
+}
+.pin-button svg {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+.pin-button:hover {
+    color: var(--text-primary);
+    transform: scale(1.1);
+}
+.pin-button.pinned {
+    color: var(--accent-color);
+}
+.note-item .pin-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2em;
+    color: var(--text-secondary);
+    cursor: pointer;
+    z-index: 5;
+    padding: 3px;
+}
+.note-item .pin-icon.pinned {
+    color: var(--accent-color);
+}
+.note-item .pin-icon:hover {
+    color: var(--text-primary);
+}
+
+
+/* Chế độ soạn thảo */
+#note-editor-view {
+    max-width: 800px;
+}
+#note-editor-view h2 {
+     border-bottom: 1px solid var(--border-secondary);
+     padding-bottom: 15px;
+     margin-bottom: 20px;
+     color: var(--text-primary);
+}
+#note-editor-view textarea#note-content-input {
+    font-family: var(--font-content);
+}
+.tag-input-container {
+    position: relative;
+    margin-bottom: 12px;
+}
+#note-tags-input {
+    margin-bottom: 0;
+}
+.tag-suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-input);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 4px 8px var(--shadow-primary);
+}
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-secondary);
+}
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+.suggestion-item:hover {
+    background-color: var(--bg-note-item-hover);
+}
+.suggestion-item.active {
+    background-color: var(--accent-color);
+    color: var(--text-button);
+}
+
+
+.code-options {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.code-options label {
+    margin-left: 8px;
+    margin-right: 20px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text-secondary);
+}
+.code-options input[type="checkbox"] {
+    width: auto;
+    margin-bottom: 0;
+    cursor: pointer;
+    vertical-align: middle;
+}
+.code-options select {
+    width: auto;
+    min-width: 150px;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.editor-actions button {
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
 
 /* Style cho nút Scroll to Top */
 #scrollToTopBtn {
@@ -469,15 +947,6 @@ body {
     .content-area {
         padding: 25px;
     }
-     /* *** THÊM MỚI: Điều chỉnh toast trên tablet *** */
-    #toast-container {
-        top: 15px;
-        right: 15px;
-    }
-    .toast-message {
-        min-width: 220px;
-        max-width: 300px;
-    }
 }
 
 @media (max-width: 768px) {
@@ -594,17 +1063,4 @@ body {
     .tag-suggestions-list {
         font-size: 0.9em;
     }
-    /* *** THÊM MỚI: Điều chỉnh toast trên mobile *** */
-    #toast-container {
-        top: 10px;
-        right: 10px;
-        left: 10px; /* Cho toast chiếm gần hết chiều rộng trên mobile */
-        align-items: center; /* Căn giữa toast */
-    }
-    .toast-message {
-        min-width: 0; /* Bỏ min-width */
-        width: 100%; /* Chiếm hết chiều rộng container */
-        max-width: none; /* Bỏ max-width */
-    }
-
 }
