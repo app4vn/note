@@ -69,39 +69,43 @@
                     </svg>
                      Tất cả Ghi chú
                 </button>
-                <div class="sidebar-settings">
-                    <hr>
-                    <h2>Giao diện</h2>
-                    <div class="theme-selector">
-                         <h3>Chủ đề</h3>
-                         <div class="theme-options">
-                            <button data-theme="light" class="theme-button" title="Giao diện Sáng">Sáng</button>
-                            <button data-theme="dark" class="theme-button" title="Giao diện Tối">Tối</button>
-                            <button data-theme="gruvbox-light" class="theme-button" title="Giao diện Gruvbox Sáng">Gruvbox</button>
-                            <button data-theme="dracula" class="theme-button" title="Giao diện Dracula">Dracula</button>
-                            <button data-theme="solarized-light" class="theme-button" title="Giao diện Solarized Sáng">Solarized</button>
-                         </div>
-                    </div>
-                    <div class="accent-color-selector">
-                        <h3>Màu nhấn</h3>
-                        <div class="accent-color-options">
-                            <button class="accent-color-button" data-accent="#007bff" style="background-color: #007bff;" title="Xanh dương (Mặc định)"></button>
-                            <button class="accent-color-button" data-accent="#198754" style="background-color: #198754;" title="Xanh lá"></button>
-                            <button class="accent-color-button" data-accent="#dc3545" style="background-color: #dc3545;" title="Đỏ"></button>
-                            <button class="accent-color-button" data-accent="#ffc107" style="background-color: #ffc107;" title="Vàng"></button>
-                            <button class="accent-color-button" data-accent="#fd7e14" style="background-color: #fd7e14;" title="Cam"></button>
-                            <button class="accent-color-button" data-accent="#6f42c1" style="background-color: #6f42c1;" title="Tím"></button>
+
+                <div class="sidebar-settings"> <hr>
+                    <h2 id="toggle-settings-btn" class="settings-toggle">
+                        Giao diện
+                        <span class="toggle-arrow">▼</span> </h2>
+                    <div id="settings-options-content" class="settings-options-content" style="display: none;">
+                        <div class="theme-selector">
+                             <h3>Chủ đề</h3>
+                             <div class="theme-options">
+                                <button data-theme="light" class="theme-button" title="Giao diện Sáng">Sáng</button>
+                                <button data-theme="dark" class="theme-button" title="Giao diện Tối">Tối</button>
+                                <button data-theme="gruvbox-light" class="theme-button" title="Giao diện Gruvbox Sáng">Gruvbox</button>
+                                <button data-theme="dracula" class="theme-button" title="Giao diện Dracula">Dracula</button>
+                                <button data-theme="solarized-light" class="theme-button" title="Giao diện Solarized Sáng">Solarized</button>
+                             </div>
                         </div>
-                    </div>
-                    <div class="font-selector">
-                        <h3>Font chữ Nội dung</h3>
-                        <select id="font-select">
-                            <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">Hệ thống (Mặc định)</option>
-                            <option value="'Lora', serif">Lora (Serif)</option>
-                            <option value="'Roboto', sans-serif">Roboto (Sans-serif)</option>
-                            <option value="'Open Sans', sans-serif">Open Sans (Sans-serif)</option>
-                            <option value="'Merriweather', serif">Merriweather (Serif)</option>
-                        </select>
+                        <div class="accent-color-selector">
+                            <h3>Màu nhấn</h3>
+                            <div class="accent-color-options">
+                                <button class="accent-color-button" data-accent="#007bff" style="background-color: #007bff;" title="Xanh dương (Mặc định)"></button>
+                                <button class="accent-color-button" data-accent="#198754" style="background-color: #198754;" title="Xanh lá"></button>
+                                <button class="accent-color-button" data-accent="#dc3545" style="background-color: #dc3545;" title="Đỏ"></button>
+                                <button class="accent-color-button" data-accent="#ffc107" style="background-color: #ffc107;" title="Vàng"></button>
+                                <button class="accent-color-button" data-accent="#fd7e14" style="background-color: #fd7e14;" title="Cam"></button>
+                                <button class="accent-color-button" data-accent="#6f42c1" style="background-color: #6f42c1;" title="Tím"></button>
+                            </div>
+                        </div>
+                        <div class="font-selector">
+                            <h3>Font chữ Nội dung</h3>
+                            <select id="font-select">
+                                <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">Hệ thống (Mặc định)</option>
+                                <option value="'Lora', serif">Lora (Serif)</option>
+                                <option value="'Roboto', sans-serif">Roboto (Sans-serif)</option>
+                                <option value="'Open Sans', sans-serif">Open Sans (Sans-serif)</option>
+                                <option value="'Merriweather', serif">Merriweather (Serif)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </aside>
@@ -124,7 +128,6 @@
                         <p>Đang tải ghi chú...</p>
                     </div>
                 </div>
-
                 <div id="trash-view" style="display: none;">
                     <div class="grid-view-header">
                         <h2>Ghi chú trong Thùng rác</h2>
@@ -133,7 +136,6 @@
                         <p>Thùng rác trống.</p>
                     </div>
                 </div>
-
                 <div id="note-detail-view" style="display: none;">
                      <button id="back-to-grid-btn" class="button-secondary back-button">&larr; Quay lại danh sách</button>
                      <button id="pin-note-detail-btn" class="pin-button" title="Ghim/Bỏ ghim ghi chú">
@@ -149,7 +151,6 @@
                           <button id="copy-code-btn" class="button-secondary" style="display: none;">Copy Code</button>
                      </div>
                 </div>
-
                 <div id="note-editor-view" style="display: none;">
                     <h2 id="editor-title">Soạn thảo Ghi chú</h2>
                     <input type="hidden" id="note-id-input">
@@ -179,5 +180,5 @@
 
     <button id="scrollToTopBtn" title="Cuộn lên đầu trang">&uarr;</button>
 
-    </body>
+</body>
 </html>
