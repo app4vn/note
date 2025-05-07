@@ -42,6 +42,9 @@
     --text-error: #dc3545;
     --text-code-block: #393a34;
     --text-highlight: #333;
+    /* *** THÊM MỚI/CẬP NHẬT: Màu cho tiêu đề ghi chú *** */
+    --text-note-title: var(--accent-color);
+
 
     --border-primary: #dee2e6;
     --border-secondary: #e0e0e0;
@@ -84,6 +87,8 @@ body.theme-dark {
     --text-error: #f17c7c;
     --text-code-block: #abb2bf;
     --text-highlight: #212529;
+    /* --text-note-title: var(--accent-color); */ /* Kế thừa từ root hoặc JS sẽ set */
+
 
     --border-primary: #495057;
     --border-secondary: #5c636a;
@@ -123,6 +128,7 @@ body.theme-gruvbox-light {
     --text-error: #cc241d;
     --text-code-block: #3c3836;
     --text-highlight: #3c3836;
+    /* --text-note-title: var(--accent-color); */
 
     --border-primary: #d5c4a1;
     --border-secondary: #bdae93;
@@ -161,6 +167,8 @@ body.theme-dracula {
     --text-error: #ff5555;
     --text-code-block: #f8f8f2;
     --text-highlight: #282a36;
+    /* --text-note-title: var(--accent-color); */
+
 
     --border-primary: #6272a4;
     --border-secondary: #44475a;
@@ -199,6 +207,7 @@ body.theme-solarized-light {
     --text-error: #dc322f;
     --text-code-block: #586e75;
     --text-highlight: #002b36;
+    /* --text-note-title: var(--accent-color); */
 
     --border-primary: #93a1a1;
     --border-secondary: #eee8d5;
@@ -447,41 +456,24 @@ hr {
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.sidebar h2 { /* Tiêu đề "Tags" */
+.sidebar h2 {
     font-size: 1.1em;
     margin-top: 0;
     color: var(--text-primary);
     padding-bottom: 8px;
 }
-/* *** THAY ĐỔI: Style cho tiêu đề cài đặt có thể click *** */
-.sidebar .settings-toggle {
-    font-size: 1.1em; /* Giống h2 khác */
-    color: var(--text-primary);
-    padding-bottom: 8px;
-    margin-bottom: 0; /* Bỏ margin bottom để sát với hr */
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between; /* Đẩy mũi tên ra xa */
-    align-items: center;
-    user-select: none; /* Không cho chọn text */
-    border-bottom: 1px solid var(--border-secondary); /* Giữ lại đường kẻ */
-}
-.sidebar .settings-toggle .toggle-arrow {
-    font-size: 0.8em;
-    transition: transform 0.3s ease;
-}
-.sidebar .sidebar-settings.expanded .settings-toggle .toggle-arrow {
-    transform: rotate(180deg); /* Xoay mũi tên khi mở */
-}
-
-.sidebar .sidebar-settings h3 { /* Tiêu đề các mục con (Theme, Màu nhấn, Font) */
+.sidebar .sidebar-settings h2, .sidebar .sidebar-settings h3 {
     font-size: 0.95em;
-    margin-top: 15px; /* Khoảng cách trên cho mục đầu tiên */
     margin-bottom: 10px;
+    padding-bottom: 0;
     color: var(--text-secondary);
     font-weight: 500;
+    border-bottom: none;
 }
-
+.sidebar .sidebar-settings h2 {
+     border-bottom: 1px solid var(--border-secondary);
+     padding-bottom: 5px;
+}
 
 /* Style cho các nút trong sidebar (Thùng rác, Tất cả notes) */
 .sidebar-button {
@@ -637,10 +629,10 @@ body.theme-solarized-light .note-item::before {
 
 
 /* Nội dung bên trong thẻ */
-.note-item h3 {
+.note-item h3 { /* Tiêu đề thẻ */
     font-size: 1.1em;
     margin-bottom: 8px;
-    color: var(--text-note-title);
+    color: var(--text-note-title); /* *** SỬ DỤNG BIẾN MÀU NHẤN CHO TIÊU ĐỀ THẺ *** */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -695,10 +687,10 @@ body.theme-solarized-light .note-item::before {
 #note-detail-view {
     position: relative;
 }
-#note-detail-view h2 {
+#note-detail-view h2 { /* Tiêu đề note chi tiết */
     padding-bottom: 15px;
     margin-bottom: 20px;
-    color: var(--text-note-title);
+    color: var(--text-note-title); /* *** SỬ DỤNG BIẾN MÀU NHẤN CHO TIÊU ĐỀ CHI TIẾT *** */
     font-size: 1.8em;
     word-break: break-word;
     padding-right: 40px;
@@ -919,56 +911,23 @@ body.theme-solarized-light .note-item::before {
 
 /* Style cho Bộ chọn Theme & Cài đặt khác trong Sidebar */
 .sidebar-settings {
-    margin-top: auto; /* Đẩy xuống cuối sidebar */
+    margin-top: auto;
     padding-top: 15px;
 }
-/* *** THAY ĐỔI: Style cho tiêu đề cài đặt có thể click *** */
-.sidebar .settings-toggle {
-    font-size: 1.1em;
-    color: var(--text-primary);
-    padding-bottom: 8px; /* Giữ padding bottom */
-    margin-bottom: 10px; /* Thêm margin bottom để tách biệt với nội dung cài đặt */
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    user-select: none;
+.sidebar .sidebar-settings h2 {
     border-bottom: 1px solid var(--border-secondary);
+    padding-bottom: 5px;
 }
-.sidebar .settings-toggle .toggle-arrow {
-    font-size: 0.8em;
-    transition: transform 0.3s ease;
-    margin-left: 5px;
-}
-.sidebar .sidebar-settings.expanded .settings-toggle .toggle-arrow {
-    transform: rotate(180deg);
-}
-/* *** THÊM MỚI: Style cho container chứa các tùy chọn cài đặt *** */
-.settings-options-content {
-    /* display: none;  Mặc định ẩn bởi JS hoặc style inline trong HTML */
-    /* Thêm hiệu ứng trượt (tùy chọn) */
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-    padding-left: 5px; /* Thụt lề nhẹ cho các mục con */
-}
-.sidebar-settings.expanded .settings-options-content {
-    max-height: 500px; /* Đặt một giá trị đủ lớn để chứa nội dung */
-    /* Hoặc dùng JS để tính chiều cao động nếu cần */
-}
-
-
 .theme-selector, .accent-color-selector, .font-selector {
     margin-bottom: 15px;
 }
-.sidebar .sidebar-settings h3 { /* Tiêu đề các mục con (Theme, Màu nhấn, Font) */
+.theme-selector h3, .accent-color-selector h3, .font-selector h3 {
     font-size: 0.95em;
     margin-bottom: 10px;
     padding-bottom: 0;
     color: var(--text-secondary);
     font-weight: 500;
     border-bottom: none;
-    margin-top: 0; /* Reset margin-top cho h3 đầu tiên trong settings-options-content */
 }
 .theme-options {
     display: flex;
