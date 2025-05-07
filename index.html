@@ -135,7 +135,11 @@
                     <input type="hidden" id="note-id-input">
                     <input type="text" id="note-title-input" placeholder="Tiêu đề" required>
                     <textarea id="note-content-input" placeholder="Nội dung ghi chú..." rows="10" required></textarea>
-                    <input type="text" id="note-tags-input" placeholder="Tags (cách nhau bằng dấu phẩy)">
+                    <div class="tag-input-container">
+                        <input type="text" id="note-tags-input" placeholder="Tags (cách nhau bằng dấu phẩy)">
+                        <div id="tag-suggestions" class="tag-suggestions-list" style="display: none;">
+                            </div>
+                    </div>
                     <div class="code-options">
                         <input type="checkbox" id="note-is-code-checkbox">
                         <label for="note-is-code-checkbox">Đây là code?</label>
