@@ -145,6 +145,12 @@
                      <div id="note-detail-tags" class="tags-display"></div>
                      <div id="note-detail-content" class="content-display"></div>
                      <pre id="note-detail-code" style="display: none;"><code class="language-plaintext"></code></pre>
+                     <div id="note-detail-todos-container" style="display: none;">
+                        <h3>Danh sách công việc:</h3>
+                        <ul id="note-detail-todos-list">
+                            </ul>
+                        <div id="note-detail-todos-progress" style="margin-top: 10px;"></div>
+                     </div>
                      <div id="note-detail-actions">
                           <button id="edit-note-btn" class="button-secondary">Sửa</button>
                           <button id="delete-note-btn" class="button-danger">Xóa</button>
@@ -187,7 +193,14 @@
                             <option value="typescript">TypeScript</option>
                             <option value="jsx">JSX (React)</option>
                             <option value="tsx">TSX (React)</option>
-                            </select>
+                        </select>
+                    </div>
+
+                    <div id="note-editor-todos-container" style="margin-top: 20px;">
+                        <h3>Danh sách công việc (<label for="enable-todo-checkbox">Bật/Tắt</label> <input type="checkbox" id="enable-todo-checkbox">)</h3>
+                        <ul id="note-editor-todos-list" style="list-style: none; padding-left: 0;">
+                            </ul>
+                        <button type="button" id="add-todo-editor-item-btn" class="button-secondary" style="margin-top: 10px;">Thêm công việc</button>
                     </div>
                     <div class="editor-actions">
                         <button id="save-note-btn" class="button-primary">Lưu Ghi Chú</button>
