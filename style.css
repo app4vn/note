@@ -14,12 +14,11 @@
     --bg-sidebar: #f8f9fa;
     --bg-header: #343a40;
     --bg-input: #fff;
-    /* Màu nhấn mặc định */
     --accent-color: #007bff;
     --accent-color-hover: #0056b3;
 
-    --bg-button-primary: var(--accent-color); /* Nút chính dùng màu nhấn */
-    --bg-button-primary-hover: var(--accent-color-hover); /* Hover nút chính */
+    --bg-button-primary: var(--accent-color);
+    --bg-button-primary-hover: var(--accent-color-hover);
     --bg-button-secondary: #6c757d;
     --bg-button-secondary-hover: #5a6268;
     --bg-button-danger: #dc3545;
@@ -29,7 +28,7 @@
     --bg-note-item-hover: #e9ecef;
     --bg-note-item-active: #cfe2ff;
     --bg-tag-item: #6c757d;
-    --bg-tag-item-active: var(--accent-color); /* Tag active dùng màu nhấn */
+    --bg-tag-item-active: var(--accent-color);
     --dog-ear-color: #e0e0e0;
     --dog-ear-shadow: rgba(0,0,0,0.2);
 
@@ -37,8 +36,8 @@
     --text-secondary: #6c757d;
     --text-header: #fff;
     --text-button: #fff;
-    --text-link: var(--accent-color); /* Link dùng màu nhấn */
-    --text-link-hover: var(--accent-color-hover); /* Hover link */
+    --text-link: var(--accent-color);
+    --text-link-hover: var(--accent-color-hover);
     --text-placeholder: #6c757d;
     --text-error: #dc3545;
     --text-code-block: #393a34;
@@ -47,13 +46,16 @@
     --border-primary: #dee2e6;
     --border-secondary: #e0e0e0;
     --border-input: #ccc;
-    --border-input-focus: var(--accent-color); /* Border focus dùng màu nhấn */
+    --border-input-focus: var(--accent-color);
     --border-content-display: #e9ecef;
     --border-code-block: #ddd;
 
     --shadow-primary: rgba(0,0,0,0.1);
-    --shadow-focus: rgba(0, 123, 255, 0.2); /* Sẽ được cập nhật theo màu nhấn */
+    --shadow-focus: rgba(0, 123, 255, 0.25); /* Sẽ được cập nhật bằng JS theo màu nhấn */
     --highlight-bg: yellow;
+
+    /* *** THÊM MỚI: Biến Font chữ cho nội dung *** */
+    --font-content: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* Font hệ thống mặc định */
 }
 
 body.theme-dark {
@@ -63,8 +65,7 @@ body.theme-dark {
     --bg-sidebar: #2b3035;
     --bg-header: #1c1e21;
     --bg-input: #495057;
-    /* Màu nhấn mặc định cho theme tối (có thể giữ nguyên hoặc thay đổi) */
-    /* --accent-color: #0d6efd; */
+    /* --accent-color: #0d6efd; */ /* Giữ màu nhấn từ root hoặc JS sẽ set */
     /* --accent-color-hover: #0b5ed7; */
 
     --bg-button-secondary: #5c636a;
@@ -74,9 +75,8 @@ body.theme-dark {
     --bg-code-block: #282c34;
     --bg-content-display: #3a3f44;
     --bg-note-item-hover: #495057;
-    --bg-note-item-active: var(--accent-color); /* Dùng màu nhấn */
+    --bg-note-item-active: var(--accent-color);
     --bg-tag-item: #5c636a;
-    /* --bg-tag-item-active: var(--accent-color); */ /* Đã có ở :root */
     --dog-ear-color: #5c636a;
     --dog-ear-shadow: rgba(0,0,0,0.4);
 
@@ -84,8 +84,6 @@ body.theme-dark {
     --text-secondary: #adb5bd;
     --text-header: #fff;
     --text-button: #fff;
-    /* --text-link: #6ea8fe; */ /* Sẽ dùng var(--accent-color) */
-    /* --text-link-hover: #8bb9fe; */
     --text-placeholder: #adb5bd;
     --text-error: #f17c7c;
     --text-code-block: #abb2bf;
@@ -94,12 +92,10 @@ body.theme-dark {
     --border-primary: #495057;
     --border-secondary: #5c636a;
     --border-input: #6c757d;
-    /* --border-input-focus: #6ea8fe; */ /* Sẽ dùng var(--accent-color) */
     --border-content-display: #495057;
     --border-code-block: #5c636a;
 
     --shadow-primary: rgba(255,255,255,0.1);
-    /* --shadow-focus: rgba(110, 168, 254, 0.25); */ /* Sẽ được cập nhật theo màu nhấn */
     --highlight-bg: #ffec80;
 }
 
@@ -110,7 +106,6 @@ body.theme-gruvbox-light {
     --bg-sidebar: #f2e5bc;
     --bg-header: #3c3836;
     --bg-input: #fbf1c7;
-    /* Màu nhấn mặc định cho Gruvbox (có thể giữ nguyên hoặc thay đổi) */
     /* --accent-color: #458588; */
     /* --accent-color-hover: #076678; */
 
@@ -121,18 +116,15 @@ body.theme-gruvbox-light {
     --bg-code-block: #f2e5bc;
     --bg-content-display: #f2e5bc;
     --bg-note-item-hover: #d5c4a1;
-    --bg-note-item-active: #bdae93; /* Có thể đổi sang màu nhấn */
+    --bg-note-item-active: #bdae93;
     --bg-tag-item: #7c6f64;
-    /* --bg-tag-item-active: var(--accent-color); */
     --dog-ear-color: #bdae93;
     --dog-ear-shadow: rgba(60, 56, 54, 0.2);
 
     --text-primary: #3c3836;
     --text-secondary: #665c54;
     --text-header: #ebdbb2;
-    --text-button: #ebdbb2; /* Chữ trên nút màu nhấn cần tương phản */
-    /* --text-link: #458588; */
-    /* --text-link-hover: #076678; */
+    --text-button: #ebdbb2;
     --text-placeholder: #928374;
     --text-error: #cc241d;
     --text-code-block: #3c3836;
@@ -141,12 +133,10 @@ body.theme-gruvbox-light {
     --border-primary: #d5c4a1;
     --border-secondary: #bdae93;
     --border-input: #bdae93;
-    /* --border-input-focus: #458588; */
     --border-content-display: #d5c4a1;
     --border-code-block: #bdae93;
 
     --shadow-primary: rgba(0,0,0,0.08);
-    /* --shadow-focus: rgba(69, 133, 136, 0.2); */
     --highlight-bg: #fabd2f;
 }
 
@@ -157,7 +147,7 @@ html {
 
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* Font mặc định cho toàn trang */
     line-height: 1.6;
     color: var(--text-primary);
     background-color: var(--bg-primary);
@@ -178,7 +168,7 @@ h1, h2 {
 }
 #notes-grid-view h2 #active-tag-display {
     font-size: 0.8em;
-    color: var(--text-link); /* Sử dụng màu nhấn */
+    color: var(--text-link);
     font-weight: 500;
     margin-left: 10px;
 }
@@ -234,8 +224,8 @@ input::placeholder, textarea::placeholder {
 }
 input:focus, textarea:focus, select:focus {
     outline: none;
-    border-color: var(--border-input-focus); /* Sử dụng màu nhấn */
-    box-shadow: 0 0 0 3px var(--shadow-focus); /* Sẽ được cập nhật bằng JS */
+    border-color: var(--border-input-focus);
+    box-shadow: 0 0 0 3px var(--shadow-focus);
 }
 /* Ô tìm kiếm trong sidebar */
 #search-input {
@@ -246,7 +236,7 @@ input:focus, textarea:focus, select:focus {
 textarea {
     min-height: 150px;
     resize: vertical;
-    font-family: inherit;
+    font-family: var(--font-content); /* *** SỬ DỤNG BIẾN FONT CHO TEXTAREA SOẠN THẢO *** */
 }
 
 hr {
@@ -264,11 +254,11 @@ hr {
 
 /* Kiểu nút */
 .button-primary {
-    background-color: var(--bg-button-primary); /* Sử dụng màu nhấn */
+    background-color: var(--bg-button-primary);
     color: var(--text-button);
 }
 .button-primary:hover:not(:disabled) {
-    background-color: var(--bg-button-primary-hover); /* Sử dụng màu nhấn hover */
+    background-color: var(--bg-button-primary-hover);
 }
 
 .button-secondary {
@@ -327,13 +317,13 @@ hr {
     color: var(--text-secondary);
 }
 .auth-switch-link span {
-    color: var(--text-link); /* Sử dụng màu nhấn */
+    color: var(--text-link);
     text-decoration: underline;
     cursor: pointer;
     transition: color 0.2s ease;
 }
 .auth-switch-link span:hover {
-    color: var(--text-link-hover); /* Sử dụng màu nhấn hover */
+    color: var(--text-link-hover);
 }
 
 
@@ -393,18 +383,17 @@ hr {
     color: var(--text-primary);
     padding-bottom: 8px;
 }
-.sidebar .sidebar-settings h2 { /* Tiêu đề "Giao diện" nhỏ hơn */
-    font-size: 1em;
+.sidebar .sidebar-settings h2, .sidebar .sidebar-settings h3 { /* Tiêu đề nhỏ hơn cho cài đặt */
+    font-size: 0.95em;
     margin-bottom: 10px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid var(--border-secondary);
-}
-.sidebar .sidebar-settings h3 { /* Tiêu đề "Màu nhấn" */
-    font-size: 0.9em;
+    padding-bottom: 0; /* Bỏ padding bottom cho h3 */
     color: var(--text-secondary);
-    margin-top: 15px;
-    margin-bottom: 8px;
     font-weight: 500;
+    border-bottom: none; /* Bỏ border bottom cho h3 */
+}
+.sidebar .sidebar-settings h2 { /* Riêng cho "Giao diện" */
+     border-bottom: 1px solid var(--border-secondary);
+     padding-bottom: 5px;
 }
 
 
@@ -425,7 +414,7 @@ hr {
 }
 #tags-list-container .tag-item:hover,
 #tags-list-container .tag-item.active {
-    background-color: var(--bg-tag-item-active); /* Sử dụng màu nhấn */
+    background-color: var(--bg-tag-item-active);
 }
 
 
@@ -505,7 +494,7 @@ body.theme-gruvbox-light .content-area {
 }
 #notes-list-container .note-item:hover {
     box-shadow: 0 4px 12px var(--shadow-primary);
-    border-color: var(--border-input-focus); /* Sử dụng màu nhấn */
+    border-color: var(--border-input-focus);
     background-color: var(--bg-note-item-hover);
 }
 
@@ -551,6 +540,7 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
     text-overflow: ellipsis;
     white-space: normal;
     word-break: break-word;
+    font-family: var(--font-content); /* *** SỬ DỤNG BIẾN FONT *** */
 }
 .note-item-date { /* Ngày tháng */
     font-size: 0.8em;
@@ -581,7 +571,7 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
 }
 .tags-display .tag {
     display: inline-block;
-    background-color: var(--bg-button-primary); /* Sử dụng màu nhấn */
+    background-color: var(--bg-button-primary);
     color: var(--text-button);
     padding: 4px 10px;
     border-radius: 6px;
@@ -602,6 +592,7 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
     border: 1px solid var(--border-content-display);
     border-radius: 8px;
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    font-family: var(--font-content); /* *** SỬ DỤNG BIẾN FONT *** */
 }
 
 #note-detail-code { /* Thẻ <pre> cho code */
@@ -611,7 +602,7 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
     border-radius: 8px;
     overflow-x: auto;
     white-space: pre;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; /* Giữ font code riêng */
     font-size: 0.95em;
     line-height: 1.5;
     margin-top: 15px;
@@ -676,7 +667,7 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
   z-index: 99;
   border: none;
   outline: none;
-  background-color: var(--bg-button-primary); /* Sử dụng màu nhấn */
+  background-color: var(--bg-button-primary);
   color: var(--text-button);
   cursor: pointer;
   padding: 10px 15px;
@@ -689,7 +680,7 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
 }
 
 #scrollToTopBtn:hover {
-  background-color: var(--bg-button-primary-hover); /* Sử dụng màu nhấn hover */
+  background-color: var(--bg-button-primary-hover);
   opacity: 1;
 }
 #scrollToTopBtn:active {
@@ -704,27 +695,31 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
     border-radius: 2px;
 }
 
-/* Style cho Bộ chọn Theme */
-.sidebar-settings { /* Container cho các cài đặt trong sidebar */
-    margin-top: auto; /* Đẩy xuống cuối sidebar */
+/* Style cho Bộ chọn Theme & Cài đặt khác */
+.sidebar-settings {
+    margin-top: auto;
     padding-top: 15px;
 }
-.theme-selector {
-    /* margin-top: auto; */ /* Bỏ margin-top ở đây vì đã có ở .sidebar-settings */
-    /* padding-top: 15px; */
+.sidebar .sidebar-settings h2 { /* Tiêu đề "Giao diện" */
+    border-bottom: 1px solid var(--border-secondary);
+    padding-bottom: 5px;
 }
-.theme-selector h2, .accent-color-selector h3 { /* Tiêu đề nhỏ hơn cho cài đặt */
+.theme-selector, .accent-color-selector, .font-selector { /* Khoảng cách giữa các mục cài đặt */
+    margin-bottom: 15px;
+}
+.theme-selector h2, .accent-color-selector h3, .font-selector h3 { /* Tiêu đề nhỏ hơn cho cài đặt */
+    font-size: 0.95em;
     margin-bottom: 10px;
-    font-size: 0.95em; /* Điều chỉnh lại */
     padding-bottom: 0;
     color: var(--text-secondary);
     font-weight: 500;
+    border-bottom: none;
 }
 .theme-options {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    margin-bottom: 15px; /* Khoảng cách với phần chọn màu nhấn */
+    /* margin-bottom: 15px; */ /* Đã có ở .theme-selector */
 }
 .theme-button {
     flex: 1;
@@ -737,9 +732,9 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 .theme-button.active {
-    background-color: var(--bg-button-primary); /* Sử dụng màu nhấn */
+    background-color: var(--bg-button-primary);
     color: var(--text-button);
-    border-color: var(--bg-button-primary); /* Sử dụng màu nhấn */
+    border-color: var(--bg-button-primary);
     font-weight: bold;
 }
 .theme-button:not(.active):hover {
@@ -748,21 +743,21 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
      color: var(--text-primary);
 }
 
-/* *** THÊM MỚI: Style cho Bộ chọn Màu Nhấn *** */
+/* Style cho Bộ chọn Màu Nhấn */
 .accent-color-selector {
-    margin-top: 10px; /* Khoảng cách với phần chọn theme */
+    /* margin-top: 10px; */ /* Đã có ở .sidebar-settings */
 }
 .accent-color-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px; /* Khoảng cách giữa các nút màu */
+    gap: 8px;
 }
 .accent-color-button {
-    width: 28px; /* Kích thước nút màu */
+    width: 28px;
     height: 28px;
-    border-radius: 50%; /* Bo tròn */
-    border: 2px solid var(--bg-sidebar); /* Viền nhẹ để tách biệt */
-    padding: 0; /* Bỏ padding mặc định của button */
+    border-radius: 50%;
+    border: 2px solid var(--bg-sidebar);
+    padding: 0;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     transition: transform 0.1s ease, box-shadow 0.2s ease;
 }
@@ -771,9 +766,17 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 .accent-color-button.active {
-    border-color: var(--text-primary); /* Viền đậm hơn cho nút active */
-    box-shadow: 0 0 0 2px var(--bg-sidebar), 0 0 0 4px var(--text-primary); /* Hiệu ứng viền kép */
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 2px var(--bg-sidebar), 0 0 0 4px var(--text-primary);
     transform: scale(1.1);
+}
+
+/* *** THÊM MỚI: Style cho Bộ chọn Font chữ *** */
+.font-selector select {
+    width: 100%; /* Chiếm toàn bộ chiều rộng sidebar cho dễ chọn */
+    padding: 8px 10px;
+    font-size: 0.9em;
+    /* Kế thừa style chung của select */
 }
 
 
@@ -815,12 +818,16 @@ body.theme-gruvbox-light #notes-list-container .note-item::before {
     .sidebar #search-input {
         margin-bottom: 0;
     }
-    .sidebar-settings { /* Điều chỉnh cài đặt sidebar trên mobile */
+    .sidebar-settings {
         margin-top: 15px;
         padding-top: 10px;
     }
     .theme-options, .accent-color-options {
-        justify-content: flex-start; /* Căn trái các nút trên mobile */
+        justify-content: flex-start;
+    }
+    /* *** THÊM MỚI: Đảm bảo font select không bị quá nhỏ trên mobile *** */
+    .font-selector select {
+        padding: 10px; /* Tăng padding cho dễ chạm */
     }
 
 
