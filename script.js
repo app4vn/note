@@ -51,6 +51,13 @@ const signupError = document.getElementById('signup-error');
 const showSignupLink = document.getElementById('show-signup-link');
 const showLoginLink = document.getElementById('show-login-link');
 
+// Thêm tham chiếu cho các phần tử mobile sidebar
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const sidebar = document.getElementById('sidebar'); // Đã thêm ID vào HTML
+const sidebarOverlay = document.getElementById('sidebar-overlay'); // Đã thêm vào HTML
+const contentArea = document.getElementById('content-area'); // Đã thêm ID vào HTML
+
+
 const searchInput = document.getElementById('search-input');
 const sortSelect = document.getElementById('sort-select');
 
@@ -108,7 +115,7 @@ const addTodoEditorItemBtn = document.getElementById('add-todo-editor-item-btn')
 
 
 const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-const contentArea = document.querySelector('.content-area');
+// const contentArea = document.querySelector('.content-area'); // Đã lấy bằng ID ở trên
 
 // Tham chiếu đến các nút cài đặt trong sidebar
 const themeButtons = document.querySelectorAll('.sidebar-settings .theme-button');
@@ -138,10 +145,51 @@ const pinAngleSVGPath = "M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .
 const pinAngleFillSVGPath = "M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z";
 
 
+// --- Logic cho Mobile Sidebar ---
+function openMobileSidebar() {
+    document.body.classList.add('sidebar-open');
+}
+
+function closeMobileSidebar() {
+    document.body.classList.remove('sidebar-open');
+}
+
+if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Ngăn sự kiện nổi bọt
+        // Toggle sidebar: Nếu đang mở thì đóng, nếu đang đóng thì mở
+        if (document.body.classList.contains('sidebar-open')) {
+            closeMobileSidebar();
+        } else {
+            openMobileSidebar();
+        }
+    });
+}
+
+if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', closeMobileSidebar);
+}
+
+// Đóng sidebar khi click vào một item bên trong nó (ví dụ: tag, nút thùng rác) trên mobile
+if (sidebar) {
+    sidebar.addEventListener('click', (e) => {
+        // Kiểm tra xem màn hình có đủ nhỏ để sidebar có thể đóng/mở không
+        if (window.innerWidth <= 768) {
+            // Kiểm tra xem phần tử được click có phải là link hoặc button không
+            // Hoặc một phần tử con của link/button
+            if (e.target.closest('a, button')) {
+                 // Đóng sidebar sau một khoảng trễ nhỏ để hành động click kịp thực hiện
+                 setTimeout(closeMobileSidebar, 150);
+            }
+        }
+    });
+}
+
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
 function showApp() {
     authContainer.style.display = 'none';
     appContainer.style.display = 'flex';
+    closeMobileSidebar(); // Đảm bảo sidebar đóng khi hiển thị app
 }
 
 function showAuth() {
@@ -171,6 +219,7 @@ function showAuth() {
     signupForm.style.display = 'none';
     loginError.textContent = '';
     signupError.textContent = '';
+    closeMobileSidebar(); // Đảm bảo sidebar đóng khi hiển thị auth
 }
 
 function showMainNotesView() {
@@ -190,10 +239,11 @@ function showMainNotesView() {
     if (showAllNotesBtn) showAllNotesBtn.style.display = 'none';
     if (sortSelect) sortSelect.disabled = false;
     if (searchInput) searchInput.disabled = false;
-    if (tagsListContainer) tagsListContainer.style.display = 'block';
+    if (tagsListContainer) tagsListContainer.style.display = 'block'; // Đảm bảo tags list hiển thị
 
     if (contentArea) contentArea.scrollTop = 0;
     renderNotesList(Object.values(notesCache));
+    // closeMobileSidebar(); // Không cần đóng ở đây, để người dùng tự đóng nếu muốn
 }
 
 function showTrashNotesView() {
@@ -207,10 +257,11 @@ function showTrashNotesView() {
     if (showAllNotesBtn) showAllNotesBtn.style.display = 'flex';
     if (sortSelect) sortSelect.disabled = true;
     if (searchInput) searchInput.disabled = true;
-    if (tagsListContainer) tagsListContainer.style.display = 'none';
+    if (tagsListContainer) tagsListContainer.style.display = 'none'; // Ẩn tags list khi xem thùng rác
 
     if (contentArea) contentArea.scrollTop = 0;
     renderTrashedNotesList(Object.values(trashedNotesCache));
+    // closeMobileSidebar(); // Không cần đóng ở đây
 }
 
 
@@ -221,6 +272,7 @@ function showEditor(note = null) {
     noteEditorView.style.display = 'block';
     editorError.textContent = '';
     hideTagSuggestions();
+    closeMobileSidebar(); // Đóng sidebar khi mở editor
 
     if (note && note.id) { // Sửa
         editorTitle.textContent = "Sửa Ghi chú";
@@ -233,8 +285,7 @@ function showEditor(note = null) {
         languageSelect.style.display = note.isCode ? 'inline-block' : 'none';
         currentNoteId = note.id;
 
-        // Xử lý To-Do List khi sửa
-        if (note.todos && Array.isArray(note.todos)) { // Kiểm tra note.todos có phải là mảng không
+        if (note.todos && Array.isArray(note.todos)) {
             enableTodoCheckbox.checked = true;
             renderTodosInEditor(note.todos);
         } else {
@@ -265,6 +316,7 @@ function showDetailView(note) {
     currentNoteId = note.id;
     displayNoteDetailContent(note);
     if (contentArea) contentArea.scrollTop = 0;
+    closeMobileSidebar(); // Đóng sidebar khi xem chi tiết
 }
 
 function clearEditorFields() {
@@ -325,6 +377,7 @@ function highlightText(text, searchTerm) {
 
 
 // --- Logic xử lý Theme, Màu Nhấn, Font ---
+// ... (Giữ nguyên các hàm applyTheme, loadSavedTheme, hexToRgb, darkenColor, applyAccentColor, loadSavedAccentColor, applyContentFont, loadSavedContentFont và các event listener liên quan)
 function applyTheme(themeName) {
     console.log("Applying theme:", themeName);
     document.body.classList.remove('theme-dark', 'theme-gruvbox-light', 'theme-dracula', 'theme-solarized-light');
@@ -486,6 +539,7 @@ if (fontSelect) {
 
 
 // --- Logic Xác thực (Authentication) ---
+// ... (Giữ nguyên các hàm onAuthStateChanged, listener cho loginForm, signupForm, logoutButton, showSignupLink, showLoginLink)
 onAuthStateChanged(auth, (user) => {
     if (user) {
         console.log("User logged in:", user.uid, user.email);
@@ -545,7 +599,7 @@ if (showLoginLink) {
 
 
 // --- Logic quản lý Ghi chú (Notes CRUD & Display) ---
-
+// ... (Giữ nguyên các hàm và listener cho isCodeCheckbox, addNoteBtn, cancelEditBtn, backToGridBtn, saveNoteBtn, editNoteBtn, deleteNoteBtn, copyCodeBtn)
 isCodeCheckbox.addEventListener('change', (e) => {
     languageSelect.style.display = e.target.checked ? 'inline-block' : 'none';
     if (!e.target.checked) {
@@ -592,8 +646,7 @@ saveNoteBtn.addEventListener('click', async () => {
         alert("Tiêu đề không được để trống!");
         return;
     }
-    // Nếu không phải code VÀ (không bật to-do HOẶC (bật to-do NHƯNG không có item nào VÀ content cũng trống))
-    // thì mới báo lỗi nội dung trống.
+
     let todosToSave = null;
     if (enableTodoCheckbox.checked) {
         todosToSave = collectTodosFromEditor();
@@ -604,13 +657,11 @@ saveNoteBtn.addEventListener('click', async () => {
         alert("Nội dung không được để trống nếu không phải là code hoặc to-do list!");
         return;
     }
-    // Nếu bật to-do list mà không có item nào, và cũng không có content thường, thì cũng coi như trống
     if (!isCode && enableTodoCheckbox.checked && (!todosToSave || todosToSave.length === 0) && !content) {
          editorError.textContent = "Vui lòng thêm ít nhất một công việc hoặc nhập nội dung ghi chú.";
          alert("Vui lòng thêm ít nhất một công việc hoặc nhập nội dung ghi chú.");
          return;
     }
-
 
     editorError.textContent = '';
     saveNoteBtn.disabled = true;
@@ -622,17 +673,15 @@ saveNoteBtn.addEventListener('click', async () => {
         tags,
         isCode,
         language,
-        todos: todosToSave, // Sẽ là null nếu không bật to-do, hoặc mảng (có thể rỗng) nếu bật
+        todos: todosToSave,
         userId: currentUser.uid,
         updatedAt: Timestamp.now(),
         isPinned: id ? (notesCache[id]?.isPinned || false) : false,
         isTrashed: false
     };
-    // Nếu là to-do list và không có content thường, thì content sẽ là rỗng
     if (enableTodoCheckbox.checked && todosToSave && todosToSave.length > 0 && !isCode && !content) {
         noteData.content = '';
     }
-
 
     try {
         if (id) {
@@ -709,7 +758,9 @@ copyCodeBtn.addEventListener('click', () => {
     }
 });
 
+
 // --- Tải và Hiển thị Dữ liệu từ Firestore ---
+// ... (Giữ nguyên loadNotesAndTags, loadTrashedNotes)
 function loadNotesAndTags() {
     if (!currentUser) return;
     console.log(`Loading main notes for user: ${currentUser.uid}, Sort: ${currentSortOption}`);
@@ -802,7 +853,8 @@ function loadTrashedNotes() {
     });
 }
 
-
+// --- Render Lists ---
+// ... (Giữ nguyên renderNotesList, renderTrashedNotesList, renderTagsList, displayNoteDetailContent)
 function renderNotesList(notesFromCache) {
     notesListContainer.innerHTML = '';
 
@@ -852,7 +904,7 @@ function renderNotesList(notesFromCache) {
         if (note.todos && note.todos.length > 0) {
             const firstFewTodos = note.todos.slice(0, 3).map(todo => {
                 let previewText = `${todo.completed ? '[x]' : '[ ]'} ${todo.text}`;
-                if (todo.priority && todo.priority !== 'medium') { // Chỉ hiển thị priority nếu không phải medium
+                if (todo.priority && todo.priority !== 'medium') {
                     previewText += ` (${todo.priority.charAt(0).toUpperCase()})`;
                 }
                 if (todo.deadline) {
@@ -1036,6 +1088,7 @@ function displayNoteDetailContent(note) {
 }
 
 // --- Logic Ghim Ghi chú ---
+// ... (Giữ nguyên togglePinStatus và listener)
 async function togglePinStatus(noteId) {
     if (!currentUser || !notesCache[noteId]) return;
     const noteRef = doc(db, "notes", noteId);
@@ -1057,6 +1110,7 @@ if (pinNoteDetailBtn) {
 }
 
 // --- Logic cho Thùng rác ---
+// ... (Giữ nguyên restoreNoteFromTrash, deleteNotePermanently và listeners)
 async function restoreNoteFromTrash(noteId) {
     if (!currentUser || !trashedNotesCache[noteId]) return;
     const noteRef = doc(db, "notes", noteId);
@@ -1098,6 +1152,7 @@ if (showAllNotesBtn) {
 
 
 // --- Logic Gợi ý Tag ---
+// ... (Giữ nguyên displayTagSuggestions, hideTagSuggestions và listeners)
 function displayTagSuggestions(suggestions, currentTagValue) {
     if (!tagSuggestionsContainer) return;
     tagSuggestionsContainer.innerHTML = '';
@@ -1159,7 +1214,9 @@ if (noteTagsInput) {
 
 
 // --- Logic cho nút Scroll to Top ---
+// ... (Giữ nguyên handleScroll, scrollToTop và listeners)
 function handleScroll() {
+    // Sử dụng contentArea đã lấy bằng ID
     if (!contentArea || !scrollToTopBtn) return;
     if (contentArea.scrollTop > 200) {
         scrollToTopBtn.style.display = "block";
@@ -1176,7 +1233,7 @@ function scrollToTop() {
 if (contentArea) {
     contentArea.addEventListener('scroll', handleScroll);
 } else {
-    console.warn("Content area element not found for scroll event listener.");
+    console.warn("Content area element (#content-area) not found for scroll event listener.");
 }
 
 if (scrollToTopBtn) {
@@ -1185,7 +1242,9 @@ if (scrollToTopBtn) {
     console.warn("Scroll to top button element not found.");
 }
 
+
 // --- Logic tìm kiếm ---
+// ... (Giữ nguyên listener cho searchInput)
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
         currentSearchTerm = e.target.value.trim();
@@ -1198,6 +1257,7 @@ if (searchInput) {
 }
 
 // --- Logic sắp xếp ---
+// ... (Giữ nguyên listener cho sortSelect)
 if (sortSelect) {
     sortSelect.addEventListener('change', (e) => {
         const newSortOption = e.target.value;
@@ -1211,13 +1271,14 @@ if (sortSelect) {
     console.warn("Sort select element not found.");
 }
 
-// --- LOGIC CHO TO-DO LIST ---
 
+// --- LOGIC CHO TO-DO LIST ---
+// ... (Giữ nguyên các hàm toggleTodoEditorVisibility, addTodoItemToEditor, renderTodosInEditor, collectTodosFromEditor, renderTodosInDetailView, toggleTodoItemStatus, updateTodoProgress và các listener liên quan)
 function toggleTodoEditorVisibility() {
     const isEnabled = enableTodoCheckbox.checked;
     noteEditorTodosList.style.display = isEnabled ? 'block' : 'none';
     addTodoEditorItemBtn.style.display = isEnabled ? 'inline-block' : 'none';
-    
+
     if (isCodeCheckbox.checked) {
         noteContentInput.style.display = 'block';
     } else {
@@ -1233,7 +1294,7 @@ if (isCodeCheckbox) {
 }
 
 
-function addTodoItemToEditor(todo = { id: '', text: '', completed: false, priority: 'medium', deadline: '' }) {
+function addTodoItemToEditor(todo = { id: '', text: '', completed: false, priority: 'medium', deadline: null }) { // deadline mặc định null
     const listItem = document.createElement('li');
     listItem.classList.add('todo-editor-item');
     const todoId = todo.id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
@@ -1265,7 +1326,11 @@ function addTodoItemToEditor(todo = { id: '', text: '', completed: false, priori
     ['medium', 'low', 'high'].forEach(p => {
         const option = document.createElement('option');
         option.value = p;
-        option.textContent = `Ưu tiên: ${p.charAt(0).toUpperCase() + p.slice(1)}`;
+        // Hiển thị tên đầy đủ hơn
+        let priorityText = 'Trung bình';
+        if (p === 'low') priorityText = 'Thấp';
+        else if (p === 'high') priorityText = 'Cao';
+        option.textContent = `Ưu tiên: ${priorityText}`;
         if (p === (todo.priority || 'medium')) option.selected = true;
         prioritySelect.appendChild(option);
     });
@@ -1273,7 +1338,7 @@ function addTodoItemToEditor(todo = { id: '', text: '', completed: false, priori
     const deadlineInput = document.createElement('input');
     deadlineInput.type = 'date';
     deadlineInput.classList.add('todo-editor-item-deadline');
-    deadlineInput.value = todo.deadline || '';
+    deadlineInput.value = todo.deadline || ''; // Gán giá trị deadline
 
 
     const deleteButton = document.createElement('button');
@@ -1312,17 +1377,15 @@ function collectTodosFromEditor() {
         const textInput = item.querySelector('.todo-editor-item-text');
         const prioritySelect = item.querySelector('.todo-editor-item-priority');
         const deadlineInput = item.querySelector('.todo-editor-item-deadline');
-        // Lấy trạng thái completed từ checkbox (dù disabled, nó vẫn giữ giá trị khi render từ data)
         const completedCheckbox = item.querySelector('.todo-editor-item-checkbox');
-
 
         if (textInput && textInput.value.trim() !== '') {
             collectedTodos.push({
                 id: item.dataset.todoId.startsWith('temp-') ? `todo-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 3)}` : item.dataset.todoId,
                 text: textInput.value.trim(),
-                completed: completedCheckbox ? completedCheckbox.checked : false, // Lấy trạng thái completed
+                completed: completedCheckbox ? completedCheckbox.checked : false,
                 priority: prioritySelect ? prioritySelect.value : 'medium',
-                deadline: deadlineInput ? deadlineInput.value : null, // Lưu null nếu rỗng
+                deadline: deadlineInput && deadlineInput.value ? deadlineInput.value : null, // Lưu null nếu rỗng
                 order: index
             });
         }
@@ -1340,7 +1403,7 @@ function renderTodosInDetailView(noteId, todosArray = []) {
     todosArray.sort((a, b) => (a.order || 0) - (b.order || 0));
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0); 
+    today.setHours(0, 0, 0, 0);
 
     todosArray.forEach(todo => {
         const listItem = document.createElement('li');
@@ -1364,7 +1427,7 @@ function renderTodosInDetailView(noteId, todosArray = []) {
         if (todo.completed) {
             textSpan.classList.add('completed');
         }
-        
+
         contentDiv.appendChild(textSpan);
 
         const metaDisplayDiv = document.createElement('div');
@@ -1373,7 +1436,10 @@ function renderTodosInDetailView(noteId, todosArray = []) {
         if (todo.priority) {
             const prioritySpan = document.createElement('span');
             prioritySpan.classList.add('todo-detail-item-priority', `priority-${todo.priority}`);
-            prioritySpan.textContent = `Ưu tiên: ${todo.priority.charAt(0).toUpperCase() + todo.priority.slice(1)}`;
+             let priorityText = 'Trung bình';
+             if (todo.priority === 'low') priorityText = 'Thấp';
+             else if (todo.priority === 'high') priorityText = 'Cao';
+            prioritySpan.textContent = `Ưu tiên: ${priorityText}`;
             metaDisplayDiv.appendChild(prioritySpan);
         }
 
@@ -1381,9 +1447,8 @@ function renderTodosInDetailView(noteId, todosArray = []) {
             const deadlineSpan = document.createElement('span');
             deadlineSpan.classList.add('todo-detail-item-deadline');
             try {
-                // Đảm bảo deadline được xử lý đúng múi giờ khi tạo Date object
-                const deadlineDate = new Date(todo.deadline + "T00:00:00"); // Giả định deadline là đầu ngày
-                if (!isNaN(deadlineDate)) { // Kiểm tra ngày hợp lệ
+                const deadlineDate = new Date(todo.deadline + "T00:00:00");
+                if (!isNaN(deadlineDate)) {
                     deadlineSpan.textContent = `Hạn: ${deadlineDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}`;
                     if (!todo.completed && deadlineDate < today) {
                         deadlineSpan.classList.add('overdue');
@@ -1398,7 +1463,7 @@ function renderTodosInDetailView(noteId, todosArray = []) {
             }
             metaDisplayDiv.appendChild(deadlineSpan);
         }
-        
+
         if(metaDisplayDiv.hasChildNodes()){
             contentDiv.appendChild(metaDisplayDiv);
         }
@@ -1414,22 +1479,32 @@ async function toggleTodoItemStatus(noteId, todoId, isCompleted) {
     if (!currentUser || !notesCache[noteId]) return;
 
     const noteRef = doc(db, "notes", noteId);
-    
-    // Lấy dữ liệu note hiện tại từ cache để tránh ghi đè không mong muốn nếu có nhiều thay đổi nhanh
-    // Hoặc tốt hơn là đọc trực tiếp từ server trước khi update (nếu cần độ chính xác cao nhất)
-    const currentNoteData = notesCache[noteId];
-    if (!currentNoteData || !currentNoteData.todos || !Array.isArray(currentNoteData.todos)) {
-        console.error("Cannot find note or todos in cache for update:", noteId);
-        // Có thể thử đọc lại từ server ở đây nếu cần
-        const serverNoteSnap = await getDoc(noteRef);
-        if (!serverNoteSnap.exists() || !serverNoteSnap.data().todos) {
-            alert("Lỗi: Không tìm thấy ghi chú hoặc danh sách công việc để cập nhật.");
-            return;
+
+    // Lấy dữ liệu note hiện tại từ cache hoặc server để cập nhật
+    let currentTodos = [];
+    const noteInCache = notesCache[noteId];
+    if (noteInCache && noteInCache.todos && Array.isArray(noteInCache.todos)) {
+        currentTodos = [...noteInCache.todos]; // Tạo bản sao để không sửa trực tiếp cache
+    } else {
+        // Nếu không có trong cache, thử đọc từ server
+        try {
+            const serverNoteSnap = await getDoc(noteRef);
+            if (serverNoteSnap.exists() && serverNoteSnap.data().todos && Array.isArray(serverNoteSnap.data().todos)) {
+                currentTodos = serverNoteSnap.data().todos;
+            } else {
+                 console.error("Note or todos not found on server for update:", noteId);
+                 alert("Lỗi: Không tìm thấy danh sách công việc để cập nhật.");
+                 return; // Không thể tiếp tục nếu không có dữ liệu gốc
+            }
+        } catch (error) {
+             console.error("Error fetching note before update:", error);
+             alert("Lỗi khi lấy dữ liệu ghi chú để cập nhật.");
+             return;
         }
-        currentNoteData.todos = serverNoteSnap.data().todos; // Cập nhật cache
     }
 
-    const updatedTodos = currentNoteData.todos.map(t => {
+
+    const updatedTodos = currentTodos.map(t => {
         if (t.id === todoId) {
             return { ...t, completed: isCompleted };
         }
@@ -1442,25 +1517,23 @@ async function toggleTodoItemStatus(noteId, todoId, isCompleted) {
             updatedAt: Timestamp.now()
         });
         console.log(`Todo ${todoId} in note ${noteId} status updated to ${isCompleted} on server.`);
-        // UI sẽ được cập nhật bởi onSnapshot.
-        // Tuy nhiên, để UI phản hồi nhanh hơn, có thể cập nhật trực tiếp DOM ở đây
-        // (nhưng cần cẩn thận để không xung đột với onSnapshot)
+
+        // Cập nhật UI ngay lập tức để phản hồi nhanh
         const detailItemText = noteDetailTodosList.querySelector(`li[data-todo-id="${todoId}"] .todo-detail-item-text`);
         if (detailItemText) {
             detailItemText.classList.toggle('completed', isCompleted);
         }
-        // Cập nhật lại progress bar ngay
-        const noteInCache = notesCache[noteId];
-        if(noteInCache && noteInCache.todos){
-            const todoItemInCache = noteInCache.todos.find(t => t.id === todoId);
-            if(todoItemInCache) todoItemInCache.completed = isCompleted; // Cập nhật cache cục bộ
-            updateTodoProgress(noteInCache.todos);
+        // Cập nhật cache cục bộ sau khi server xác nhận (hoặc dựa vào onSnapshot)
+        if (notesCache[noteId]) {
+            notesCache[noteId].todos = updatedTodos;
+            notesCache[noteId].updatedAt = Timestamp.now(); // Cập nhật thời gian cache
+            updateTodoProgress(updatedTodos); // Cập nhật progress bar
         }
-
 
     } catch (error) {
         console.error("Error updating todo status on server:", error);
         alert("Lỗi cập nhật trạng thái công việc.");
+        // Cân nhắc rollback UI nếu cần
     }
 }
 
