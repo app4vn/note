@@ -62,17 +62,18 @@
                     </svg>
                     Thùng rác
                 </button>
-                 <button id="show-all-notes-btn" class="sidebar-button" style="display: none;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
+                 <button id="show-all-notes-btn" class="sidebar-button" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
                         <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
                         <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8m0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0M4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
                     </svg>
                      Tất cả Ghi chú
                 </button>
-
                 <div class="sidebar-settings">
                     <hr>
                     <h2>Giao diện</h2>
                     <div class="theme-selector">
+                         <h3>Chủ đề</h3>
                          <div class="theme-options">
                             <button data-theme="light" class="theme-button" title="Giao diện Sáng">Sáng</button>
                             <button data-theme="dark" class="theme-button" title="Giao diện Tối">Tối</button>
@@ -106,7 +107,6 @@
             </aside>
 
             <main class="content-area">
-
                 <div id="notes-grid-view">
                     <div class="grid-view-header">
                         <h2 id="main-view-title">Tất cả Ghi chú <span id="active-tag-display"></span></h2>
@@ -126,21 +126,18 @@
                 </div>
 
                 <div id="trash-view" style="display: none;">
-                    <div class="grid-view-header"> <h2>Ghi chú trong Thùng rác</h2>
-                        </div>
+                    <div class="grid-view-header">
+                        <h2>Ghi chú trong Thùng rác</h2>
+                    </div>
                     <div id="trash-list-container">
                         <p>Thùng rác trống.</p>
                     </div>
                 </div>
 
-
                 <div id="note-detail-view" style="display: none;">
                      <button id="back-to-grid-btn" class="button-secondary back-button">&larr; Quay lại danh sách</button>
                      <button id="pin-note-detail-btn" class="pin-button" title="Ghim/Bỏ ghim ghi chú">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle" viewBox="0 0 16 16">
-                            <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146"/>
-                            <path d="M6.559 2.788a1.527 1.527 0 0 1 .217.217l2.135 2.134a1.527 1.527 0 0 1 .217.217L6.428 7.47a.5.5 0 0 1-.707 0l-2.134-2.134a.5.5 0 0 1 0-.707l2.134-2.134a.5.5 0 0 1 .707 0z"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle" viewBox="0 0 16 16">...</svg>
                      </button>
                      <h2 id="note-detail-title"></h2>
                      <div id="note-detail-tags" class="tags-display"></div>
@@ -148,7 +145,8 @@
                      <pre id="note-detail-code" style="display: none;"><code class="language-plaintext"></code></pre>
                      <div id="note-detail-actions">
                           <button id="edit-note-btn" class="button-secondary">Sửa</button>
-                          <button id="delete-note-btn" class="button-danger">Xóa</button> <button id="copy-code-btn" class="button-secondary" style="display: none;">Copy Code</button>
+                          <button id="delete-note-btn" class="button-danger">Xóa</button>
+                          <button id="copy-code-btn" class="button-secondary" style="display: none;">Copy Code</button>
                      </div>
                 </div>
 
@@ -159,25 +157,12 @@
                     <textarea id="note-content-input" placeholder="Nội dung ghi chú..." rows="10" required></textarea>
                     <div class="tag-input-container">
                         <input type="text" id="note-tags-input" placeholder="Tags (cách nhau bằng dấu phẩy)">
-                        <div id="tag-suggestions" class="tag-suggestions-list" style="display: none;">
-                            </div>
+                        <div id="tag-suggestions" class="tag-suggestions-list" style="display: none;"></div>
                     </div>
                     <div class="code-options">
                         <input type="checkbox" id="note-is-code-checkbox">
                         <label for="note-is-code-checkbox">Đây là code?</label>
-                        <select id="note-language-select" style="display: none;">
-                            <option value="plaintext">Plain Text</option>
-                            <option value="javascript">JavaScript</option>
-                            <option value="python">Python</option>
-                            <option value="html">HTML</option>
-                            <option value="css">CSS</option>
-                            <option value="sql">SQL</option>
-                            <option value="json">JSON</option>
-                            <option value="markdown">Markdown</option>
-                            <option value="java">Java</option>
-                            <option value="csharp">C#</option>
-                            <option value="php">PHP</option>
-                        </select>
+                        <select id="note-language-select" style="display: none;">...</select>
                     </div>
                     <div class="editor-actions">
                         <button id="save-note-btn" class="button-primary">Lưu Ghi Chú</button>
@@ -194,5 +179,5 @@
 
     <button id="scrollToTopBtn" title="Cuộn lên đầu trang">&uarr;</button>
 
-</body>
+    </body>
 </html>
