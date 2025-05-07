@@ -56,10 +56,8 @@ const sortSelect = document.getElementById('sort-select');
 
 const tagsListContainer = document.getElementById('tags-list-container');
 const addNoteBtn = document.getElementById('add-note-btn');
-// *** THÊM MỚI: Tham chiếu đến các nút icon footer ***
 const trashIconBtn = document.getElementById('trash-icon-btn');
 const settingsIconBtn = document.getElementById('settings-icon-btn');
-// *** THÊM MỚI: Tham chiếu đến overlay và panel cài đặt ***
 const settingsOverlay = document.getElementById('settings-overlay');
 const settingsPanel = document.getElementById('settings-panel');
 const closeSettingsBtn = document.getElementById('close-settings-btn');
@@ -104,9 +102,8 @@ const editorError = document.getElementById('editor-error');
 const scrollToTopBtn = document.getElementById('scrollToTopBtn');
 const contentArea = document.querySelector('.content-area');
 
-// *** CẬP NHẬT: Lấy tham chiếu đến các nút cài đặt BÊN TRONG panel ***
 const themeButtons = settingsPanel.querySelectorAll('.theme-button');
-const prismThemeLink = document.getElementById('prism-theme-link'); // Vẫn giữ ở head
+const prismThemeLink = document.getElementById('prism-theme-link');
 const accentColorButtons = settingsPanel.querySelectorAll('.accent-color-button');
 const fontSelect = settingsPanel.querySelector('#font-select');
 
@@ -124,10 +121,12 @@ let currentSortOption = 'updatedAt_desc';
 let currentTheme = 'light';
 let currentAccentColor = '#007bff';
 let currentContentFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'";
+let allUserTags = new Set(); // Vẫn dùng để gợi ý tag
 let currentView = 'notes';
 
 
 // --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
+// (Các hàm khác giữ nguyên)
 function showApp() {
     authContainer.style.display = 'none';
     appContainer.style.display = 'flex';
@@ -154,15 +153,23 @@ function showAuth() {
     if(searchInput) searchInput.value = '';
     if(sortSelect) sortSelect.value = currentSortOption;
     if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
-    // Không cần reset nút thùng rác/cài đặt vì chúng luôn hiển thị
+    if (trashIconBtn) { // Reset nút thùng rác về trạng thái ban đầu
+        trashIconBtn.classList.remove('active');
+        trashIconBtn.title = "Thùng rác";
+        const svg = trashIconBtn.querySelector('svg');
+        if (svg && !svg.classList.contains('bi-trash3')) {
+             svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66H14.5a.5.5 0 0 0 0-1H11Zm-1 1.007H6.5V13h3V3.5ZM5.036 3.5h5.928L10.202 13H5.797L5.036 3.5Z"/>
+                             </svg>`;
+        }
+    }
     loginForm.style.display = 'block';
     signupForm.style.display = 'none';
     loginError.textContent = '';
     signupError.textContent = '';
-    hideSettingsPanel(); // Đảm bảo panel cài đặt ẩn khi logout
+    hideSettingsPanel();
 }
 
-/** Hiển thị Grid View chính, ẩn các view khác */
 function showMainNotesView() {
     notesGridView.style.display = 'block';
     trashView.style.display = 'none';
@@ -176,19 +183,14 @@ function showMainNotesView() {
     } else {
         activeTagDisplay.textContent = '';
     }
-    // Cập nhật trạng thái nút thùng rác/quay lại
     if (trashIconBtn) {
-        trashIconBtn.classList.remove('active'); // Không active khi ở view chính
+        trashIconBtn.classList.remove('active');
         trashIconBtn.title = "Thùng rác";
-        // Đảm bảo icon là thùng rác
         const svg = trashIconBtn.querySelector('svg');
         if (svg && !svg.classList.contains('bi-trash3')) {
-             svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66H14.5a.5.5 0 0 0 0-1H11Zm-1 1.007H6.5V13h3V3.5ZM5.036 3.5h5.928L10.202 13H5.797L5.036 3.5Z"/>
-                             </svg>`;
+             svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">...</svg>`; // SVG path
         }
     }
-
     if (sortSelect) sortSelect.disabled = false;
     if (searchInput) searchInput.disabled = false;
     if (tagsListContainer) tagsListContainer.style.display = 'block';
@@ -197,7 +199,6 @@ function showMainNotesView() {
     renderNotesList(Object.values(notesCache));
 }
 
-/** Hiển thị Thùng rác View, ẩn các view khác */
 function showTrashNotesView() {
     notesGridView.style.display = 'none';
     trashView.style.display = 'block';
@@ -205,20 +206,14 @@ function showTrashNotesView() {
     noteEditorView.style.display = 'none';
     currentNoteId = null;
     currentView = 'trash';
-    // Cập nhật trạng thái nút thùng rác/quay lại
     if (trashIconBtn) {
-        trashIconBtn.classList.add('active'); // Active khi ở view thùng rác
+        trashIconBtn.classList.add('active');
         trashIconBtn.title = "Tất cả Ghi chú";
-        // Đổi icon thành danh sách hoặc mũi tên quay lại
         const svg = trashIconBtn.querySelector('svg');
          if (svg && !svg.classList.contains('bi-card-list')) {
-             svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
-                                <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
-                                <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8m0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0M4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
-                             </svg>`;
+             svg.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">...</svg>`; // SVG path
         }
     }
-
     if (sortSelect) sortSelect.disabled = true;
     if (searchInput) searchInput.disabled = true;
     if (tagsListContainer) tagsListContainer.style.display = 'none';
@@ -324,8 +319,7 @@ function highlightText(text, searchTerm) {
 }
 
 
-// --- Logic xử lý Theme, Màu Nhấn, Font --- (Giữ nguyên)
-// ... (code for applyTheme, loadSavedTheme, themeButtons, etc.) ...
+// --- Logic xử lý Theme, Màu Nhấn, Font ---
 function applyTheme(themeName) {
     console.log("Applying theme:", themeName);
     document.body.classList.remove('theme-dark', 'theme-gruvbox-light', 'theme-dracula', 'theme-solarized-light');
@@ -925,7 +919,7 @@ function renderTagsList(notes) {
         const noTags = document.createElement('p');
         noTags.textContent = 'Chưa có tag nào.';
         noTags.style.fontSize = '0.9em';
-        noTags.style.color = '#6c757d';
+        noTags.style.color = 'var(--text-secondary)';
         tagsListContainer.appendChild(noTags);
     }
 }
@@ -1022,7 +1016,6 @@ async function deleteNotePermanently(noteId, noteTitle = "ghi chú này") {
     }
 }
 
-// *** CẬP NHẬT: Listener cho nút icon thùng rác/tất cả notes ***
 if (trashIconBtn) {
     trashIconBtn.addEventListener('click', () => {
         if (currentView === 'notes') {
@@ -1148,8 +1141,7 @@ if (sortSelect) {
     console.warn("Sort select element not found.");
 }
 
-// --- *** THÊM MỚI: Logic cho Panel Cài đặt *** ---
-/** Mở panel cài đặt */
+// --- Logic cho Panel Cài đặt ---
 function openSettingsPanel() {
     if (settingsOverlay && settingsPanel) {
         settingsOverlay.classList.add('visible');
@@ -1157,7 +1149,6 @@ function openSettingsPanel() {
     }
 }
 
-/** Đóng panel cài đặt */
 function closeSettingsPanel() {
      if (settingsOverlay && settingsPanel) {
         settingsOverlay.classList.remove('visible');
@@ -1165,12 +1156,10 @@ function closeSettingsPanel() {
     }
 }
 
-// Gắn sự kiện cho nút icon cài đặt
 if (settingsIconBtn) {
     settingsIconBtn.addEventListener('click', openSettingsPanel);
 }
 
-// Gắn sự kiện cho nút đóng panel và overlay
 if (closeSettingsBtn) {
     closeSettingsBtn.addEventListener('click', closeSettingsPanel);
 }
