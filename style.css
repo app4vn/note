@@ -1,3 +1,1120 @@
+/* style.css */
+/* Reset cơ bản & Kiểu toàn cục */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Định nghĩa Biến CSS cho Themes */
+:root {
+    /* Theme Sáng (Mặc định) */
+    --bg-primary: #f4f4f4;
+    --bg-secondary: #fff;
+    --bg-sidebar: #f8f9fa;
+    --bg-header: #343a40;
+    --bg-input: #fff;
+    --accent-color: #007bff;
+    --accent-color-hover: #0056b3;
+
+    --bg-button-primary: var(--accent-color);
+    --bg-button-primary-hover: var(--accent-color-hover);
+    --bg-button-secondary: #6c757d;
+    --bg-button-secondary-hover: #5a6268;
+    --bg-button-danger: #dc3545;
+    --bg-button-danger-hover: #c82333;
+    --bg-code-block: #f5f2f0;
+    --bg-content-display: #f8f9fa;
+    --bg-note-item-hover: #e9ecef;
+    --bg-note-item-active: #cfe2ff;
+    --bg-tag-item: #6c757d;
+    --bg-tag-item-active: var(--accent-color);
+    --dog-ear-color: #e0e0e0;
+    --dog-ear-shadow: rgba(0,0,0,0.2);
+
+    --text-primary: #333;
+    --text-secondary: #6c757d;
+    --text-header: #fff;
+    --text-button: #fff;
+    --text-link: var(--accent-color);
+    --text-link-hover: var(--accent-color-hover);
+    --text-placeholder: #6c757d;
+    --text-error: #dc3545;
+    --text-code-block: #393a34;
+    --text-highlight: #333;
+    /* *** THÊM MỚI/CẬP NHẬT: Màu cho tiêu đề ghi chú *** */
+    --text-note-title: var(--accent-color);
+
+
+    --border-primary: #dee2e6;
+    --border-secondary: #e0e0e0;
+    --border-input: #ccc;
+    --border-input-focus: var(--accent-color);
+    --border-content-display: #e9ecef;
+    --border-code-block: #ddd;
+
+    --shadow-primary: rgba(0,0,0,0.1);
+    --shadow-focus: rgba(0, 123, 255, 0.25);
+    --highlight-bg: yellow;
+    --font-content: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+body.theme-dark {
+    /* Theme Tối */
+    --bg-primary: #212529;
+    --bg-secondary: #343a40;
+    --bg-sidebar: #2b3035;
+    --bg-header: #1c1e21;
+    --bg-input: #495057;
+
+    --bg-button-secondary: #5c636a;
+    --bg-button-secondary-hover: #4f555a;
+    --bg-button-danger: #dc3545;
+    --bg-button-danger-hover: #bb2d3b;
+    --bg-code-block: #282c34;
+    --bg-content-display: #3a3f44;
+    --bg-note-item-hover: #495057;
+    --bg-note-item-active: var(--accent-color);
+    --bg-tag-item: #5c636a;
+    --dog-ear-color: #5c636a;
+    --dog-ear-shadow: rgba(0,0,0,0.4);
+
+    --text-primary: #e9ecef;
+    --text-secondary: #adb5bd;
+    --text-header: #fff;
+    --text-button: #fff;
+    --text-placeholder: #adb5bd;
+    --text-error: #f17c7c;
+    --text-code-block: #abb2bf;
+    --text-highlight: #212529;
+    /* --text-note-title: var(--accent-color); */ /* Kế thừa từ root hoặc JS sẽ set */
+
+
+    --border-primary: #495057;
+    --border-secondary: #5c636a;
+    --border-input: #6c757d;
+    --border-content-display: #495057;
+    --border-code-block: #5c636a;
+
+    --shadow-primary: rgba(255,255,255,0.1);
+    --highlight-bg: #ffec80;
+}
+
+body.theme-gruvbox-light {
+    /* Theme Gruvbox Sáng */
+    --bg-primary: #fbf1c7;
+    --bg-secondary: #ebdbb2;
+    --bg-sidebar: #f2e5bc;
+    --bg-header: #3c3836;
+    --bg-input: #fbf1c7;
+
+    --bg-button-secondary: #7c6f64;
+    --bg-button-secondary-hover: #665c54;
+    --bg-button-danger: #cc241d;
+    --bg-button-danger-hover: #9d0006;
+    --bg-code-block: #f2e5bc;
+    --bg-content-display: #f2e5bc;
+    --bg-note-item-hover: #d5c4a1;
+    --bg-note-item-active: #bdae93;
+    --bg-tag-item: #7c6f64;
+    --dog-ear-color: #bdae93;
+    --dog-ear-shadow: rgba(60, 56, 54, 0.2);
+
+    --text-primary: #3c3836;
+    --text-secondary: #665c54;
+    --text-header: #ebdbb2;
+    --text-button: #ebdbb2;
+    --text-placeholder: #928374;
+    --text-error: #cc241d;
+    --text-code-block: #3c3836;
+    --text-highlight: #3c3836;
+    /* --text-note-title: var(--accent-color); */
+
+    --border-primary: #d5c4a1;
+    --border-secondary: #bdae93;
+    --border-input: #bdae93;
+    --border-content-display: #d5c4a1;
+    --border-code-block: #bdae93;
+
+    --shadow-primary: rgba(0,0,0,0.08);
+    --highlight-bg: #fabd2f;
+}
+
+body.theme-dracula {
+    --bg-primary: #282a36;
+    --bg-secondary: #44475a;
+    --bg-sidebar: #3a3c4e;
+    --bg-header: #1e1f29;
+    --bg-input: #44475a;
+
+    --bg-button-secondary: #6272a4;
+    --bg-button-secondary-hover: #52608d;
+    --bg-button-danger: #ff5555;
+    --bg-button-danger-hover: #e84444;
+    --bg-code-block: #21222c;
+    --bg-content-display: #44475a;
+    --bg-note-item-hover: #53566e;
+    --bg-note-item-active: var(--accent-color);
+    --bg-tag-item: #6272a4;
+    --dog-ear-color: #6272a4;
+    --dog-ear-shadow: rgba(0,0,0,0.5);
+
+    --text-primary: #f8f8f2;
+    --text-secondary: #bd93f9;
+    --text-header: #f8f8f2;
+    --text-button: #f8f8f2;
+    --text-placeholder: #9a9bb7;
+    --text-error: #ff5555;
+    --text-code-block: #f8f8f2;
+    --text-highlight: #282a36;
+    /* --text-note-title: var(--accent-color); */
+
+
+    --border-primary: #6272a4;
+    --border-secondary: #44475a;
+    --border-input: #6272a4;
+    --border-content-display: #6272a4;
+    --border-code-block: #44475a;
+
+    --shadow-primary: rgba(0,0,0,0.3);
+    --highlight-bg: #f1fa8c;
+}
+
+body.theme-solarized-light {
+    --bg-primary: #fdf6e3;
+    --bg-secondary: #eee8d5;
+    --bg-sidebar: #f6f0e0;
+    --bg-header: #002b36;
+    --bg-input: #fdf6e3;
+
+    --bg-button-secondary: #93a1a1;
+    --bg-button-secondary-hover: #839496;
+    --bg-button-danger: #dc322f;
+    --bg-button-danger-hover: #cb4b16;
+    --bg-code-block: #f6f0e0;
+    --bg-content-display: #eee8d5;
+    --bg-note-item-hover: #e0daca;
+    --bg-note-item-active: var(--accent-color);
+    --bg-tag-item: #93a1a1;
+    --dog-ear-color: #93a1a1;
+    --dog-ear-shadow: rgba(0, 43, 54, 0.2);
+
+    --text-primary: #586e75;
+    --text-secondary: #839496;
+    --text-header: #eee8d5;
+    --text-button: #fdf6e3;
+    --text-placeholder: #93a1a1;
+    --text-error: #dc322f;
+    --text-code-block: #586e75;
+    --text-highlight: #002b36;
+    /* --text-note-title: var(--accent-color); */
+
+    --border-primary: #93a1a1;
+    --border-secondary: #eee8d5;
+    --border-input: #93a1a1;
+    --border-content-display: #93a1a1;
+    --border-code-block: #93a1a1;
+
+    --shadow-primary: rgba(0, 43, 54, 0.15);
+    --highlight-bg: #b58900;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    font-family: var(--font-content);
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2 {
+    margin-bottom: 0.8em;
+    font-weight: 600;
+}
+/* Tiêu đề lưới */
+#notes-grid-view h2, #trash-view h2 {
+    margin-bottom: 20px;
+    font-size: 1.6em;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-secondary);
+    padding-bottom: 10px;
+}
+#notes-grid-view h2 #active-tag-display {
+    font-size: 0.8em;
+    color: var(--text-link);
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+
+button {
+    cursor: pointer;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+button:active:not(:disabled) {
+     transform: translateY(1px);
+     box-shadow: inset 0 1px 3px var(--shadow-primary);
+}
+/* Nút quay lại */
+.back-button {
+    margin-bottom: 20px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+}
+.back-button:hover {
+    background-color: var(--bg-note-item-hover);
+}
+
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-input);
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+}
+input::placeholder, textarea::placeholder {
+    color: var(--text-placeholder);
+    opacity: 1; /* Firefox */
+}
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--border-input-focus);
+    box-shadow: 0 0 0 3px var(--shadow-focus);
+}
+/* Ô tìm kiếm trong sidebar */
+#search-input {
+    margin-bottom: 0;
+}
+
+
+textarea#note-content-input {
+    min-height: 150px;
+    resize: vertical;
+    font-family: var(--font-content);
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: var(--border-secondary);
+    margin: 20px 0;
+}
+/* hr trong sidebar */
+.sidebar hr {
+    margin: 15px 0;
+    background-color: var(--border-primary);
+}
+
+
+/* Kiểu nút */
+.button-primary {
+    background-color: var(--bg-button-primary);
+    color: var(--text-button);
+}
+.button-primary:hover:not(:disabled) {
+    background-color: var(--bg-button-primary-hover);
+}
+
+.button-secondary {
+    background-color: var(--bg-button-secondary);
+    color: var(--text-button);
+}
+.button-secondary:hover:not(:disabled) {
+    background-color: var(--bg-button-secondary-hover);
+}
+
+.button-danger {
+    background-color: var(--bg-button-danger);
+    color: var(--text-button);
+}
+.button-danger:hover:not(:disabled) {
+    background-color: var(--bg-button-danger-hover);
+}
+
+.full-width {
+    width: 100%;
+}
+
+/* Thông báo lỗi */
+.error-message {
+    color: var(--text-error);
+    font-size: 0.9em;
+    margin-top: 5px;
+    min-height: 1.2em;
+    text-align: left;
+}
+
+/* Khu vực xác thực */
+#auth-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px var(--shadow-primary);
+    text-align: center;
+    border: 1px solid var(--border-primary);
+}
+#auth-forms hr {
+    background-color: var(--border-secondary);
+    margin: 25px 0;
+}
+#auth-forms h2 {
+    margin-bottom: 15px;
+    font-size: 1.4em;
+    color: var(--text-primary);
+}
+
+.auth-switch-link {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+.auth-switch-link span {
+    color: var(--text-link);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.auth-switch-link span:hover {
+    color: var(--text-link-hover);
+}
+
+
+/* Khu vực ứng dụng chính */
+#app-container {
+    display: none;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-header {
+    background-color: var(--bg-header);
+    color: var(--text-header);
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 5px var(--shadow-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.app-header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.user-info span {
+    margin-right: 15px;
+    font-weight: 500;
+}
+
+/* Bố cục chính (Sidebar + Content) */
+.main-content {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background-color: var(--bg-sidebar);
+    padding: 20px;
+    border-right: 1px solid var(--border-primary);
+    overflow-y: auto;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sidebar h2 {
+    font-size: 1.1em;
+    margin-top: 0;
+    color: var(--text-primary);
+    padding-bottom: 8px;
+}
+.sidebar .sidebar-settings h2, .sidebar .sidebar-settings h3 {
+    font-size: 0.95em;
+    margin-bottom: 10px;
+    padding-bottom: 0;
+    color: var(--text-secondary);
+    font-weight: 500;
+    border-bottom: none;
+}
+.sidebar .sidebar-settings h2 {
+     border-bottom: 1px solid var(--border-secondary);
+     padding-bottom: 5px;
+}
+
+/* Style cho các nút trong sidebar (Thùng rác, Tất cả notes) */
+.sidebar-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid transparent;
+    margin-bottom: 5px;
+}
+.sidebar-button:hover {
+    background-color: var(--bg-note-item-hover);
+    border-color: var(--border-primary);
+}
+.sidebar-button.active {
+    background-color: var(--accent-color);
+    color: var(--text-button);
+    border-color: var(--accent-color);
+    font-weight: 500;
+}
+.sidebar-button svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+
+#tags-list-container {
+    margin-top: 10px;
+}
+#tags-list-container .tag-item {
+     display: inline-block;
+     background-color: var(--bg-tag-item);
+     color: var(--text-button);
+     padding: 4px 10px;
+     border-radius: 15px;
+     font-size: 0.85em;
+     margin-right: 6px;
+     margin-bottom: 6px;
+     cursor: pointer;
+     transition: background-color 0.2s ease;
+}
+#tags-list-container .tag-item:hover,
+#tags-list-container .tag-item.active {
+    background-color: var(--bg-tag-item-active);
+}
+
+
+.content-area {
+    flex-grow: 1;
+    padding: 30px 40px;
+    background-color: var(--bg-secondary);
+    overflow-y: auto;
+    transition: background-color 0.3s ease;
+}
+body.theme-gruvbox-light .content-area,
+body.theme-solarized-light .content-area {
+    background-color: var(--bg-primary);
+}
+
+
+/* Grid View */
+#notes-grid-view, #trash-view {
+    display: block;
+}
+
+/* Header của Grid View */
+.grid-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-secondary);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.grid-view-header h2 {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.sort-options {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.sort-options label {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+.sort-options select {
+    width: auto;
+    min-width: 200px;
+    margin-bottom: 0;
+    padding: 8px 12px;
+    font-size: 0.9em;
+}
+
+
+#notes-list-container, #trash-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 0;
+    padding: 5px;
+}
+
+/* Thẻ ghi chú trong lưới (và trong thùng rác) */
+.note-item {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 15px 20px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 150px;
+    box-shadow: 0 1px 3px var(--shadow-primary);
+    position: relative;
+}
+#notes-list-container .note-item:hover {
+    box-shadow: 0 4px 12px var(--shadow-primary);
+    border-color: var(--border-input-focus);
+    background-color: var(--bg-note-item-hover);
+}
+#notes-list-container .note-item {
+    cursor: pointer;
+}
+
+
+/* Style cho hiệu ứng Dog Ear */
+.note-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-width: 0 25px 25px 0;
+    border-style: solid;
+    border-color: var(--bg-primary) var(--bg-primary) var(--dog-ear-color) var(--dog-ear-color);
+    box-shadow: -1px 1px 3px var(--dog-ear-shadow);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+body.theme-gruvbox-light .note-item::before,
+body.theme-solarized-light .note-item::before {
+    border-color: var(--bg-primary) var(--bg-primary) var(--dog-ear-color) var(--dog-ear-color);
+}
+
+
+/* Nội dung bên trong thẻ */
+.note-item h3 { /* Tiêu đề thẻ */
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    color: var(--text-note-title); /* *** SỬ DỤNG BIẾN MÀU NHẤN CHO TIÊU ĐỀ THẺ *** */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    min-height: 2.4em;
+}
+.note-item-content-preview {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    flex-grow: 1;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-word;
+    font-family: var(--font-content);
+}
+.note-item-date {
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    margin-top: auto;
+    text-align: right;
+}
+
+/* Thông báo khi không có note */
+#notes-list-container > p, #trash-list-container > p {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-secondary);
+    margin-top: 30px;
+}
+
+/* Style cho các nút trong thẻ ghi chú của thùng rác */
+.trashed-note-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+.trashed-note-actions button {
+    padding: 6px 10px;
+    font-size: 0.85em;
+}
+
+
+/* Chế độ xem chi tiết */
+#note-detail-view {
+    position: relative;
+}
+#note-detail-view h2 { /* Tiêu đề note chi tiết */
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    color: var(--text-note-title); /* *** SỬ DỤNG BIẾN MÀU NHẤN CHO TIÊU ĐỀ CHI TIẾT *** */
+    font-size: 1.8em;
+    word-break: break-word;
+    padding-right: 40px;
+}
+.tags-display {
+    margin-bottom: 20px;
+}
+.tags-display .tag {
+    display: inline-block;
+    background-color: var(--bg-button-primary);
+    color: var(--text-button);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.content-display {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.7;
+    color: var(--text-primary);
+    background-color: var(--bg-content-display);
+    padding: 20px;
+    border: 1px solid var(--border-content-display);
+    border-radius: 8px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    font-family: var(--font-content);
+}
+
+#note-detail-code {
+    background-color: var(--bg-code-block);
+    color: var(--text-code-block);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    white-space: pre;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.95em;
+    line-height: 1.5;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    border: 1px solid var(--border-code-block);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+#note-detail-actions button {
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+/* Style cho nút Ghim */
+.pin-button {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color 0.2s ease, transform 0.2s ease;
+    position: absolute;
+    top: 25px;
+    right: 20px;
+}
+.pin-button svg {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+.pin-button:hover {
+    color: var(--text-primary);
+    transform: scale(1.1);
+}
+.pin-button.pinned {
+    color: var(--accent-color);
+}
+.note-item .pin-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2em;
+    color: var(--text-secondary);
+    cursor: pointer;
+    z-index: 5;
+    padding: 3px;
+}
+.note-item .pin-icon.pinned {
+    color: var(--accent-color);
+}
+.note-item .pin-icon:hover {
+    color: var(--text-primary);
+}
+
+
+/* Chế độ soạn thảo */
+#note-editor-view {
+    max-width: 800px;
+}
+#note-editor-view h2 {
+     border-bottom: 1px solid var(--border-secondary);
+     padding-bottom: 15px;
+     margin-bottom: 20px;
+     color: var(--text-primary);
+}
+#note-editor-view textarea#note-content-input {
+    font-family: var(--font-content);
+}
+.tag-input-container {
+    position: relative;
+    margin-bottom: 12px;
+}
+#note-tags-input {
+    margin-bottom: 0;
+}
+.tag-suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-input);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 4px 8px var(--shadow-primary);
+}
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-secondary);
+}
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+.suggestion-item:hover {
+    background-color: var(--bg-note-item-hover);
+}
+.suggestion-item.active {
+    background-color: var(--accent-color);
+    color: var(--text-button);
+}
+
+
+.code-options {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.code-options label {
+    margin-left: 8px;
+    margin-right: 20px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text-secondary);
+}
+.code-options input[type="checkbox"] {
+    width: auto;
+    margin-bottom: 0;
+    cursor: pointer;
+    vertical-align: middle;
+}
+.code-options select {
+    width: auto;
+    min-width: 150px;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.editor-actions button {
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+
+/* Style cho nút Scroll to Top */
+#scrollToTopBtn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: var(--bg-button-primary);
+  color: var(--text-button);
+  cursor: pointer;
+  padding: 10px 15px;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 1;
+  box-shadow: 0 2px 5px var(--shadow-primary);
+  opacity: 0.8;
+  transition: opacity 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+}
+
+#scrollToTopBtn:hover {
+  background-color: var(--bg-button-primary-hover);
+  opacity: 1;
+}
+#scrollToTopBtn:active {
+    transform: scale(0.95);
+}
+
+/* Style cho highlight tìm kiếm */
+.search-highlight {
+    background-color: var(--highlight-bg);
+    font-weight: bold;
+    color: var(--text-highlight);
+    border-radius: 2px;
+}
+
+/* Style cho Bộ chọn Theme & Cài đặt khác trong Sidebar */
+.sidebar-settings {
+    margin-top: auto;
+    padding-top: 15px;
+}
+.sidebar .sidebar-settings h2 {
+    border-bottom: 1px solid var(--border-secondary);
+    padding-bottom: 5px;
+}
+.theme-selector, .accent-color-selector, .font-selector {
+    margin-bottom: 15px;
+}
+.theme-selector h3, .accent-color-selector h3, .font-selector h3 {
+    font-size: 0.95em;
+    margin-bottom: 10px;
+    padding-bottom: 0;
+    color: var(--text-secondary);
+    font-weight: 500;
+    border-bottom: none;
+}
+.theme-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.theme-button {
+    flex: 1;
+    min-width: 55px;
+    padding: 6px 8px;
+    font-size: 0.85em;
+    border: 1px solid var(--border-primary);
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.theme-button.active {
+    background-color: var(--bg-button-primary);
+    color: var(--text-button);
+    border-color: var(--bg-button-primary);
+    font-weight: bold;
+}
+.theme-button:not(.active):hover {
+     background-color: var(--bg-note-item-hover);
+     border-color: var(--border-input);
+     color: var(--text-primary);
+}
+
+/* Style cho Bộ chọn Màu Nhấn */
+.accent-color-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.accent-color-button {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-sidebar);
+    padding: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+.accent-color-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.accent-color-button.active {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 2px var(--bg-sidebar), 0 0 0 4px var(--text-primary);
+    transform: scale(1.1);
+}
+
+/* Style cho Bộ chọn Font chữ */
+.font-selector select {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 0.9em;
+}
+
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    #notes-list-container, #trash-list-container {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 15px;
+    }
+    .content-area {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        overflow: auto;
+        font-size: 15px;
+    }
+    #app-container {
+        height: auto;
+        min-height: 100vh;
+    }
+    .main-content {
+        flex-direction: column;
+        overflow: visible;
+        height: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-primary);
+        max-height: none;
+        min-height: auto;
+        overflow-y: visible;
+        padding: 15px;
+    }
+    .sidebar #search-input {
+        margin-bottom: 0;
+    }
+    .sidebar-settings {
+        margin-top: 15px;
+        padding-top: 10px;
+    }
+    .theme-options, .accent-color-options {
+        justify-content: flex-start;
+    }
+    .font-selector select {
+        padding: 10px;
+    }
+
+
+    .content-area {
+        padding: 20px 15px;
+        overflow-y: visible;
+    }
+
+    #notes-list-container, #trash-list-container {
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); /* 1 cột */
+        gap: 15px;
+    }
+     #notes-grid-view h2, #trash-view h2 {
+        font-size: 1.4em;
+     }
+     .grid-view-header {
+        flex-direction: column;
+        align-items: flex-start;
+     }
+     .sort-options {
+        width: 100%;
+        margin-top: 10px;
+     }
+     .sort-options select {
+        flex-grow: 1;
+        min-width: 0;
+     }
+
+
+    .app-header {
+        padding: 15px;
+    }
+    .app-header h1 {
+        font-size: 1.3em;
+    }
+    .user-info span {
+        display: none;
+    }
+
+     #auth-container {
+        margin: 20px;
+        padding: 20px;
+        width: auto;
+        max-width: none;
+    }
+
+    button, input, textarea, select {
+        font-size: 1em;
+    }
+
+    #note-detail-view h2 {
+        font-size: 1.5em;
+    }
+    .content-display, #note-detail-code {
+        font-size: 0.9em;
+        padding: 15px;
+    }
+    .back-button {
+        margin-bottom: 15px;
+    }
+
+    #scrollToTopBtn {
+        bottom: 15px;
+        right: 15px;
+        padding: 8px 12px;
+        font-size: 16px;
+    }
+    .pin-button {
+        top: 15px;
+        right: 15px;
+    }
+    .pin-button svg {
+        width: 18px;
+        height: 18px;
+    }
+    .tag-suggestions-list {
+        font-size: 0.9em;
+    }
+}
 /* --- CSS cho Tính năng To-Do List --- */
 
 /* Khu vực To-Do trong Trình soạn thảo */
@@ -234,4 +1351,5 @@
     border-radius: 5px;
     transition: width 0.3s ease;
 }
+
 
