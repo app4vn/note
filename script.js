@@ -224,7 +224,7 @@ function showMainNotesView() {
     if (tagsListContainer) tagsListContainer.style.display = 'block';
 
     if (contentArea) contentArea.scrollTop = 0;
-    renderNotesList(Object.values(notesCache));
+    renderNotesList(Object.values(notesCache)); // Đảm bảo gọi hàm renderNotesList
 }
 
 function showTrashNotesView() {
@@ -342,23 +342,17 @@ function linkify(text) {
 
 function highlightText(text, searchTerm) {
     if (!searchTerm) {
-        // Chỉ escape HTML và thay thế newline khi không có search term
         const tempDiv = document.createElement('div');
         tempDiv.textContent = text || '';
         return tempDiv.innerHTML.replace(/\n/g, '<br>');
     }
     if (!text) return '';
 
-    // Escape search term để dùng trong regex
     const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`(${escapedSearchTerm})`, 'gi');
-
-    // Escape HTML trong text gốc TRƯỚC KHI highlight
     const tempDiv = document.createElement('div');
     tempDiv.textContent = text;
-    const escapedText = tempDiv.innerHTML.replace(/\n/g, '<br>'); // Escape và thay newline
-
-    // Áp dụng highlight vào text đã escape
+    const escapedText = tempDiv.innerHTML.replace(/\n/g, '<br>');
     return escapedText.replace(regex, '<span class="search-highlight">$1</span>');
 }
 
@@ -516,7 +510,6 @@ if (fontSelect) {
 
 
 // --- Logic Xác thực (Authentication) ---
-// ... (giữ nguyên)
 onAuthStateChanged(auth, (user) => {
     if (user) {
         console.log("User logged in:", user.uid, user.email);
@@ -529,7 +522,7 @@ onAuthStateChanged(auth, (user) => {
         if(searchInput) searchInput.disabled = false;
         if(sortSelect) sortSelect.disabled = false;
         if(addNoteBtn) addNoteBtn.disabled = false;
-        loadNotesAndTags();
+        loadNotesAndTags(); // Gọi hàm này
         loadTrashedNotes();
         showMainNotesView();
     } else {
@@ -612,7 +605,7 @@ logoutButton.addEventListener('click', () => {
 
 
 // --- Logic quản lý Ghi chú (Notes CRUD & Display) ---
-// ... (giữ nguyên)
+// ... (giữ nguyên các hàm và listener cho isCodeCheckbox, addNoteBtn, cancelEditBtn, backToGridBtn, saveNoteBtn, editNoteBtn, deleteNoteBtn, copyCodeBtn)
 isCodeCheckbox.addEventListener('change', (e) => {
     languageSelect.style.display = e.target.checked ? 'inline-block' : 'none';
     if (!e.target.checked) {
@@ -699,7 +692,7 @@ saveNoteBtn.addEventListener('click', async () => {
             console.log("Note added with ID:", docRef.id);
         }
         clearEditor();
-        showMainNotesView();
+        showMainNotesView(); // Gọi hàm này sau khi lưu thành công
     } catch (error) {
         console.error("Error saving note: ", error);
         editorError.textContent = `Lỗi lưu ghi chú: ${error.message}`;
@@ -756,11 +749,69 @@ copyCodeBtn.addEventListener('click', () => {
 });
 
 
-// --- Tải và Hiển thị Dữ liệu từ Firestore ---
-// ... (giữ nguyên loadTrashedNotes)
+// --- Tải và Hiển thị Dữ liệu từ Firestore --- ĐỊNH NGHĨA LẠI HÀM ---
+function loadNotesAndTags() {
+    if (!currentUser) return;
+    console.log(`Loading notes for user: ${currentUser.uid}, Sort: ${currentSortOption}`);
+
+    const [sortField, sortDirection] = currentSortOption.split('_');
+
+    let notesQuery = query(
+        collection(db, "notes"),
+        where("userId", "==", currentUser.uid),
+        where("isTrashed", "==", false)
+    );
+
+    if (currentSortOption !== 'deadline_asc') {
+        notesQuery = query(notesQuery, orderBy("isPinned", "desc"), orderBy(sortField, sortDirection));
+    } else {
+         notesQuery = query(notesQuery, orderBy("isPinned", "desc"), orderBy("updatedAt", "desc"));
+    }
+
+    if (notesUnsubscribe) notesUnsubscribe();
+
+    notesUnsubscribe = onSnapshot(notesQuery, (querySnapshot) => {
+        console.log("Notes data received from Firestore");
+        const allNotes = [];
+        const newNotesCache = {};
+        allUserTags.clear();
+
+        querySnapshot.forEach((doc) => {
+            const note = { id: doc.id, ...doc.data() };
+            allNotes.push(note);
+            newNotesCache[note.id] = note;
+            if (note.tags && Array.isArray(note.tags)) {
+                note.tags.forEach(tag => allUserTags.add(tag));
+            }
+        });
+
+        notesCache = newNotesCache;
+        if (currentView === 'notes') {
+            renderNotesList(Object.values(notesCache)); // Gọi hàm renderNotesList
+        }
+        renderTagsList(allNotes);
+
+        if (currentNoteId && !notesCache[currentNoteId] && noteDetailView.style.display === 'block') {
+            showMainNotesView();
+        } else if (currentNoteId && notesCache[currentNoteId] && noteDetailView.style.display === 'block') {
+            displayNoteDetailContent(notesCache[currentNoteId]);
+        }
+
+    }, (error) => {
+        console.error("Error loading main notes: ", error);
+        if (error.code === 'failed-precondition') {
+             notesListContainer.innerHTML = `<p class="error-message">Lỗi: Cần tạo chỉ mục (index) trong Firestore. Kiểm tra Console.</p>`;
+             console.error("Firestore Index Required:", error.message);
+        } else {
+            notesListContainer.innerHTML = `<p class="error-message">Lỗi tải ghi chú: ${error.message}</p>`;
+        }
+    });
+}
+
 function loadTrashedNotes() {
     if (!currentUser) return;
     console.log(`Loading trashed notes for user: ${currentUser.uid}`);
+
     const trashQuery = query(
         collection(db, "notes"),
         where("userId", "==", currentUser.uid),
@@ -792,9 +843,195 @@ function loadTrashedNotes() {
     });
 }
 
-// --- Render Lists ---
-// ... (giữ nguyên renderTrashedNotesList, renderTagsList, displayNoteDetailContent)
+// --- Render Lists --- ĐỊNH NGHĨA LẠI HÀM ---
+
+// Hàm phụ trợ lấy deadline gần nhất (chưa hoàn thành)
+function getNearestUpcomingDeadline(note) {
+    if (!note.todos || note.todos.length === 0) {
+        return null;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let nearestDeadline = null;
+
+    note.todos.forEach(todo => {
+        if (!todo.completed && todo.deadline) {
+            try {
+                const deadlineDate = new Date(todo.deadline + "T00:00:00");
+                if (!isNaN(deadlineDate) && deadlineDate >= today) {
+                    if (nearestDeadline === null || deadlineDate < nearestDeadline) {
+                        nearestDeadline = deadlineDate;
+                    }
+                }
+            } catch (e) {
+                console.warn("Invalid date format in todo:", todo);
+            }
+        }
+    });
+    return nearestDeadline;
+}
+
+function renderNotesList(notesFromCache) {
+    notesListContainer.innerHTML = '';
+
+    const searchTermLower = currentSearchTerm.toLowerCase();
+    let notesToRender = notesFromCache.filter(note => {
+        const tagMatch = !activeTag || (note.tags && note.tags.includes(activeTag));
+        if (!tagMatch) return false;
+        if (searchTermLower) {
+            const titleMatch = note.title?.toLowerCase().includes(searchTermLower);
+            const contentMatch = note.content?.toLowerCase().includes(searchTermLower);
+            const tagsMatch = note.tags?.some(tag => tag.toLowerCase().includes(searchTermLower));
+            const todosMatch = note.todos?.some(todo => todo.text?.toLowerCase().includes(searchTermLower));
+            return titleMatch || contentMatch || tagsMatch || todosMatch;
+        }
+        return true;
+    });
+
+    // Sắp xếp client-side nếu chọn 'deadline_asc'
+    if (currentSortOption === 'deadline_asc') {
+        notesToRender.sort((a, b) => {
+            const deadlineA = getNearestUpcomingDeadline(a);
+            const deadlineB = getNearestUpcomingDeadline(b);
+            if (deadlineA && deadlineB) return deadlineA - deadlineB;
+            if (deadlineA && !deadlineB) return -1;
+            if (!deadlineA && deadlineB) return 1;
+            const dateA = a.updatedAt?.toDate ? a.updatedAt.toDate() : new Date(0);
+            const dateB = b.updatedAt?.toDate ? b.updatedAt.toDate() : new Date(0);
+            return dateB - dateA;
+        });
+    }
+    // Sort lại theo isPinned nếu không phải sort deadline
+    else {
+         notesToRender.sort((a, b) => {
+            const pinA = a.isPinned || false;
+            const pinB = b.isPinned || false;
+            if (pinA !== pinB) return pinB - pinA;
+            return 0; // Giữ nguyên thứ tự Firestore cho các mục cùng trạng thái pin
+         });
+    }
+
+
+    if (notesToRender.length === 0) {
+        let message = 'Chưa có ghi chú nào.';
+        if (activeTag && currentSearchTerm) message = `Không có ghi chú nào với tag "${activeTag}" khớp với "${currentSearchTerm}".`;
+        else if (activeTag) message = `Không có ghi chú nào với tag "${activeTag}".`;
+        else if (currentSearchTerm) message = `Không có ghi chú nào khớp với "${currentSearchTerm}".`;
+        else message = 'Chưa có ghi chú nào. Hãy tạo ghi chú mới!';
+        notesListContainer.innerHTML = `<p>${message}</p>`;
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    notesToRender.forEach(note => {
+        const noteElement = document.createElement('div');
+        noteElement.classList.add('note-item');
+        noteElement.dataset.id = note.id;
+
+        const pinIcon = document.createElement('span');
+        pinIcon.classList.add('pin-icon');
+        pinIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle${note.isPinned ? '-fill' : ''}" viewBox="0 0 16 16">
+                                <path d="${note.isPinned ? pinAngleFillSVGPath : pinAngleSVGPath}"/>
+                             </svg>`;
+        if (note.isPinned) pinIcon.classList.add('pinned');
+        pinIcon.title = note.isPinned ? "Bỏ ghim" : "Ghim ghi chú";
+        pinIcon.addEventListener('click', (e) => { e.stopPropagation(); togglePinStatus(note.id); });
+        noteElement.appendChild(pinIcon);
+
+        const titleElement = document.createElement('h3');
+        titleElement.innerHTML = highlightText(note.title || "Không có tiêu đề", currentSearchTerm);
+
+        const contentPreview = document.createElement('div');
+        contentPreview.classList.add('note-item-content-preview');
+
+        if (note.todos && note.todos.length > 0) {
+            let nearestDeadlineInfo = { date: null, text: '', isOverdue: false };
+            let highestPriorityUncompletedText = '';
+            let highestPriorityLevel = -1;
+
+            note.todos.forEach(todo => {
+                if (!todo.completed) {
+                    if (todo.deadline) {
+                        try {
+                            const deadlineDate = new Date(todo.deadline + "T00:00:00");
+                            if (!isNaN(deadlineDate)) {
+                                const isOverdue = deadlineDate < today;
+                                // Chỉ xét deadline sắp tới hoặc hôm nay cho nearestDeadline
+                                if (deadlineDate >= today) {
+                                    if (nearestDeadlineInfo.date === null || deadlineDate < nearestDeadlineInfo.date) {
+                                        nearestDeadlineInfo = { date: deadlineDate, text: `Hạn: ${deadlineDate.toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit'})}`, isOverdue: false };
+                                    }
+                                } else if (isOverdue) {
+                                    // Ưu tiên hiển thị deadline quá hạn gần nhất nếu không có deadline sắp tới
+                                     if (nearestDeadlineInfo.date === null || !nearestDeadlineInfo.isOverdue || deadlineDate > nearestDeadlineInfo.date) {
+                                         nearestDeadlineInfo = { date: deadlineDate, text: `Hạn: ${deadlineDate.toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit'})}`, isOverdue: true };
+                                     }
+                                }
+                            }
+                        } catch(e) {}
+                    }
+                    const currentPriorityLevel = (todo.priority === 'high' ? 2 : (todo.priority === 'medium' ? 1 : (todo.priority === 'low' ? 0 : -1)));
+                    if (currentPriorityLevel > highestPriorityLevel) {
+                        highestPriorityLevel = currentPriorityLevel;
+                        highestPriorityUncompletedText = `Ưu tiên: ${todo.priority.charAt(0).toUpperCase() + todo.priority.slice(1)}`;
+                    }
+                }
+            });
+
+            let previewHTML = '';
+            if (nearestDeadlineInfo.date || highestPriorityLevel > -1) {
+                 previewHTML += `<div class="todo-preview-item">`;
+                 if (nearestDeadlineInfo.date) {
+                     previewHTML += `<span class="todo-deadline-preview ${nearestDeadlineInfo.isOverdue ? 'overdue' : ''}">${nearestDeadlineInfo.text}</span>`;
+                 }
+                 if (highestPriorityLevel > -1 && !(nearestDeadlineInfo.date && nearestDeadlineInfo.isOverdue)) {
+                      previewHTML += `<span class="todo-priority-preview priority-${['low','medium','high'][highestPriorityLevel]}">${highestPriorityUncompletedText}</span>`;
+                 }
+                 const otherTodos = note.todos.filter(t => !t.completed).slice(0, 2);
+                 otherTodos.forEach(t => {
+                     // Escape HTML trong text của todo trước khi hiển thị
+                     const tempDiv = document.createElement('div');
+                     tempDiv.textContent = t.text || '';
+                     const escapedTodoText = tempDiv.innerHTML;
+                     previewHTML += `<br><span class="todo-status">[ ]</span> <span class="todo-text">${escapedTodoText.substring(0, 50)}${escapedTodoText.length > 50 ? '...' : ''}</span>`;
+                 });
+                 previewHTML += `</div>`;
+            } else {
+                 const firstTodos = note.todos.slice(0, 3).map(todo => {
+                     const tempDiv = document.createElement('div');
+                     tempDiv.textContent = todo.text || '';
+                     const escapedTodoText = tempDiv.innerHTML;
+                     return `<span class="todo-preview-item">
+                         <span class="todo-status">${todo.completed ? '[x]' : '[ ]'}</span>
+                         <span class="todo-text">${escapedTodoText.substring(0, 50)}${escapedTodoText.length > 50 ? '...' : ''}</span>
+                      </span>`;
+                 }).join('');
+                 previewHTML = firstTodos + (note.todos.length > 3 ? '...' : '');
+            }
+            contentPreview.innerHTML = previewHTML;
+
+        } else {
+            contentPreview.innerHTML = highlightText(note.content || '', currentSearchTerm);
+        }
+
+
+        const dateElement = document.createElement('div');
+        dateElement.classList.add('note-item-date');
+        if (note.updatedAt && note.updatedAt.toDate) {
+             dateElement.textContent = note.updatedAt.toDate().toLocaleDateString('vi-VN', {day: '2-digit', month: '2-digit', year: 'numeric'});
+        }
+        noteElement.appendChild(titleElement);
+        noteElement.appendChild(contentPreview);
+        noteElement.appendChild(dateElement);
+        noteElement.addEventListener('click', () => showDetailView(note));
+        notesListContainer.appendChild(noteElement);
+    });
+}
+
 function renderTrashedNotesList(trashedNotes) {
+    // ... (giữ nguyên)
     trashListContainer.innerHTML = '';
     if (trashedNotes.length === 0) {
         trashListContainer.innerHTML = '<p>Thùng rác trống.</p>';
@@ -847,6 +1084,7 @@ function renderTrashedNotesList(trashedNotes) {
     });
 }
 function renderTagsList(notes) {
+    // ... (giữ nguyên)
     tagsListContainer.innerHTML = '';
     const allTagElement = document.createElement('span');
     allTagElement.classList.add('tag-item');
@@ -886,6 +1124,7 @@ function renderTagsList(notes) {
     }
 }
 function displayNoteDetailContent(note) {
+    // ... (giữ nguyên)
     if (!note) return;
     noteDetailTitle.textContent = note.title;
     if (pinNoteDetailBtn) {
