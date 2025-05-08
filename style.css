@@ -1782,6 +1782,82 @@ body.modal-open .modal {
     padding: 10px 12px; /* Điều chỉnh padding cho phù hợp */
     margin-bottom: 0; /* Bỏ margin bottom mặc định của input */
 }
+/* --- CSS cho Bộ lọc Tag Calendar --- */
+
+.calendar-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-secondary);
+    flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+    gap: 15px;
+}
+
+.calendar-view-header h2 {
+    margin-bottom: 0; /* Bỏ margin bottom của h2 */
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.calendar-filter-options {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-filter-options label {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+#calendar-tag-filter {
+    width: auto;
+    min-width: 180px;
+    margin-bottom: 0;
+    padding: 8px 12px;
+    font-size: 0.9em;
+    /* Kế thừa style từ input/select chung */
+}
+
+/* Responsive cho Calendar Header */
+@media (max-width: 768px) {
+    .calendar-view-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .calendar-filter-options {
+        width: 100%;
+    }
+    #calendar-tag-filter {
+        flex-grow: 1; /* Cho select chiếm hết chiều rộng còn lại */
+        min-width: 0;
+    }
+}
+
+/* Style cho Input Ngày Sự kiện trong Editor */
+.event-date-input-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.event-date-input-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+#note-event-date {
+    width: auto;
+    min-width: 180px;
+    padding: 10px 12px;
+    margin-bottom: 0;
+}
+
 
 
 
