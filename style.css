@@ -1458,4 +1458,143 @@ body.theme-solarized-light .note-item::before {
         gap: 15px;
     }
 }
+/* --- CSS cho Auth Modal và Trạng thái Đăng nhập --- */
+
+/* Ẩn/Hiện các phần tử dựa trên trạng thái đăng nhập */
+body.logged-out .logged-in-element {
+    display: none !important; /* Ẩn khi chưa đăng nhập */
+}
+body.logged-in .logged-out-element {
+    display: none !important; /* Ẩn khi đã đăng nhập */
+}
+
+/* Style cho link trong welcome message */
+#welcome-message .auth-link {
+    color: var(--text-link);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+#welcome-message .auth-link:hover {
+    color: var(--text-link-hover);
+}
+
+/* --- Style cho Auth Modal --- */
+.modal-overlay {
+    display: none; /* Mặc định ẩn */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Lớp phủ tối hơn một chút */
+    z-index: 1000; /* Cao hơn sidebar overlay */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal {
+    display: none; /* Mặc định ẩn */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%); /* Dịch chuyển lên một chút ban đầu */
+    background-color: var(--bg-secondary);
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    z-index: 1001; /* Cao nhất */
+    width: 90%;
+    max-width: 450px; /* Giới hạn chiều rộng */
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Trạng thái hiển thị của Modal */
+body.modal-open .modal-overlay {
+    display: block;
+    opacity: 1;
+}
+body.modal-open .modal {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%); /* Đưa về giữa màn hình */
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2em;
+    line-height: 1;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+}
+.modal-close-btn:hover {
+    color: var(--text-primary);
+}
+
+#auth-modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5em;
+    color: var(--text-primary);
+}
+
+/* Style cho form bên trong modal (tương tự auth-container cũ) */
+#auth-modal #login-form,
+#auth-modal #signup-form {
+    text-align: center;
+}
+
+#auth-modal input[type="email"],
+#auth-modal input[type="password"] {
+    margin-bottom: 15px; /* Tăng khoảng cách */
+}
+
+#auth-modal button[type="submit"] {
+    margin-top: 10px;
+    width: 100%;
+}
+
+#auth-modal .error-message {
+    min-height: 1.2em;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+#auth-modal .auth-switch-link {
+    margin-top: 25px;
+    font-size: 0.9em;
+}
+#auth-modal .auth-switch-link span {
+    color: var(--text-link);
+    text-decoration: underline;
+    cursor: pointer;
+}
+#auth-modal .auth-switch-link span:hover {
+     color: var(--text-link-hover);
+}
+
+/* Điều chỉnh nút đăng nhập/đăng ký trên header */
+.user-info .logged-out-element {
+    margin-left: 10px; /* Khoảng cách giữa 2 nút */
+}
+
+/* Responsive cho Modal */
+@media (max-width: 768px) {
+    .modal {
+        padding: 25px 20px;
+        width: 90%;
+    }
+    #auth-modal-content h2 {
+        font-size: 1.3em;
+    }
+}
+
 
