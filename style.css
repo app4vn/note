@@ -1761,6 +1761,28 @@ body.modal-open .modal {
         min-height: 400px;
     }
 }
+/* --- CSS cho Input Ngày Sự kiện --- */
+
+.event-date-input-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.event-date-input-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+#note-event-date {
+    width: auto; /* Hoặc đặt chiều rộng cụ thể nếu muốn */
+    min-width: 180px;
+    padding: 10px 12px; /* Điều chỉnh padding cho phù hợp */
+    margin-bottom: 0; /* Bỏ margin bottom mặc định của input */
+}
+
 
 
 
