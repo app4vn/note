@@ -14,6 +14,29 @@
 </head>
 <body class="logged-out">
 
+    <div id="auth-modal-overlay" class="modal-overlay"></div>
+    <div id="auth-modal" class="modal">
+        <button id="close-auth-modal-btn" class="modal-close-btn">&times;</button>
+        <div id="auth-modal-content">
+             <form id="login-form">
+                <h2>Đăng nhập</h2>
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Mật khẩu" required>
+                <button type="submit" class="button-primary">Đăng nhập</button>
+                <p id="login-error" class="error-message"></p>
+                <p class="auth-switch-link">Chưa có tài khoản? <span id="show-signup-link">Đăng ký ngay</span></p>
+            </form>
+
+            <form id="signup-form" style="display: none;">
+                <h2>Đăng ký</h2>
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="password" id="signup-password" placeholder="Mật khẩu (ít nhất 6 ký tự)" required>
+                <button type="submit" class="button-primary">Đăng ký</button>
+                <p id="signup-error" class="error-message"></p>
+                <p class="auth-switch-link">Đã có tài khoản? <span id="show-login-link">Đăng nhập</span></p>
+            </form>
+        </div>
+    </div>
     <div id="app-container">
         <header class="app-header">
             <button id="mobile-menu-btn" class="mobile-menu-button">
@@ -25,7 +48,6 @@
             <div class="user-info">
                 <span id="user-email" class="logged-in-element"></span>
                 <button id="logout-button" class="button-secondary logged-in-element">Đăng xuất</button>
-
                 <button id="show-login-modal-btn" class="button-secondary logged-out-element">Đăng nhập</button>
                 <button id="show-signup-modal-btn" class="button-primary logged-out-element">Đăng ký</button>
             </div>
@@ -107,6 +129,7 @@
                                 <option value="updatedAt_asc">Ngày cập nhật (Cũ nhất)</option>
                                 <option value="title_asc">Tiêu đề (A-Z)</option>
                                 <option value="title_desc">Tiêu đề (Z-A)</option>
+                                <option value="deadline_asc">Hạn chót gần nhất</option>
                             </select>
                         </div>
                     </div>
@@ -202,30 +225,7 @@
 
         <div id="sidebar-overlay"></div>
 
-        <div id="auth-modal-overlay" class="modal-overlay"></div>
-        <div id="auth-modal" class="modal">
-            <button id="close-auth-modal-btn" class="modal-close-btn">&times;</button>
-            <div id="auth-modal-content">
-                <form id="login-form">
-                    <h2>Đăng nhập</h2>
-                    <input type="email" id="login-email" placeholder="Email" required>
-                    <input type="password" id="login-password" placeholder="Mật khẩu" required>
-                    <button type="submit" class="button-primary">Đăng nhập</button>
-                    <p id="login-error" class="error-message"></p>
-                    <p class="auth-switch-link">Chưa có tài khoản? <span id="show-signup-link">Đăng ký ngay</span></p>
-                </form>
-
-                <form id="signup-form" style="display: none;">
-                    <h2>Đăng ký</h2>
-                    <input type="email" id="signup-email" placeholder="Email" required>
-                    <input type="password" id="signup-password" placeholder="Mật khẩu (ít nhất 6 ký tự)" required>
-                    <button type="submit" class="button-primary">Đăng ký</button>
-                    <p id="signup-error" class="error-message"></p>
-                    <p class="auth-switch-link">Đã có tài khoản? <span id="show-login-link">Đăng nhập</span></p>
-                </form>
-            </div>
-        </div>
-        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
