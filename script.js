@@ -40,44 +40,50 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // --- Lấy tham chiếu đến các phần tử DOM ---
-const authContainer = document.getElementById('auth-container');
-const appContainer = document.getElementById('app-container');
-const loginForm = document.getElementById('login-form');
-const signupForm = document.getElementById('signup-form');
-const logoutButton = document.getElementById('logout-button');
-const userEmailDisplay = document.getElementById('user-email');
-const loginError = document.getElementById('login-error');
-const signupError = document.getElementById('signup-error');
-const showSignupLink = document.getElementById('show-signup-link');
-const showLoginLink = document.getElementById('show-login-link');
+// Bỏ tham chiếu đến authContainer cũ
+// const authContainer = document.getElementById('auth-container');
+const appContainer = document.getElementById('app-container'); // Vẫn giữ
 
-// Thêm tham chiếu cho các phần tử mobile sidebar
+// Auth Modal Elements
+const authModalOverlay = document.getElementById('auth-modal-overlay');
+const authModal = document.getElementById('auth-modal');
+const closeAuthModalBtn = document.getElementById('close-auth-modal-btn');
+const showLoginModalBtn = document.getElementById('show-login-modal-btn');
+const showSignupModalBtn = document.getElementById('show-signup-modal-btn');
+
+// Forms bên trong Modal
+const loginForm = document.getElementById('login-form'); // Vẫn giữ
+const signupForm = document.getElementById('signup-form'); // Vẫn giữ
+const loginError = document.getElementById('login-error'); // Vẫn giữ
+const signupError = document.getElementById('signup-error'); // Vẫn giữ
+const showSignupLink = document.getElementById('show-signup-link'); // Vẫn giữ (trong modal)
+const showLoginLink = document.getElementById('show-login-link'); // Vẫn giữ (trong modal)
+
+// Header Elements
+const logoutButton = document.getElementById('logout-button'); // Vẫn giữ
+const userEmailDisplay = document.getElementById('user-email'); // Vẫn giữ
+
+// Mobile Sidebar Elements
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-const sidebar = document.getElementById('sidebar'); // Đã thêm ID vào HTML
-const sidebarOverlay = document.getElementById('sidebar-overlay'); // Đã thêm vào HTML
-const contentArea = document.getElementById('content-area'); // Đã thêm ID vào HTML
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
+const contentArea = document.getElementById('content-area');
 
-
+// Main App Elements
 const searchInput = document.getElementById('search-input');
 const sortSelect = document.getElementById('sort-select');
-
 const tagsListContainer = document.getElementById('tags-list-container');
 const addNoteBtn = document.getElementById('add-note-btn');
 const showTrashBtn = document.getElementById('show-trash-btn');
 const showAllNotesBtn = document.getElementById('show-all-notes-btn');
-
-
 const notesGridView = document.getElementById('notes-grid-view');
 const noteDetailView = document.getElementById('note-detail-view');
 const noteEditorView = document.getElementById('note-editor-view');
 const trashView = document.getElementById('trash-view');
 const trashListContainer = document.getElementById('trash-list-container');
 const mainViewTitle = document.getElementById('main-view-title');
-
-
 const notesListContainer = document.getElementById('notes-list-container');
 const activeTagDisplay = document.getElementById('active-tag-display');
-
 const backToGridBtn = document.getElementById('back-to-grid-btn');
 const noteDetailTitle = document.getElementById('note-detail-title');
 const noteDetailTags = document.getElementById('note-detail-tags');
@@ -88,36 +94,24 @@ const copyCodeBtn = document.getElementById('copy-code-btn');
 const editNoteBtn = document.getElementById('edit-note-btn');
 const deleteNoteBtn = document.getElementById('delete-note-btn');
 const pinNoteDetailBtn = document.getElementById('pin-note-detail-btn');
-
-// DOM Elements for To-Do List in Detail View
 const noteDetailTodosContainer = document.getElementById('note-detail-todos-container');
 const noteDetailTodosList = document.getElementById('note-detail-todos-list');
 const noteDetailTodosProgress = document.getElementById('note-detail-todos-progress');
-
-
 const editorTitle = document.getElementById('editor-title');
 const noteIdInput = document.getElementById('note-id-input');
 const noteTitleInput = document.getElementById('note-title-input');
 const noteContentInput = document.getElementById('note-content-input');
 const noteTagsInput = document.getElementById('note-tags-input');
 const tagSuggestionsContainer = document.getElementById('tag-suggestions');
-
 const isCodeCheckbox = document.getElementById('note-is-code-checkbox');
 const languageSelect = document.getElementById('note-language-select');
 const saveNoteBtn = document.getElementById('save-note-btn');
 const cancelEditBtn = document.getElementById('cancel-edit-btn');
 const editorError = document.getElementById('editor-error');
-
-// DOM Elements for To-Do List Editor
 const enableTodoCheckbox = document.getElementById('enable-todo-checkbox');
 const noteEditorTodosList = document.getElementById('note-editor-todos-list');
 const addTodoEditorItemBtn = document.getElementById('add-todo-editor-item-btn');
-
-
 const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-// const contentArea = document.querySelector('.content-area'); // Đã lấy bằng ID ở trên
-
-// Tham chiếu đến các nút cài đặt trong sidebar
 const themeButtons = document.querySelectorAll('.sidebar-settings .theme-button');
 const prismThemeLink = document.getElementById('prism-theme-link');
 const accentColorButtons = document.querySelectorAll('.sidebar-settings .accent-color-button');
@@ -138,7 +132,7 @@ let currentTheme = 'light';
 let currentAccentColor = '#007bff';
 let currentContentFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'";
 let allUserTags = new Set();
-let currentView = 'notes';
+let currentView = 'notes'; // Mặc định là view notes
 
 // --- SVG Paths ---
 const pinAngleSVGPath = "M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146zm-3.27 1.96a.5.5 0 0 1 0 .707L2.874 8.874a.5.5 0 1 1-.707-.707l3.687-3.687a.5.5 0 0 1 .707 0z";
@@ -156,8 +150,7 @@ function closeMobileSidebar() {
 
 if (mobileMenuBtn) {
     mobileMenuBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Ngăn sự kiện nổi bọt
-        // Toggle sidebar: Nếu đang mở thì đóng, nếu đang đóng thì mở
+        e.stopPropagation();
         if (document.body.classList.contains('sidebar-open')) {
             closeMobileSidebar();
         } else {
@@ -170,59 +163,74 @@ if (sidebarOverlay) {
     sidebarOverlay.addEventListener('click', closeMobileSidebar);
 }
 
-// Đóng sidebar khi click vào một item bên trong nó (ví dụ: tag, nút thùng rác) trên mobile
 if (sidebar) {
     sidebar.addEventListener('click', (e) => {
-        // Kiểm tra xem màn hình có đủ nhỏ để sidebar có thể đóng/mở không
         if (window.innerWidth <= 768) {
-            // Kiểm tra xem phần tử được click có phải là link hoặc button không
-            // Hoặc một phần tử con của link/button
             if (e.target.closest('a, button')) {
-                 // Đóng sidebar sau một khoảng trễ nhỏ để hành động click kịp thực hiện
                  setTimeout(closeMobileSidebar, 150);
             }
         }
     });
 }
 
-// --- Hàm trợ giúp quản lý giao diện (UI Helpers) ---
-function showApp() {
-    authContainer.style.display = 'none';
-    appContainer.style.display = 'flex';
-    closeMobileSidebar(); // Đảm bảo sidebar đóng khi hiển thị app
+// --- Logic cho Auth Modal ---
+function openAuthModal(mode = 'login') {
+    loginError.textContent = ''; // Xóa lỗi cũ
+    signupError.textContent = ''; // Xóa lỗi cũ
+    if (mode === 'login') {
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+    } else {
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+    }
+    document.body.classList.add('modal-open');
 }
 
-function showAuth() {
-    authContainer.style.display = 'block';
-    appContainer.style.display = 'none';
-    currentUser = null;
-    clearEditor();
-    notesListContainer.innerHTML = '<p>Vui lòng đăng nhập.</p>';
-    trashListContainer.innerHTML = '<p>Vui lòng đăng nhập.</p>';
-    tagsListContainer.innerHTML = '';
-    if (notesUnsubscribe) { notesUnsubscribe(); notesUnsubscribe = null; }
-    if (trashUnsubscribe) { trashUnsubscribe(); trashUnsubscribe = null; }
-    notesCache = {};
-    trashedNotesCache = {};
-    allUserTags.clear();
-    activeTag = null;
-    currentNoteId = null;
-    currentSearchTerm = '';
-    currentSortOption = 'updatedAt_desc';
-    currentView = 'notes';
-    if(searchInput) searchInput.value = '';
-    if(sortSelect) sortSelect.value = currentSortOption;
-    if (scrollToTopBtn) scrollToTopBtn.style.display = 'none';
-    if (showTrashBtn) showTrashBtn.style.display = 'flex';
-    if (showAllNotesBtn) showAllNotesBtn.style.display = 'none';
-    loginForm.style.display = 'block';
-    signupForm.style.display = 'none';
-    loginError.textContent = '';
-    signupError.textContent = '';
-    closeMobileSidebar(); // Đảm bảo sidebar đóng khi hiển thị auth
+function closeAuthModal() {
+    document.body.classList.remove('modal-open');
+    // Reset form khi đóng modal (tùy chọn)
+    // loginForm.reset();
+    // signupForm.reset();
 }
+
+if (showLoginModalBtn) {
+    showLoginModalBtn.addEventListener('click', () => openAuthModal('login'));
+}
+if (showSignupModalBtn) {
+    showSignupModalBtn.addEventListener('click', () => openAuthModal('signup'));
+}
+if (closeAuthModalBtn) {
+    closeAuthModalBtn.addEventListener('click', closeAuthModal);
+}
+if (authModalOverlay) {
+    authModalOverlay.addEventListener('click', closeAuthModal);
+}
+// Chuyển đổi form bên trong modal
+if (showSignupLink) {
+    showSignupLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+        loginError.textContent = '';
+    });
+}
+if (showLoginLink) {
+    showLoginLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        signupForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        signupError.textContent = '';
+    });
+}
+
+
+// --- Hàm trợ giúp quản lý giao diện (UI Helpers) - ĐÃ BỎ showApp/showAuth ---
+// Các hàm showMainNotesView, showTrashNotesView, showEditor, showDetailView giữ nguyên
+// nhưng cần đảm bảo chúng chỉ hoạt động/hiển thị đúng khi đã đăng nhập (CSS đã xử lý phần lớn việc này)
 
 function showMainNotesView() {
+    if (!currentUser) return; // Chỉ hoạt động khi đã đăng nhập
     notesGridView.style.display = 'block';
     trashView.style.display = 'none';
     noteDetailView.style.display = 'none';
@@ -239,14 +247,14 @@ function showMainNotesView() {
     if (showAllNotesBtn) showAllNotesBtn.style.display = 'none';
     if (sortSelect) sortSelect.disabled = false;
     if (searchInput) searchInput.disabled = false;
-    if (tagsListContainer) tagsListContainer.style.display = 'block'; // Đảm bảo tags list hiển thị
+    if (tagsListContainer) tagsListContainer.style.display = 'block';
 
     if (contentArea) contentArea.scrollTop = 0;
     renderNotesList(Object.values(notesCache));
-    // closeMobileSidebar(); // Không cần đóng ở đây, để người dùng tự đóng nếu muốn
 }
 
 function showTrashNotesView() {
+    if (!currentUser) return;
     notesGridView.style.display = 'none';
     trashView.style.display = 'block';
     noteDetailView.style.display = 'none';
@@ -257,22 +265,22 @@ function showTrashNotesView() {
     if (showAllNotesBtn) showAllNotesBtn.style.display = 'flex';
     if (sortSelect) sortSelect.disabled = true;
     if (searchInput) searchInput.disabled = true;
-    if (tagsListContainer) tagsListContainer.style.display = 'none'; // Ẩn tags list khi xem thùng rác
+    if (tagsListContainer) tagsListContainer.style.display = 'none';
 
     if (contentArea) contentArea.scrollTop = 0;
     renderTrashedNotesList(Object.values(trashedNotesCache));
-    // closeMobileSidebar(); // Không cần đóng ở đây
 }
 
 
 function showEditor(note = null) {
+    if (!currentUser) return;
     notesGridView.style.display = 'none';
     trashView.style.display = 'none';
     noteDetailView.style.display = 'none';
     noteEditorView.style.display = 'block';
     editorError.textContent = '';
     hideTagSuggestions();
-    closeMobileSidebar(); // Đóng sidebar khi mở editor
+    closeMobileSidebar();
 
     if (note && note.id) { // Sửa
         editorTitle.textContent = "Sửa Ghi chú";
@@ -304,8 +312,8 @@ function showEditor(note = null) {
 }
 
 function showDetailView(note) {
-    if (!note || !note.id) {
-        console.warn("Attempted to show detail view with invalid note data.");
+    if (!currentUser || !note || !note.id) {
+        console.warn("Attempted to show detail view with invalid note data or not logged in.");
         showMainNotesView();
         return;
     }
@@ -316,9 +324,14 @@ function showDetailView(note) {
     currentNoteId = note.id;
     displayNoteDetailContent(note);
     if (contentArea) contentArea.scrollTop = 0;
-    closeMobileSidebar(); // Đóng sidebar khi xem chi tiết
+    closeMobileSidebar();
 }
 
+// --- Các hàm khác giữ nguyên ---
+// clearEditorFields, clearEditor, setActiveTagItem, linkify, highlightText
+// Các hàm xử lý Theme, Màu Nhấn, Font
+// Các hàm xử lý logic ghi chú (save, edit, delete, copy code, pin, trash, tags, todo, scroll, search, sort)
+// ...
 function clearEditorFields() {
     noteTitleInput.value = '';
     noteContentInput.value = '';
@@ -377,7 +390,6 @@ function highlightText(text, searchTerm) {
 
 
 // --- Logic xử lý Theme, Màu Nhấn, Font ---
-// ... (Giữ nguyên các hàm applyTheme, loadSavedTheme, hexToRgb, darkenColor, applyAccentColor, loadSavedAccentColor, applyContentFont, loadSavedContentFont và các event listener liên quan)
 function applyTheme(themeName) {
     console.log("Applying theme:", themeName);
     document.body.classList.remove('theme-dark', 'theme-gruvbox-light', 'theme-dracula', 'theme-solarized-light');
@@ -538,31 +550,96 @@ if (fontSelect) {
 }
 
 
-// --- Logic Xác thực (Authentication) ---
-// ... (Giữ nguyên các hàm onAuthStateChanged, listener cho loginForm, signupForm, logoutButton, showSignupLink, showLoginLink)
+// --- Logic Xác thực (Authentication) - CẬP NHẬT ---
 onAuthStateChanged(auth, (user) => {
     if (user) {
         console.log("User logged in:", user.uid, user.email);
         currentUser = user;
         userEmailDisplay.textContent = user.email;
-        showApp();
+
+        // Cập nhật UI cho trạng thái đăng nhập
+        document.body.classList.remove('logged-out');
+        document.body.classList.add('logged-in');
+        closeAuthModal(); // Đóng modal nếu đang mở
+        closeMobileSidebar(); // Đóng sidebar mobile nếu đang mở
+
+        // Kích hoạt các chức năng cần đăng nhập
+        if(searchInput) searchInput.disabled = false;
+        if(sortSelect) sortSelect.disabled = false;
+        if(addNoteBtn) addNoteBtn.disabled = false;
+        // ... (kích hoạt các nút khác nếu cần)
+
+        // Tải dữ liệu người dùng
         loadNotesAndTags();
         loadTrashedNotes();
-        showMainNotesView();
+        showMainNotesView(); // Hiển thị view chính
     } else {
         console.log("User logged out.");
-        showAuth();
+        currentUser = null;
+
+        // Cập nhật UI cho trạng thái chưa đăng nhập
+        document.body.classList.remove('logged-in');
+        document.body.classList.add('logged-out');
+        closeAuthModal(); // Đóng modal nếu đang mở
+        closeMobileSidebar(); // Đóng sidebar mobile nếu đang mở
+
+        // Xóa dữ liệu cũ và hủy listeners
+        clearEditor();
+        notesListContainer.innerHTML = ''; // Xóa danh sách notes
+        trashListContainer.innerHTML = '<p>Thùng rác trống.</p>';
+        tagsListContainer.innerHTML = ''; // Xóa tags
+        if (notesUnsubscribe) { notesUnsubscribe(); notesUnsubscribe = null; }
+        if (trashUnsubscribe) { trashUnsubscribe(); trashUnsubscribe = null; }
+        notesCache = {};
+        trashedNotesCache = {};
+        allUserTags.clear();
+        activeTag = null;
+        currentNoteId = null;
+        currentSearchTerm = '';
+        currentSortOption = 'updatedAt_desc';
+        currentView = 'notes'; // Reset view
+        if(searchInput) searchInput.value = '';
+        if(sortSelect) sortSelect.value = currentSortOption;
+
+        // Vô hiệu hóa các chức năng cần đăng nhập
+        if(searchInput) searchInput.disabled = true;
+        if(sortSelect) sortSelect.disabled = true;
+        if(addNoteBtn) addNoteBtn.disabled = true;
+        // ... (vô hiệu hóa các nút khác nếu cần)
+
+        // Ẩn các view nội dung chính
+        notesGridView.style.display = 'none';
+        trashView.style.display = 'none';
+        noteDetailView.style.display = 'none';
+        noteEditorView.style.display = 'none';
+
+        // Thông báo chào mừng sẽ tự hiển thị do class 'logged-out' trên body
     }
 });
 
+// Cập nhật listener cho form đăng nhập/đăng ký
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = loginForm['login-email'].value;
     const password = loginForm['login-password'].value;
     loginError.textContent = '';
+    const submitButton = loginForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Đang đăng nhập...';
+
     signInWithEmailAndPassword(auth, email, password)
-        .then(() => loginForm.reset())
-        .catch((error) => loginError.textContent = `Lỗi: ${error.message}`);
+        .then(() => {
+            loginForm.reset();
+            // Không cần làm gì thêm ở đây, onAuthStateChanged sẽ xử lý
+            // closeAuthModal(); // onAuthStateChanged sẽ đóng modal
+        })
+        .catch((error) => {
+            loginError.textContent = `Lỗi: ${error.message}`;
+        })
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Đăng nhập';
+        });
 });
 
 signupForm.addEventListener('submit', (e) => {
@@ -570,32 +647,29 @@ signupForm.addEventListener('submit', (e) => {
     const email = signupForm['signup-email'].value;
     const password = signupForm['signup-password'].value;
     signupError.textContent = '';
+    const submitButton = signupForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Đang đăng ký...';
+
     createUserWithEmailAndPassword(auth, email, password)
-        .then(() => signupForm.reset())
-        .catch((error) => signupError.textContent = `Lỗi: ${error.message}`);
+        .then(() => {
+            signupForm.reset();
+            // Không cần làm gì thêm ở đây, onAuthStateChanged sẽ xử lý
+            // closeAuthModal(); // onAuthStateChanged sẽ đóng modal
+        })
+        .catch((error) => {
+            signupError.textContent = `Lỗi: ${error.message}`;
+        })
+         .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Đăng ký';
+        });
 });
 
 logoutButton.addEventListener('click', () => {
     signOut(auth).catch((error) => alert(`Lỗi đăng xuất: ${error.message}`));
+    // onAuthStateChanged sẽ xử lý việc cập nhật UI
 });
-
-if (showSignupLink) {
-    showSignupLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'block';
-        loginError.textContent = '';
-    });
-}
-
-if (showLoginLink) {
-    showLoginLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        signupForm.style.display = 'none';
-        loginForm.style.display = 'block';
-        signupError.textContent = '';
-    });
-}
 
 
 // --- Logic quản lý Ghi chú (Notes CRUD & Display) ---
@@ -1088,7 +1162,6 @@ function displayNoteDetailContent(note) {
 }
 
 // --- Logic Ghim Ghi chú ---
-// ... (Giữ nguyên togglePinStatus và listener)
 async function togglePinStatus(noteId) {
     if (!currentUser || !notesCache[noteId]) return;
     const noteRef = doc(db, "notes", noteId);
@@ -1110,7 +1183,6 @@ if (pinNoteDetailBtn) {
 }
 
 // --- Logic cho Thùng rác ---
-// ... (Giữ nguyên restoreNoteFromTrash, deleteNotePermanently và listeners)
 async function restoreNoteFromTrash(noteId) {
     if (!currentUser || !trashedNotesCache[noteId]) return;
     const noteRef = doc(db, "notes", noteId);
@@ -1152,7 +1224,6 @@ if (showAllNotesBtn) {
 
 
 // --- Logic Gợi ý Tag ---
-// ... (Giữ nguyên displayTagSuggestions, hideTagSuggestions và listeners)
 function displayTagSuggestions(suggestions, currentTagValue) {
     if (!tagSuggestionsContainer) return;
     tagSuggestionsContainer.innerHTML = '';
@@ -1214,9 +1285,7 @@ if (noteTagsInput) {
 
 
 // --- Logic cho nút Scroll to Top ---
-// ... (Giữ nguyên handleScroll, scrollToTop và listeners)
 function handleScroll() {
-    // Sử dụng contentArea đã lấy bằng ID
     if (!contentArea || !scrollToTopBtn) return;
     if (contentArea.scrollTop > 200) {
         scrollToTopBtn.style.display = "block";
@@ -1244,7 +1313,6 @@ if (scrollToTopBtn) {
 
 
 // --- Logic tìm kiếm ---
-// ... (Giữ nguyên listener cho searchInput)
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
         currentSearchTerm = e.target.value.trim();
@@ -1257,7 +1325,6 @@ if (searchInput) {
 }
 
 // --- Logic sắp xếp ---
-// ... (Giữ nguyên listener cho sortSelect)
 if (sortSelect) {
     sortSelect.addEventListener('change', (e) => {
         const newSortOption = e.target.value;
@@ -1326,7 +1393,6 @@ function addTodoItemToEditor(todo = { id: '', text: '', completed: false, priori
     ['medium', 'low', 'high'].forEach(p => {
         const option = document.createElement('option');
         option.value = p;
-        // Hiển thị tên đầy đủ hơn
         let priorityText = 'Trung bình';
         if (p === 'low') priorityText = 'Thấp';
         else if (p === 'high') priorityText = 'Cao';
@@ -1338,7 +1404,7 @@ function addTodoItemToEditor(todo = { id: '', text: '', completed: false, priori
     const deadlineInput = document.createElement('input');
     deadlineInput.type = 'date';
     deadlineInput.classList.add('todo-editor-item-deadline');
-    deadlineInput.value = todo.deadline || ''; // Gán giá trị deadline
+    deadlineInput.value = todo.deadline || '';
 
 
     const deleteButton = document.createElement('button');
@@ -1385,7 +1451,7 @@ function collectTodosFromEditor() {
                 text: textInput.value.trim(),
                 completed: completedCheckbox ? completedCheckbox.checked : false,
                 priority: prioritySelect ? prioritySelect.value : 'medium',
-                deadline: deadlineInput && deadlineInput.value ? deadlineInput.value : null, // Lưu null nếu rỗng
+                deadline: deadlineInput && deadlineInput.value ? deadlineInput.value : null,
                 order: index
             });
         }
@@ -1480,13 +1546,11 @@ async function toggleTodoItemStatus(noteId, todoId, isCompleted) {
 
     const noteRef = doc(db, "notes", noteId);
 
-    // Lấy dữ liệu note hiện tại từ cache hoặc server để cập nhật
     let currentTodos = [];
     const noteInCache = notesCache[noteId];
     if (noteInCache && noteInCache.todos && Array.isArray(noteInCache.todos)) {
-        currentTodos = [...noteInCache.todos]; // Tạo bản sao để không sửa trực tiếp cache
+        currentTodos = [...noteInCache.todos];
     } else {
-        // Nếu không có trong cache, thử đọc từ server
         try {
             const serverNoteSnap = await getDoc(noteRef);
             if (serverNoteSnap.exists() && serverNoteSnap.data().todos && Array.isArray(serverNoteSnap.data().todos)) {
@@ -1494,7 +1558,7 @@ async function toggleTodoItemStatus(noteId, todoId, isCompleted) {
             } else {
                  console.error("Note or todos not found on server for update:", noteId);
                  alert("Lỗi: Không tìm thấy danh sách công việc để cập nhật.");
-                 return; // Không thể tiếp tục nếu không có dữ liệu gốc
+                 return;
             }
         } catch (error) {
              console.error("Error fetching note before update:", error);
@@ -1502,7 +1566,6 @@ async function toggleTodoItemStatus(noteId, todoId, isCompleted) {
              return;
         }
     }
-
 
     const updatedTodos = currentTodos.map(t => {
         if (t.id === todoId) {
@@ -1518,22 +1581,19 @@ async function toggleTodoItemStatus(noteId, todoId, isCompleted) {
         });
         console.log(`Todo ${todoId} in note ${noteId} status updated to ${isCompleted} on server.`);
 
-        // Cập nhật UI ngay lập tức để phản hồi nhanh
         const detailItemText = noteDetailTodosList.querySelector(`li[data-todo-id="${todoId}"] .todo-detail-item-text`);
         if (detailItemText) {
             detailItemText.classList.toggle('completed', isCompleted);
         }
-        // Cập nhật cache cục bộ sau khi server xác nhận (hoặc dựa vào onSnapshot)
         if (notesCache[noteId]) {
             notesCache[noteId].todos = updatedTodos;
-            notesCache[noteId].updatedAt = Timestamp.now(); // Cập nhật thời gian cache
-            updateTodoProgress(updatedTodos); // Cập nhật progress bar
+            notesCache[noteId].updatedAt = Timestamp.now();
+            updateTodoProgress(updatedTodos);
         }
 
     } catch (error) {
         console.error("Error updating todo status on server:", error);
         alert("Lỗi cập nhật trạng thái công việc.");
-        // Cân nhắc rollback UI nếu cần
     }
 }
 
@@ -1564,6 +1624,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSavedAccentColor();
     loadSavedContentFont();
     toggleTodoEditorVisibility();
+    // Đảm bảo trạng thái ban đầu là logged-out nếu chưa có user
+    if (!auth.currentUser) {
+         document.body.classList.remove('logged-in');
+         document.body.classList.add('logged-out');
+    }
 });
 
 console.log("Script loaded. Firebase Initialized. Waiting for Auth state change...");
