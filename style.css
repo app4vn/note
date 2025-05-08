@@ -1658,6 +1658,110 @@ body.modal-open .modal {
     word-break: break-word;
     font-family: var(--font-content);
 }
+/* --- CSS cho Calendar View --- */
+
+#calendar-view {
+    /* Có thể thêm padding hoặc margin nếu cần */
+    padding-top: 15px;
+}
+
+#calendar-view h2 {
+    margin-bottom: 20px;
+    font-size: 1.6em;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-secondary);
+    padding-bottom: 10px;
+}
+
+#calendar-container {
+    min-height: 500px; /* Đảm bảo lịch có chiều cao tối thiểu */
+    margin-bottom: 20px;
+}
+
+/* Tùy chỉnh giao diện FullCalendar */
+
+/* Nút bấm header (Prev, Next, Today) */
+.fc .fc-button {
+    background-color: var(--bg-button-secondary);
+    border-color: var(--bg-button-secondary);
+    color: var(--text-button);
+    padding: 6px 12px;
+    font-size: 0.9em;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    box-shadow: none; /* Bỏ box-shadow mặc định */
+    text-transform: none; /* Bỏ viết hoa */
+}
+.fc .fc-button:hover {
+    background-color: var(--bg-button-secondary-hover);
+    border-color: var(--bg-button-secondary-hover);
+}
+.fc .fc-button:focus {
+    box-shadow: 0 0 0 3px var(--shadow-focus); /* Thêm focus style */
+}
+.fc .fc-button-primary { /* Nút Today */
+    background-color: var(--bg-button-primary);
+    border-color: var(--bg-button-primary);
+}
+.fc .fc-button-primary:hover {
+    background-color: var(--bg-button-primary-hover);
+    border-color: var(--bg-button-primary-hover);
+}
+.fc .fc-button-primary:disabled {
+    background-color: var(--bg-button-secondary);
+    border-color: var(--bg-button-secondary);
+    opacity: 0.7;
+}
+
+/* Tiêu đề lịch (Tháng Năm) */
+.fc .fc-toolbar-title {
+    font-size: 1.4em;
+    color: var(--text-primary);
+}
+
+/* Màu nền sự kiện (Event) */
+.fc-direction-ltr .fc-daygrid-event.fc-event-start,
+.fc-direction-rtl .fc-daygrid-event.fc-event-end,
+.fc-daygrid-event { /* Style chung cho event */
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--text-button);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    margin-bottom: 3px;
+}
+
+/* Màu chữ của event */
+.fc-event-title {
+    color: var(--text-button);
+    font-weight: 500;
+}
+
+/* Màu nền của ngày hôm nay */
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: rgba(0, 123, 255, 0.08); /* Màu xanh nhạt, có thể dùng biến màu nhấn */
+}
+
+/* Responsive cho lịch */
+@media (max-width: 768px) {
+    .fc .fc-toolbar {
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    .fc .fc-toolbar-title {
+        font-size: 1.2em;
+    }
+    .fc .fc-button {
+        padding: 5px 10px;
+        font-size: 0.85em;
+    }
+    #calendar-container {
+        min-height: 400px;
+    }
+}
+
 
 
 
