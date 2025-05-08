@@ -1596,5 +1596,68 @@ body.modal-open .modal {
         font-size: 1.3em;
     }
 }
+/* --- CSS cho Hiển thị Ưu tiên/Hạn chót trong Note Preview --- */
+
+.note-item-content-preview .todo-preview-item {
+    display: block; /* Mỗi item trên một dòng */
+    margin-bottom: 4px;
+    font-size: 0.95em; /* Hơi nhỏ hơn text preview thường */
+    line-height: 1.4;
+}
+
+.note-item-content-preview .todo-preview-item .todo-status {
+    display: inline-block;
+    width: 1.2em; /* Đủ rộng cho [x] hoặc [ ] */
+    margin-right: 4px;
+    font-family: monospace; /* Font đều cho đẹp */
+}
+
+.note-item-content-preview .todo-preview-item .todo-text {
+    /* Không cần style đặc biệt */
+}
+
+.note-item-content-preview .todo-preview-item .todo-meta-preview {
+    display: inline-block; /* Hiển thị cùng dòng với text */
+    margin-left: 8px;
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+.note-item-content-preview .todo-preview-item .todo-priority-preview {
+    font-weight: bold;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+.note-item-content-preview .todo-preview-item .priority-high { color: #c62828; background-color: #ffebee; }
+.note-item-content-preview .todo-preview-item .priority-low { color: #2e7d32; background-color: #e8f5e9; }
+/* Không cần style riêng cho medium */
+
+.note-item-content-preview .todo-preview-item .todo-deadline-preview {
+    /* Có thể thêm icon đồng hồ nếu muốn */
+}
+
+.note-item-content-preview .todo-preview-item .todo-deadline-preview.overdue {
+    color: var(--text-error);
+    font-weight: bold;
+}
+
+/* Style cho trường hợp không có to-do nhưng có content thường */
+.note-item-content-preview:not(:has(.todo-preview-item)) {
+     /* Giữ style cũ nếu không có to-do preview */
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    flex-grow: 1;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-word;
+    font-family: var(--font-content);
+}
+
 
 
