@@ -529,3 +529,87 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
         font-size: 0.85em;
     }
 }
+
+/* ... CSS hiện tại của bạn ... */
+
+/* --- CSS cho Banner Thông báo Việc Gấp (Cập nhật cho 2 dòng) --- */
+.urgent-task-banner {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    border-radius: 6px;
+    padding: 10px 15px; /* Giảm padding một chút */
+    margin-bottom: 20px;
+    display: none;
+    font-size: 0.9em; /* Giảm font tổng thể của banner */
+    line-height: 1.4;
+}
+
+.urgent-task-banner-line1,
+.urgent-task-banner-line2 {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* Cho phép xuống dòng nếu không đủ chỗ */
+    gap: 8px; /* Khoảng cách giữa các item trên cùng dòng */
+}
+.urgent-task-banner-line1 {
+    margin-bottom: 5px; /* Khoảng cách giữa 2 dòng */
+}
+
+
+.urgent-task-banner-title {
+    font-weight: bold;
+    font-size: 1em; /* Điều chỉnh lại so với font-size của banner */
+    display: flex;
+    align-items: center;
+    margin-right: 5px; /* Khoảng cách với nội dung công việc */
+}
+
+.urgent-task-banner-title svg {
+    width: 18px; /* Giảm kích thước icon */
+    height: 18px;
+    margin-right: 5px;
+    fill: currentColor;
+}
+
+.urgent-task-content {
+    font-weight: 500;
+    flex-grow: 1; /* Cho phép nội dung công việc chiếm không gian */
+}
+
+.urgent-task-deadline {
+    font-size: 0.9em;
+}
+
+.urgent-task-deadline .deadline-status {
+    font-weight: bold;
+}
+.urgent-task-deadline .deadline-status.overdue { color: var(--text-error); }
+.urgent-task-deadline .deadline-status.today { color: var(--accent-color); }
+.urgent-task-deadline .deadline-status.tomorrow { color: #fd7e14; }
+
+.urgent-task-priority-banner { /* Class mới cho span ưu tiên trong banner */
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 1px 4px;
+    border-radius: 3px;
+}
+/* Thêm style màu cho priority banner nếu muốn, ví dụ: */
+.urgent-task-priority-banner.priority-high { color: #c00; background-color: #ffe3e380; }
+.urgent-task-priority-banner.priority-low { color: #155724; background-color: #d4edda80; }
+
+
+.urgent-task-note-link-container {
+    font-size: 0.85em;
+    /* margin-top: 0; -- Bỏ nếu muốn nó cùng dòng */
+}
+
+.urgent-task-note-link {
+    color: var(--text-link);
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 500;
+}
+.urgent-task-note-link:hover { color: var(--text-link-hover); }
+
+/* ... CSS còn lại ... */
