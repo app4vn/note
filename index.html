@@ -152,34 +152,59 @@
                     <div id="notes-list-container">
                         <p>Đang tải ghi chú...</p>
                     </div>
+                    <button id="fab-add-note-btn" class="fab button-primary logged-in-element" title="Tạo ghi chú mới">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                        </svg>
+                    </button>
                 </div>
 
                 <div id="calendar-view" style="display: none;" class="logged-in-element">
                     <div class="calendar-view-header">
                         <h2>Lịch Công Việc & Sự kiện</h2>
-                        <div class="calendar-filter-options">
-                            <label for="calendar-tag-filter">Tag:</label>
-                            <select id="calendar-tag-filter">
-                                <option value="">Tất cả Tags</option>
-                            </select>
-                            <label for="calendar-status-filter">Trạng thái:</label>
-                            <select id="calendar-status-filter">
-                                <option value="">Tất cả</option>
-                                <option value="uncompleted">Chưa hoàn thành</option>
-                                <option value="completed">Đã hoàn thành</option>
-                            </select>
-                            <label for="calendar-priority-filter">Ưu tiên:</label>
-                            <select id="calendar-priority-filter">
-                                <option value="">Tất cả</option>
-                                <option value="high">Cao</option>
-                                <option value="medium">Trung bình</option>
-                                <option value="low">Thấp</option>
-                            </select>
+                        <button id="toggle-calendar-filters-btn" class="button-secondary" aria-expanded="false" aria-controls="calendar-filters-collapsible">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16" style="margin-right: 5px; vertical-align: text-bottom;">
+                                <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                            </svg>
+                            Bộ lọc
+                            <span id="calendar-filter-indicator" style="display:none; font-size: 0.8em; margin-left: 5px;"></span>
+                        </button>
+                    </div>
+
+                    <div id="calendar-filters-collapsible" class="calendar-filters-collapsible" style="display: none;">
+                        <div class="calendar-filter-options-inner">
+                            <div>
+                                <label for="calendar-tag-filter">Tag:</label>
+                                <select id="calendar-tag-filter">
+                                    <option value="">Tất cả Tags</option>
+                                    </select>
+                            </div>
+                            <div>
+                                <label for="calendar-status-filter">Trạng thái:</label>
+                                <select id="calendar-status-filter">
+                                    <option value="">Tất cả</option>
+                                    <option value="uncompleted">Chưa hoàn thành</option>
+                                    <option value="completed">Đã hoàn thành</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="calendar-priority-filter">Ưu tiên:</label>
+                                <select id="calendar-priority-filter">
+                                    <option value="">Tất cả</option>
+                                    <option value="high">Cao</option>
+                                    <option value="medium">Trung bình</option>
+                                    <option value="low">Thấp</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="calendar-filters-actions">
+                            <button id="apply-calendar-filters-btn" class="button-primary">Áp dụng</button>
+                            <button id="close-calendar-filters-btn" class="button-secondary">Đóng</button>
                         </div>
                     </div>
+
                     <div id="calendar-container"></div>
                 </div>
-
                 <div id="trash-view" style="display: none;" class="logged-in-element">
                     <div class="grid-view-header">
                         <h2>Ghi chú trong Thùng rác</h2>
