@@ -125,8 +125,6 @@ body.theme-solarized-light {
     --text-urgent-banner-content: #586e75;
 }
 
-/* ... (Toàn bộ CSS gốc của bạn từ html {} đến hết .note-item-content-preview .todo-preview-item .todo-deadline-preview.overdue {}) ... */
-/* Bạn cần đảm bảo toàn bộ CSS gốc của bạn được giữ lại ở đây */
 
 html { scroll-behavior: smooth; }
 body { font-family: var(--font-content); line-height: 1.6; color: var(--text-primary); background-color: var(--bg-primary); transition: background-color 0.3s ease, color 0.3s ease; overflow-y: scroll; }
@@ -179,6 +177,17 @@ body.theme-gruvbox-light .content-area, body.theme-solarized-light .content-area
 
 .grid-view-header, .calendar-view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-secondary); flex-wrap: wrap; gap: 10px; flex-shrink: 0; }
 .grid-view-header h2, .calendar-view-header h2 { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+/* CẬP NHẬT: Cho phép các nút filter nằm cùng hàng với h2 nếu đủ chỗ */
+.grid-view-header h2 {
+    flex-grow: 1; /* Cho phép h2 co giãn */
+}
+.grid-view-header .button-secondary { /* Áp dụng cho cả hai nút filter */
+    padding: 8px 12px;
+    font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+}
+
 .sort-options { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .sort-options label { font-size: 0.9em; color: var(--text-secondary); margin-bottom: 0; margin-right: 5px; }
 .sort-options select { width: auto; min-width: 150px; margin-bottom: 0; padding: 8px 12px; font-size: 0.9em; }
@@ -363,8 +372,25 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     .calendar-view-header { flex-direction: row; justify-content: space-between; align-items: center; }
     .calendar-view-header h2 { margin-bottom: 0; }
 
-    .sort-options { width: 100%; margin-top: 8px; flex-direction: column; align-items: stretch; gap: 10px; }
+    /* CẬP NHẬT: Responsive cho các nút filter trong grid-view-header */
+    .grid-view-header {
+        gap: 8px; /* Giảm khoảng cách giữa các items khi xuống dòng */
+    }
+    .grid-view-header h2 {
+        width: 100%; /* Cho tiêu đề chiếm cả hàng */
+        margin-bottom: 8px; /* Thêm khoảng cách dưới tiêu đề */
+    }
+    .grid-view-header .button-secondary, /* Áp dụng cho cả hai nút filter */
+    .grid-view-header .sort-options {
+        width: 100%; /* Cho các nút và sort-options chiếm cả hàng */
+        margin-left: 0 !important; /* Reset margin-left đã đặt inline */
+    }
+     .grid-view-header .button-secondary {
+        justify-content: center; /* Căn giữa nội dung nút */
+    }
+    .sort-options { margin-top: 0; flex-direction: column; align-items: stretch; gap: 10px; }
     .sort-options select { flex-grow: 1; min-width: 0; width: 100%; padding: 6px 10px; font-size: 0.85em; }
+
 
     .modal { padding: 25px 20px; width: 90%; }
     #auth-modal-content h2 { font-size: 1.3em; }
@@ -388,21 +414,20 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     .user-info span#user-email { display: none !important; }
     .user-info button { padding: 5px 8px; font-size: 0.85em; }
 
-    /* Urgent Task Banner Mobile Styles */
-    #urgent-task-banner { /* ID selector takes precedence */
+    #urgent-task-banner {
         padding: 10px 12px;
-        font-size: 0.85em; /* Font chung cho banner trên mobile */
+        font-size: 0.85em;
         margin-bottom: 15px;
     }
     .urgent-task-banner-title {
-        font-size: 0.95em; /* So với font-size của #urgent-task-banner */
+        font-size: 0.95em;
     }
     .urgent-task-banner-title svg {
         width: 16px;
         height: 16px;
     }
     .urgent-task-banner-line2 {
-        font-size: 0.9em; /* So với font-size của #urgent-task-banner trên mobile */
+        font-size: 0.9em;
         gap: 3px 10px;
     }
     .urgent-task-banner-line2 > span { margin-right: 10px; display: inline-block; margin-bottom: 3px; }
@@ -414,7 +439,6 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     #scrollToTopBtn { bottom: 15px; right: 15px; }
 }
 
-/* CSS CHO PANEL BỘ LỌC LỊCH */
 #toggle-calendar-filters-btn { padding: 8px 12px; font-size: 0.9em; }
 #toggle-calendar-filters-btn svg { margin-right: 6px; vertical-align: middle; }
 .calendar-filters-collapsible { background-color: var(--bg-secondary); padding: 15px; border: 1px solid var(--border-primary); border-radius: 6px; margin-top: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px var(--shadow-primary); }
@@ -434,7 +458,6 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     .calendar-filters-actions button { font-size: 0.85em; padding: 6px 12px; }
 }
 
-/* CSS CHO HIỆU ỨNG BANNER VIỆC GẤP */
 #urgent-task-banner {
     background-color: var(--bg-urgent-banner);
     border: 1px solid var(--border-urgent-banner);
@@ -447,8 +470,8 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
 
 .urgent-task-banner-title {
     font-weight: bold;
-    color: #dc3545; /* Màu đỏ cho chữ "VIỆC GẤP:" và icon SVG (do fill="currentColor") */
-    font-size: 1em; /* So với font-size của #urgent-task-banner */
+    color: #dc3545;
+    font-size: 1em;
     margin-bottom: 5px;
     display: flex;
     align-items: center;
@@ -457,14 +480,12 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     width: 18px;
     height: 18px;
     margin-right: 8px;
-    /* fill: #ffc107; */ /* Bỏ comment nếu muốn icon vàng cố định, và text "VIỆC GẤP" vẫn đỏ. */
-                      /* Nếu làm vậy, cần bọc text "VIỆC GẤP" vào span riêng để nó có màu đỏ riêng. */
 }
 
 .urgent-task-banner-content {
     display: block;
     margin-bottom: 8px;
-    color: var(--text-urgent-banner-content); /* Đảm bảo màu chữ nội dung dễ đọc trên nền banner */
+    color: var(--text-urgent-banner-content);
 }
 
 .urgent-task-banner-line2 {
@@ -473,8 +494,8 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     gap: 5px 15px;
     align-items: center;
     margin-top: 5px;
-    font-size: 0.9em; /* Chữ ở dòng 2 nhỏ hơn một chút */
-    color: var(--text-urgent-banner-content); /* Màu chữ mặc định cho dòng 2 */
+    font-size: 0.9em;
+    color: var(--text-urgent-banner-content);
 }
 
 .urgent-task-deadline .deadline-status {
@@ -482,16 +503,16 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     margin-left: 5px;
 }
 .urgent-task-deadline .deadline-status.overdue {
-    color: #e53935; /* Màu đỏ đậm hơn */
+    color: #e53935;
 }
 .urgent-task-deadline .deadline-status.today {
-    color: var(--accent-color); /* Màu nhấn chính */
+    color: var(--accent-color);
 }
 .urgent-task-deadline .deadline-status.tomorrow {
-    color: #fb8c00; /* Màu cam đậm hơn */
+    color: #fb8c00;
 }
 .urgent-task-deadline .deadline-status.upcoming {
-    color: var(--text-secondary); /* Kế thừa màu chữ phụ nếu không có màu banner riêng */
+    color: var(--text-secondary);
 }
 
 .urgent-task-priority-banner {
@@ -499,19 +520,19 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     margin-left: 5px;
 }
 .urgent-task-priority-banner.priority-high {
-    color: #e53935; /* Màu đỏ đậm */
+    color: #e53935;
 }
 .urgent-task-priority-banner.priority-medium {
-    color: var(--text-urgent-banner-content); /* Màu chữ chung của banner */
+    color: var(--text-urgent-banner-content);
     font-weight: normal;
 }
 .urgent-task-priority-banner.priority-low {
-    color: #43a047; /* Màu xanh lá đậm */
+    color: #43a047;
 }
 
 .urgent-task-note-link-container{
     margin-left: 5px;
-    color: var(--text-urgent-banner-content); /* Cho chữ "(Note: " */
+    color: var(--text-urgent-banner-content);
 }
 .urgent-task-note-link {
     color: var(--text-link);
@@ -523,23 +544,23 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     color: var(--text-link-hover);
 }
 
-/* Responsive cho Banner Việc Gấp (CSS gốc của bạn đã có, chỉ review lại) */
-@media (max-width: 768px) {
-    #urgent-task-banner {
-        padding: 10px 12px; /* Giữ nguyên */
-        font-size: 0.85em;  /* Giữ nguyên */
-        margin-bottom: 15px; /* Giữ nguyên */
-    }
-    .urgent-task-banner-title {
-        font-size: 0.95em; /* Giữ nguyên */
-    }
-    .urgent-task-banner-title svg {
-        width: 16px; /* Giữ nguyên */
-        height: 16px; /* Giữ nguyên */
-    }
-    .urgent-task-banner-line2 {
-        font-size: 0.9em; /* Giữ nguyên hoặc 0.85em nếu muốn nhỏ hơn nữa */
-        gap: 3px 10px; /* Giữ nguyên */
-    }
-     /* Các mục con của line2 trên mobile đã có style display:inline-block và margin-right từ trước */
+/* CSS CHO CÁC NÚT LỌC MỚI TRONG GRID VIEW HEADER */
+#filter-notes-only-btn,
+#filter-todo-notes-btn {
+    /* Kế thừa kiểu từ .button-secondary đã được điều chỉnh ở .grid-view-header .button-secondary */
+    /* display: inline-flex; */ /* Đã đặt ở .grid-view-header .button-secondary */
+    /* align-items: center; */ /* Đã đặt ở .grid-view-header .button-secondary */
+    /* padding: 8px 12px; */ /* Đã đặt ở .grid-view-header .button-secondary */
+    /* font-size: 0.9em; */ /* Đã đặt ở .grid-view-header .button-secondary */
 }
+
+#filter-notes-only-btn.active,
+#filter-todo-notes-btn.active {
+    background-color: var(--accent-color);
+    color: var(--text-button);
+    /* border-color: var(--accent-color); */ /* Bỏ comment nếu nút có border */
+    font-weight: 500;
+}
+
+/* Điều chỉnh responsive cho các nút filter trong grid-view-header đã được thực hiện ở trên */
+/* trong @media (max-width: 768px) cho .grid-view-header .button-secondary */
