@@ -177,18 +177,26 @@ body.theme-gruvbox-light .content-area, body.theme-solarized-light .content-area
 
 .grid-view-header, .calendar-view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-secondary); flex-wrap: wrap; gap: 10px; flex-shrink: 0; }
 .grid-view-header h2, .calendar-view-header h2 { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
-/* CẬP NHẬT: Cho phép các nút filter nằm cùng hàng với h2 nếu đủ chỗ */
 .grid-view-header h2 {
-    flex-grow: 1; /* Cho phép h2 co giãn */
+    flex-grow: 1; /* Cho phép h2 co giãn nếu các nút filter nằm cùng hàng */
 }
-.grid-view-header .button-secondary { /* Áp dụng cho cả hai nút filter */
+.grid-view-header .button-secondary { /* Áp dụng cho các nút filter */
     padding: 8px 12px;
     font-size: 0.9em;
     display: inline-flex;
     align-items: center;
+    margin-left: 0; /* Reset margin-left từ HTML inline style, sẽ dùng gap của flexbox */
+}
+/* Căn chỉnh cho nút "Ghi chú" và "Công việc" */
+#filter-notes-only-btn {
+    margin-left: 15px; /* Giữ lại margin-left cho nút đầu tiên nếu cần */
+}
+#filter-todo-notes-btn {
+    margin-left: 10px; /* Khoảng cách giữa hai nút filter */
 }
 
-.sort-options { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.sort-options { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-left: auto; /* Đẩy sort options sang phải */ }
 .sort-options label { font-size: 0.9em; color: var(--text-secondary); margin-bottom: 0; margin-right: 5px; }
 .sort-options select { width: auto; min-width: 150px; margin-bottom: 0; padding: 8px 12px; font-size: 0.9em; }
 
@@ -368,29 +376,57 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     .content-area { width: 100%; padding: 15px; overflow-y: auto; flex-grow: 1; }
     #notes-list-container, #trash-list-container { grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 15px; }
     #notes-grid-view h2, #trash-view h2, #calendar-view h2 { font-size: 1.4em; flex-shrink: 0; margin-bottom: 10px; padding-bottom: 8px; }
-    .grid-view-header, .calendar-view-header { flex-direction: column; align-items: flex-start; flex-shrink: 0; margin-bottom: 10px; padding-bottom: 10px; }
-    .calendar-view-header { flex-direction: row; justify-content: space-between; align-items: center; }
-    .calendar-view-header h2 { margin-bottom: 0; }
-
-    /* CẬP NHẬT: Responsive cho các nút filter trong grid-view-header */
+    
+    /* CẬP NHẬT CHO GRID VIEW HEADER TRÊN MOBILE */
     .grid-view-header {
-        gap: 8px; /* Giảm khoảng cách giữa các items khi xuống dòng */
+        display: flex; /* Đảm bảo là flex container */
+        flex-wrap: wrap; /* Cho phép các item xuống dòng */
+        /* flex-direction: row; /* Mặc định của flex, nhưng có thể ghi rõ */
+        align-items: center; /* Căn giữa các item theo chiều dọc nếu chúng có chiều cao khác nhau */
+        gap: 8px; /* Khoảng cách giữa các item */
+        /* Bỏ các thuộc tính cũ nếu có: flex-direction: column; align-items: flex-start; */
     }
     .grid-view-header h2 {
-        width: 100%; /* Cho tiêu đề chiếm cả hàng */
-        margin-bottom: 8px; /* Thêm khoảng cách dưới tiêu đề */
+        width: 100%; /* Tiêu đề chiếm cả dòng */
+        order: 1; /* Ưu tiên hiển thị đầu tiên */
+        margin-bottom: 0; /* Gap sẽ xử lý khoảng cách, hoặc giữ lại nếu muốn thêm */
     }
-    .grid-view-header .button-secondary, /* Áp dụng cho cả hai nút filter */
-    .grid-view-header .sort-options {
-        width: 100%; /* Cho các nút và sort-options chiếm cả hàng */
-        margin-left: 0 !important; /* Reset margin-left đã đặt inline */
-    }
-     .grid-view-header .button-secondary {
-        justify-content: center; /* Căn giữa nội dung nút */
-    }
-    .sort-options { margin-top: 0; flex-direction: column; align-items: stretch; gap: 10px; }
-    .sort-options select { flex-grow: 1; min-width: 0; width: 100%; padding: 6px 10px; font-size: 0.85em; }
 
+    /* CSS cho các nút filter "Ghi chú" và "Công việc" trên mobile */
+    #filter-notes-only-btn,
+    #filter-todo-notes-btn {
+        flex-grow: 1;  /* Chia sẻ không gian đều nhau */
+        flex-basis: 0;   /* Cơ sở để flex-grow hoạt động đúng */
+        order: 2;      /* Hiển thị sau tiêu đề */
+        width: auto;   /* Ghi đè width: 100% từ rule chung nếu có */
+        margin-left: 0 !important; /* Reset margin-left từ inline style */
+        justify-content: center; /* Căn giữa icon và text trong nút */
+        /* Đảm bảo padding và font-size phù hợp từ rule .grid-view-header .button-secondary */
+    }
+     /* Ghi đè rule chung .grid-view-header .button-secondary { width: 100%; } cho các nút filter này */
+    .grid-view-header #filter-notes-only-btn,
+    .grid-view-header #filter-todo-notes-btn {
+        width: auto; /* Hoặc có thể dùng flex-basis: calc(50% - 4px); nếu gap là 8px */
+    }
+
+
+    .grid-view-header .sort-options {
+        width: 100%; /* Ô sắp xếp chiếm cả dòng */
+        order: 3; /* Hiển thị sau các nút filter */
+        margin-left: 0 !important; /* Reset margin-left */
+        margin-top: 0; /* Reset margin-top nếu có từ layout cột cũ */
+        flex-direction: column; /* Stack label và select bên trong sort-options */
+        align-items: stretch;
+        gap: 8px; /* Khoảng cách giữa label và select */
+    }
+     .grid-view-header .sort-options select {
+        width: 100%; /* Select chiếm toàn bộ width của sort-options */
+    }
+    /* KẾT THÚC CẬP NHẬT CHO GRID VIEW HEADER TRÊN MOBILE */
+
+
+    .calendar-view-header { flex-direction: row; justify-content: space-between; align-items: center; }
+    .calendar-view-header h2 { margin-bottom: 0; }
 
     .modal { padding: 25px 20px; width: 90%; }
     #auth-modal-content h2 { font-size: 1.3em; }
@@ -545,15 +581,6 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
 }
 
 /* CSS CHO CÁC NÚT LỌC MỚI TRONG GRID VIEW HEADER */
-#filter-notes-only-btn,
-#filter-todo-notes-btn {
-    /* Kế thừa kiểu từ .button-secondary đã được điều chỉnh ở .grid-view-header .button-secondary */
-    /* display: inline-flex; */ /* Đã đặt ở .grid-view-header .button-secondary */
-    /* align-items: center; */ /* Đã đặt ở .grid-view-header .button-secondary */
-    /* padding: 8px 12px; */ /* Đã đặt ở .grid-view-header .button-secondary */
-    /* font-size: 0.9em; */ /* Đã đặt ở .grid-view-header .button-secondary */
-}
-
 #filter-notes-only-btn.active,
 #filter-todo-notes-btn.active {
     background-color: var(--accent-color);
@@ -561,6 +588,3 @@ body.modal-open .modal { display: block; opacity: 1; transform: translate(-50%, 
     /* border-color: var(--accent-color); */ /* Bỏ comment nếu nút có border */
     font-weight: 500;
 }
-
-/* Điều chỉnh responsive cho các nút filter trong grid-view-header đã được thực hiện ở trên */
-/* trong @media (max-width: 768px) cho .grid-view-header .button-secondary */
